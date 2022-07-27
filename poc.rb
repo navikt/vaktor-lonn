@@ -134,35 +134,33 @@ def parse_periode(periodes, timecard, salary)
     end
 
     workingHours = timecard[day]
-    if workingHours.any?
-      # todo: støtte forskjellige vaktplaner, denne koden funker kun for døgnvakt
-      workingHours.each do |values|
-        from, to = values.split('-')
-        workRange = (time_to_minutes(from)...time_to_minutes(to))
+    # todo: støtte forskjellige vaktplaner, denne koden funker kun for døgnvakt
+    workingHours.each do |values|
+      from, to = values.split('-')
+      workRange = (time_to_minutes(from)...time_to_minutes(to))
 
-        if ranges_overlap?(nightTimeRange, workRange)
-          minutes[day]["nightMinutes"] -= countRangeOverlap(nightTimeRange, workRange)
+      if ranges_overlap?(nightTimeRange, workRange)
+        minutes[day]["nightMinutes"] -= countRangeOverlap(nightTimeRange, workRange)
+      end
+
+      if ranges_overlap?(eveningTimeRange, workRange)
+        minutes[day]["nightMinutes"] -= countRangeOverlap(eveningTimeRange, workRange)
+      end
+
+      if ranges_overlap?(dayTimeRange, workRange)
+        minutes[day]["dayMinutes"] -= countRangeOverlap(dayTimeRange, workRange)
+      end
+
+      # ikke i helger eller helligdager!
+      if periode["helligdag"] || date.saturday? || date.sunday?
+        minutes[day]["weekendMinutes"] -= workRange.count
+      else
+        if ranges_overlap?(preWorkRange, workRange)
+          minutes[day]["workMinutes"] -= countRangeOverlap(preWorkRange, workRange)
         end
-        
-        if ranges_overlap?(eveningTimeRange, workRange)
-          minutes[day]["nightMinutes"] -= countRangeOverlap(eveningTimeRange, workRange)
-        end
 
-        if ranges_overlap?(dayTimeRange, workRange)
-          minutes[day]["dayMinutes"] -= countRangeOverlap(dayTimeRange, workRange)
-        end
-
-        # ikke i helger eller helligdager!
-        if periode["helligdag"] || date.saturday? || date.sunday?
-          minutes[day]["weekendMinutes"] -= workRange.count
-        else
-          if ranges_overlap?(preWorkRange, workRange)
-            minutes[day]["workMinutes"] -= countRangeOverlap(preWorkRange, workRange)
-          end
-
-          if ranges_overlap?(postWorkRange, workRange)
-            minutes[day]["workMinutes"] -= countRangeOverlap(postWorkRange, workRange)
-          end
+        if ranges_overlap?(postWorkRange, workRange)
+          minutes[day]["workMinutes"] -= countRangeOverlap(postWorkRange, workRange)
         end
       end
     end
