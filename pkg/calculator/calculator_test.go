@@ -182,8 +182,8 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := calculateWorkInPeriode(tt.args.work, periodRange); got != tt.want {
-				t.Errorf("calculateWorkInPeriode() = %v, want %v", got, tt.want)
+			if got := calculateMinutesOverlappingInPeriods(tt.args.work, periodRange); got != tt.want {
+				t.Errorf("calculateMinutesOverlappingInPeriods() = %v, want %v", got, tt.want)
 			}
 		})
 	}
