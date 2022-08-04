@@ -17,15 +17,21 @@ func main() {
 				http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
 				return
 			}
-			money, err := calculator.GuarddutySalary(plan)
-			_, err = fmt.Fprintf(w, "{\"earnings\": \"%f\"}", money)
+			report, err := calculator.GuarddutySalary(plan)
 			if err != nil {
+				http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
+				return
+			}
+			err = json.NewEncoder(w).Encode(report)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
 				return
 			}
 			return
 		}
 		_, err := fmt.Fprintln(w, "Hello, we only support POST")
 		if err != nil {
+			http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
 			return
 		}
 	})
