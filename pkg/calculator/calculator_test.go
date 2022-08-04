@@ -1,7 +1,6 @@
 package calculator
 
 import (
-	"github.com/navikt/vaktor-lonn/pkg/dummy"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"reflect"
 	"testing"
@@ -44,79 +43,6 @@ func Test_timeToMinutes(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("timeToMinutes() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestCalculateEarnings(t *testing.T) {
-	type args struct {
-		minutes map[string]guardDutyMinutes
-		salary  int
-	}
-	pocPeriode := map[string]models.Period{
-		"14.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
-		},
-		"15.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
-		},
-		"16.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
-		},
-		"17.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: true,
-		},
-		"18.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
-		},
-		"19.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
-		},
-		"20.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
-		},
-	}
-	minutes, _ := ParsePeriode(pocPeriode, dummy.GetMinWinTidPOC())
-	tests := []struct {
-		name    string
-		args    args
-		want    float64
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-		{
-			name: "vs poc",
-			args: args{
-				minutes: minutes,
-				salary:  500_000,
-			},
-			want: 15482.82,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := CalculateEarnings(tt.args.minutes, tt.args.salary)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("CalculateEarnings() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("CalculateEarnings() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -256,4 +182,97 @@ func Test_createRangeForPeriod(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestCalculateEarningsVsRubyPOC(t *testing.T) {
+	type args struct {
+		report  *models.Report
+		minutes map[string]models.GuardDuty
+		salary  int
+	}
+	pocPeriode := map[string]models.Period{
+		"14.03.2022": {
+			Fra:       "00:00",
+			Til:       "24:00",
+			Helligdag: false,
+		},
+		"15.03.2022": {
+			Fra:       "00:00",
+			Til:       "24:00",
+			Helligdag: false,
+		},
+		"16.03.2022": {
+			Fra:       "00:00",
+			Til:       "24:00",
+			Helligdag: false,
+		},
+		"17.03.2022": {
+			Fra:       "00:00",
+			Til:       "24:00",
+			Helligdag: true,
+		},
+		"18.03.2022": {
+			Fra:       "00:00",
+			Til:       "24:00",
+			Helligdag: false,
+		},
+		"19.03.2022": {
+			Fra:       "00:00",
+			Til:       "24:00",
+			Helligdag: false,
+		},
+		"20.03.2022": {
+			Fra:       "00:00",
+			Til:       "24:00",
+			Helligdag: false,
+		},
+	}
+	minWinTid := map[string][]string{
+		"14.03.2022": {"07:15-15:33"},
+		"15.03.2022": {"07:15-15:57"},
+		// TODO: tiden 01-03 er vakt, så man skal ha tillegg for det.
+		"16.03.2022": {"01:00-03:00", "07:31-15:33"},
+		"17.03.2022": {"07:55-16:10"},
+		"18.03.2022": {"07:30-16:19"},
+		"19.03.2022": {},
+		"20.03.2022": {},
+	}
+	tests := struct {
+		name    string
+		args    args
+		want    float64
+		wantErr bool
+	}{
+		name: "vs poc",
+		args: args{
+			salary: 500_000,
+			report: &models.Report{
+				Ident:            "testv1",
+				TimesheetEachDay: map[string]models.Timesheet{},
+			},
+		},
+		want: 15482.82,
+	}
+
+	tests.args.report.Salary = tests.want
+	minutes, _ := ParsePeriode(tests.args.report, pocPeriode, minWinTid)
+	tests.args.minutes = minutes
+	for day, work := range minWinTid {
+		timesheet := models.Timesheet{
+			GuardDuty: pocPeriode[day],
+			Work:      work,
+		}
+		tests.args.report.TimesheetEachDay[day] = timesheet
+	}
+
+	t.Run(tests.name, func(t *testing.T) {
+		err := CalculateEarnings(tests.args.report, tests.args.minutes, tests.args.salary)
+		if (err != nil) != tests.wantErr {
+			t.Errorf("CalculateEarnings() error = %v, wantErr %v", err, tests.wantErr)
+			return
+		}
+		if tests.args.report.Earnings.Total != tests.want {
+			t.Errorf("CalculateEarnings() got = %v, want %v", tests.args.report.Earnings.Total, tests.want)
+		}
+	})
 }
