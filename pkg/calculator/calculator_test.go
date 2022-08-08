@@ -249,6 +249,12 @@ func TestCalculateEarningsVsRubyPOC(t *testing.T) {
 			report: &models.Report{
 				Ident:            "testv1",
 				TimesheetEachDay: map[string]models.Timesheet{},
+				Satser: map[string]float64{
+					"0620":    10,
+					"2006":    20,
+					"lørsøn":  55,
+					"utvidet": 15,
+				},
 			},
 		},
 		want: 15482.82,

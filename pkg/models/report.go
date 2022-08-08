@@ -35,7 +35,7 @@ type Earnings struct {
 type Report struct {
 	Ident            string
 	Salary           float64
-	Satser           map[string]int
+	Satser           map[string]float64
 	Earnings         Earnings
 	TimesheetEachDay map[string]Timesheet
 	GuardDutyMinutes GuardDuty

@@ -276,10 +276,10 @@ func CalculateCompensation(report *models.Report, minutes map[string]models.Guar
 	report.GuardDutyHours.Helgetillegg = int(math.Round(float64(compensation.Helgetillegg / 60)))
 
 	// TODO: runne av til nærmeste 2 desimaler
-	return math.Round(float64(compensation.Hvilende0620/60.0))*10.0 +
-		math.Round(float64(compensation.Hvilende2006/60.0))*20.0 +
-		(math.Round(float64(compensation.Helgetillegg/60.0)) * 55.0 / 5) +
-		(math.Round(float64(compensation.Skifttillegg/60.0)) * 15.0 / 5), nil
+	return math.Round(float64(compensation.Hvilende0620/60.0))*report.Satser["0620"] +
+		math.Round(float64(compensation.Hvilende2006/60.0))*report.Satser["2006"] +
+		(math.Round(float64(compensation.Helgetillegg/60.0)) * report.Satser["lørsøn"] / 5) +
+		(math.Round(float64(compensation.Skifttillegg/60.0)) * report.Satser["utvidet"] / 5), nil
 }
 
 func CalculateOvertime(report *models.Report, minutes map[string]models.GuardDuty, salary float64) (float64, error) {

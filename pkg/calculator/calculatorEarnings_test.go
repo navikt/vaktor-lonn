@@ -72,7 +72,7 @@ func TestDøgnvakt(t *testing.T) {
 			report: &models.Report{
 				Ident:            "testv1",
 				TimesheetEachDay: map[string]models.Timesheet{},
-				Satser: map[string]int{
+				Satser: map[string]float64{
 					"lørsøn":  55,
 					"0620":    10,
 					"2006":    20,

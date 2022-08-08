@@ -7,7 +7,7 @@ type Period struct {
 }
 
 type Plan struct {
-	Ident   string            `json:"ident"`
-	Satser  map[string]int    `json:"satser"`
-	Periods map[string]Period `json:"periods"`
+	Ident   string             `json:"ident"`
+	Satser  map[string]float64 `json:"satser"`
+	Periods map[string]Period  `json:"periods"`
 }
