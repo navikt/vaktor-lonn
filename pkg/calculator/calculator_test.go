@@ -184,101 +184,72 @@ func Test_createRangeForPeriod(t *testing.T) {
 	}
 }
 
-func TestCalculateEarningsVsRubyPOC(t *testing.T) {
+func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 	type args struct {
-		report  *models.Report
-		minutes map[string]models.GuardDuty
-		salary  int
+		report     *models.Report
+		day        string
+		dutyPeriod models.Period
+		compPeriod models.Period
+		timesheet  []string
 	}
-	pocPeriode := map[string]models.Period{
-		"14.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
-		},
-		"15.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
-		},
-		"16.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
-		},
-		"17.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: true,
-		},
-		"18.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
-		},
-		"19.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
-		},
-		"20.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
-		},
+
+	day := "08.08.2022"
+	report := &models.Report{
+		TimesheetEachDay: map[string]models.Timesheet{},
 	}
-	minWinTid := map[string][]string{
-		"14.03.2022": {"07:15-15:33"},
-		"15.03.2022": {"07:15-15:57"},
-		// TODO: tiden 01-03 er vakt, så man skal ha tillegg for det.
-		"16.03.2022": {"01:00-03:00", "07:31-15:33"},
-		"17.03.2022": {"07:55-16:10"},
-		"18.03.2022": {"07:30-16:19"},
-		"19.03.2022": {},
-		"20.03.2022": {},
-	}
-	tests := struct {
+	timesheet := models.Timesheet{}
+	report.TimesheetEachDay[day] = timesheet
+
+	tests := []struct {
 		name    string
 		args    args
-		want    float64
+		want    int
 		wantErr bool
 	}{
-		name: "vs poc",
-		args: args{
-			salary: 500_000,
-			report: &models.Report{
-				Ident:            "testv1",
-				TimesheetEachDay: map[string]models.Timesheet{},
-				Satser: map[string]float64{
-					"0620":    10,
-					"2006":    20,
-					"lørsøn":  55,
-					"utvidet": 15,
-				},
+		{
+			name: "Vanlig arbeidsdag",
+			args: args{
+				report:     report,
+				day:        day,
+				dutyPeriod: models.Period{Fra: "00:00", Til: "24:00"},
+				compPeriod: models.Period{Fra: "09:00", Til: "14:30"},
+				timesheet:  []string{"08:00-15:00"},
 			},
+			want: 0,
 		},
-		want: 15482.82,
+		{
+			name: "Uvanlig kort arbeidsdag",
+			args: args{
+				report:     report,
+				day:        day,
+				dutyPeriod: models.Period{Fra: "00:00", Til: "24:00"},
+				compPeriod: models.Period{Fra: "09:00", Til: "14:30"},
+				timesheet:  []string{"10:00-14:00"},
+			},
+			want: 90,
+		},
+		{
+			name: "Forskjøvet arbeidsdag",
+			args: args{
+				report:     report,
+				day:        day,
+				dutyPeriod: models.Period{Fra: "00:00", Til: "24:00"},
+				compPeriod: models.Period{Fra: "09:00", Til: "14:30"},
+				timesheet:  []string{"10:00-18:00"},
+			},
+			want: 60,
+		},
 	}
-
-	tests.args.report.Salary = tests.want
-	minutes, _ := ParsePeriode(tests.args.report, pocPeriode, minWinTid)
-	tests.args.minutes = minutes
-	for day, work := range minWinTid {
-		timesheet := models.Timesheet{
-			GuardDuty: pocPeriode[day],
-			Work:      work,
-		}
-		tests.args.report.TimesheetEachDay[day] = timesheet
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := calculateMinutesWithGuardDutyInPeriod(tt.args.report, tt.args.day, tt.args.dutyPeriod, tt.args.compPeriod, tt.args.timesheet)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("calculateMinutesWithGuardDutyInPeriod() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("calculateMinutesWithGuardDutyInPeriod() got = %v, want %v", got, tt.want)
+			}
+		})
 	}
-
-	t.Run(tests.name, func(t *testing.T) {
-		err := CalculateEarnings(tests.args.report, tests.args.minutes, tests.args.salary)
-		if (err != nil) != tests.wantErr {
-			t.Errorf("CalculateEarnings() error = %v, wantErr %v", err, tests.wantErr)
-			return
-		}
-		if tests.args.report.Earnings.Total != tests.want {
-			t.Errorf("CalculateEarnings() got = %v, want %v", tests.args.report.Earnings.Total, tests.want)
-		}
-	})
 }

@@ -33,13 +33,15 @@ type Earnings struct {
 }
 
 type Report struct {
-	Ident            string
-	Salary           float64
-	Satser           map[string]float64
-	Earnings         Earnings
-	TimesheetEachDay map[string]Timesheet
-	GuardDutyMinutes GuardDuty
-	GuardDutyHours   GuardDuty
-	OTS50            float64
-	OTS100           float64
+	Ident                           string
+	Salary                          float64
+	Satser                          map[string]float64
+	Earnings                        Earnings
+	TimesheetEachDay                map[string]Timesheet
+	GuardDutyMinutes                GuardDuty
+	GuardDutyHours                  GuardDuty
+	OTS50                           float64
+	OTS100                          float64
+	MinutesNotWorkedinCoreWorkHours int
+	TooMuchDutyMinutes              int
 }
