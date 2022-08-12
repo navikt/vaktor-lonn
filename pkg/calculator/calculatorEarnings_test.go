@@ -13,41 +13,55 @@ func TestDøgnvakt(t *testing.T) {
 		minutes map[string]models.GuardDuty
 		salary  int
 	}
-	pocPeriode := map[string]models.Period{
+	pocPeriode := map[string][]models.Period{
 		"14.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
+			{
+				Begin:     "00:00",
+				End:       "24:00",
+				Helligdag: false,
+			},
 		},
 		"15.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
+			{
+				Begin:     "00:00",
+				End:       "24:00",
+				Helligdag: false,
+			},
 		},
 		"16.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
+			{
+				Begin:     "00:00",
+				End:       "24:00",
+				Helligdag: false,
+			},
 		},
 		"17.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: true,
+			{
+				Begin:     "00:00",
+				End:       "24:00",
+				Helligdag: true,
+			},
 		},
 		"18.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
+			{
+				Begin:     "00:00",
+				End:       "24:00",
+				Helligdag: false,
+			},
 		},
 		"19.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
+			{
+				Begin:     "00:00",
+				End:       "24:00",
+				Helligdag: false,
+			},
 		},
 		"20.03.2022": {
-			Fra:       "00:00",
-			Til:       "24:00",
-			Helligdag: false,
+			{
+				Begin:     "00:00",
+				End:       "24:00",
+				Helligdag: false,
+			},
 		},
 	}
 	minWinTid := map[string][]string{
@@ -86,8 +100,8 @@ func TestDøgnvakt(t *testing.T) {
 	tests.args.report.Salary = float64(tests.args.salary)
 	for day, work := range minWinTid {
 		timesheet := models.Timesheet{
-			GuardDuty: pocPeriode[day],
-			Work:      work,
+			Schedule: pocPeriode[day],
+			Work:     work,
 		}
 		tests.args.report.TimesheetEachDay[day] = timesheet
 	}

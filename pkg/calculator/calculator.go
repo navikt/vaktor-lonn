@@ -137,10 +137,12 @@ func createRangeForPeriod(day, dutyBegin, dutyEnd, begin, end string) (*Range, e
 }
 
 // ParsePeriode returns an object with the minutes you have been having guard duty each day in a given periode
-func ParsePeriode(report *models.Report, dutyPeriods map[string]models.Period, timesheet map[string][]string) (map[string]models.GuardDuty, error) {
+func ParsePeriode(report *models.Report, schedule map[string][]models.Period, timesheet map[string][]string) (map[string]models.GuardDuty, error) {
 	guardHours := map[string]models.GuardDuty{}
 
-	for day, dutyPeriod := range dutyPeriods {
+	for day, periods := range schedule {
+		// TODO: loop igjennom perioder
+		period := periods[0]
 		date, err := time.Parse("02.01.2006", day)
 		if err != nil {
 			return guardHours, err
@@ -149,7 +151,7 @@ func ParsePeriode(report *models.Report, dutyPeriods map[string]models.Period, t
 		dutyHours := models.GuardDuty{}
 
 		// sjekk om man har vakt i perioden 00-06
-		dutyHours.Hvilende2006, err = calculateMinutesWithGuardDutyInPeriod(report, day, dutyPeriod, models.Period{Fra: "00:00", Til: "06:00"}, timesheet[day])
+		dutyHours.Hvilende2006, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "00:00", End: "06:00"}, timesheet[day])
 		if err != nil {
 			return nil, err
 		}
@@ -157,19 +159,19 @@ func ParsePeriode(report *models.Report, dutyPeriods map[string]models.Period, t
 		dutyHours.Hvilende2006 += modifier
 
 		// sjekk om man har vakt i perioden 20-24
-		minutesWorked, err := calculateMinutesWithGuardDutyInPeriod(report, day, dutyPeriod, models.Period{Fra: "20:00", Til: "24:00"}, timesheet[day])
+		minutesWorked, err := calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "20:00", End: "24:00"}, timesheet[day])
 		if err != nil {
 			return nil, err
 		}
 		dutyHours.Hvilende2006 += minutesWorked
 
 		// sjekk om man har vakt i perioden 06-20
-		dutyHours.Hvilende0620, err = calculateMinutesWithGuardDutyInPeriod(report, day, dutyPeriod, models.Period{Fra: "06:00", Til: "20:00"}, timesheet[day])
+		dutyHours.Hvilende0620, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "06:00", End: "20:00"}, timesheet[day])
 		if err != nil {
 			return nil, err
 		}
 
-		validateHowMuchDutyHours, err := validateHowMuchDutyHours(date, dutyPeriod.Helligdag)
+		validateHowMuchDutyHours, err := validateHowMuchDutyHours(date, period.Helligdag)
 		if err != nil {
 			return nil, err
 		}
@@ -180,7 +182,7 @@ func ParsePeriode(report *models.Report, dutyPeriods map[string]models.Period, t
 
 			// Dette er tiden du ikke jobbet i kjernetiden. Da vil man ikke kunne få vakttillegg, da andre er på jobb til å ta uforutsette hendelser.
 			minutesNotWorkedInCoreWorkingHours := 0
-			minutesNotWorkedInCoreWorkingHours, err = calculateMinutesWithGuardDutyInPeriod(report, day, dutyPeriod, models.Period{Fra: "09:00", Til: "14:30"}, timesheet[day])
+			minutesNotWorkedInCoreWorkingHours, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "09:00", End: "14:30"}, timesheet[day])
 			dutyHours.Hvilende0620 -= minutesNotWorkedInCoreWorkingHours
 			report.MinutesNotWorkedinCoreWorkHours = minutesNotWorkedInCoreWorkingHours
 
@@ -203,9 +205,9 @@ func ParsePeriode(report *models.Report, dutyPeriods map[string]models.Period, t
 			}
 		}
 
-		if date.Weekday() == time.Saturday || date.Weekday() == time.Sunday || dutyPeriod.Helligdag {
+		if date.Weekday() == time.Saturday || date.Weekday() == time.Sunday || period.Helligdag {
 			// sjekk om man har vakt i perioden 00-24
-			dutyHours.Helgetillegg, err = calculateMinutesWithGuardDutyInPeriod(report, day, dutyPeriod, models.Period{Fra: "00:00", Til: "24:00"}, timesheet[day])
+			dutyHours.Helgetillegg, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "00:00", End: "24:00"}, timesheet[day])
 			if err != nil {
 				return nil, err
 			}
@@ -213,13 +215,13 @@ func ParsePeriode(report *models.Report, dutyPeriods map[string]models.Period, t
 			dutyHours.WeekendOrHolidayCompensation = true
 		} else {
 			// sjekk om man har vakt i perioden 06-07
-			dutyHours.Skifttillegg, err = calculateMinutesWithGuardDutyInPeriod(report, day, dutyPeriod, models.Period{Fra: "06:00", Til: "07:00"}, timesheet[day])
+			dutyHours.Skifttillegg, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "06:00", End: "07:00"}, timesheet[day])
 			if err != nil {
 				return nil, err
 			}
 
 			// sjekk om man har vakt i perioden 17-20
-			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, dutyPeriod, models.Period{Fra: "17:00", Til: "20:00"}, timesheet[day])
+			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "17:00", End: "20:00"}, timesheet[day])
 			if err != nil {
 				return nil, err
 			}
@@ -293,7 +295,7 @@ func calculateDaylightSavingTimeModifier(day string) (int, error) {
 
 // calculateMinutesWithGuardDutyInPeriod return the number of minutes that you have non-working guard duty
 func calculateMinutesWithGuardDutyInPeriod(report *models.Report, day string, dutyPeriod models.Period, compPeriod models.Period, timesheet []string) (int, error) {
-	dutyRange, err := createRangeForPeriod(day, dutyPeriod.Fra, dutyPeriod.Til, compPeriod.Fra, compPeriod.Til)
+	dutyRange, err := createRangeForPeriod(day, dutyPeriod.Begin, dutyPeriod.End, compPeriod.Begin, compPeriod.End)
 	if err != nil {
 		return 0, err
 	}
@@ -311,15 +313,15 @@ func calculateMinutesWithGuardDutyInPeriod(report *models.Report, day string, du
 		}
 
 		timesheet := report.TimesheetEachDay[day]
-		switch compPeriod.Fra {
+		switch compPeriod.Begin {
 		case "00:00":
-			if compPeriod.Til == "06:00" {
+			if compPeriod.End == "06:00" {
 				timesheet.MinutesWorked.Hvilende2006 += minutesWorked
 			} else {
 				timesheet.MinutesWorked.Helgetillegg += minutesWorked
 			}
 		case "06:00":
-			if compPeriod.Til == "07:00" {
+			if compPeriod.End == "07:00" {
 				timesheet.MinutesWorked.Skifttillegg += minutesWorked
 			} else {
 				timesheet.MinutesWorked.Hvilende0620 += minutesWorked
@@ -412,19 +414,19 @@ func GuarddutySalary(plan models.Plan) (models.Report, error) {
 	report := &models.Report{
 		Ident:            plan.Ident,
 		Salary:           float64(salary),
-		Satser:           plan.Satser,
+		Satser:           dummy.GetSatserFromAgresso(),
 		TimesheetEachDay: map[string]models.Timesheet{},
 	}
 
 	for day, work := range minWinTid {
 		timesheet := models.Timesheet{
-			GuardDuty: plan.Periods[day],
-			Work:      work,
+			Schedule: plan.Schedule[day],
+			Work:     work,
 		}
 		report.TimesheetEachDay[day] = timesheet
 	}
 
-	minutes, err := ParsePeriode(report, plan.Periods, minWinTid)
+	minutes, err := ParsePeriode(report, plan.Schedule, minWinTid)
 	if err != nil {
 		return *report, err
 	}

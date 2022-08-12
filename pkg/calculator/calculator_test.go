@@ -211,8 +211,8 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 			args: args{
 				report:     report,
 				day:        day,
-				dutyPeriod: models.Period{Fra: "00:00", Til: "24:00"},
-				compPeriod: models.Period{Fra: "09:00", Til: "14:30"},
+				dutyPeriod: models.Period{Begin: "00:00", End: "24:00"},
+				compPeriod: models.Period{Begin: "09:00", End: "14:30"},
 				timesheet:  []string{"08:00-15:00"},
 			},
 			want: 0,
@@ -222,8 +222,8 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 			args: args{
 				report:     report,
 				day:        day,
-				dutyPeriod: models.Period{Fra: "00:00", Til: "24:00"},
-				compPeriod: models.Period{Fra: "09:00", Til: "14:30"},
+				dutyPeriod: models.Period{Begin: "00:00", End: "24:00"},
+				compPeriod: models.Period{Begin: "09:00", End: "14:30"},
 				timesheet:  []string{"10:00-14:00"},
 			},
 			want: 90,
@@ -233,8 +233,8 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 			args: args{
 				report:     report,
 				day:        day,
-				dutyPeriod: models.Period{Fra: "00:00", Til: "24:00"},
-				compPeriod: models.Period{Fra: "09:00", Til: "14:30"},
+				dutyPeriod: models.Period{Begin: "00:00", End: "24:00"},
+				compPeriod: models.Period{Begin: "09:00", End: "14:30"},
 				timesheet:  []string{"10:00-18:00"},
 			},
 			want: 60,

@@ -10,7 +10,7 @@ type GuardDuty struct {
 }
 
 type Timesheet struct {
-	GuardDuty       Period
+	Schedule        []Period
 	MinutesWithDuty GuardDuty
 	Work            []string
 	MinutesWorked   GuardDuty

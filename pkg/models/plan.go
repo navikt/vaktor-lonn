@@ -1,13 +1,12 @@
 package models
 
 type Period struct {
-	Fra       string `json:"fra"`
-	Til       string `json:"til"`
+	Begin     string `json:"start_timestamp"`
+	End       string `json:"end_timestamp"`
 	Helligdag bool   `json:"helligdag"`
 }
 
 type Plan struct {
-	Ident   string             `json:"ident"`
-	Satser  map[string]float64 `json:"satser"`
-	Periods map[string]Period  `json:"periods"`
+	Ident    string              `json:"id"`
+	Schedule map[string][]Period `json:"schedule"`
 }
