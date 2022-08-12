@@ -21,8 +21,3 @@ func GetMinWinTid(ident string) map[string][]string {
 		"20.03.2022": {},
 	}
 }
-
-func GetSalary(ident string) int {
-	fmt.Printf("Creating fake salary for %s\n", ident)
-	return rand.Intn(700_000) + 300_000
-}
