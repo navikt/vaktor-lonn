@@ -16,7 +16,6 @@ func Test_timeToMinutes(t *testing.T) {
 		want    int
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{
 			name: "first test",
 			args: args{
@@ -62,7 +61,6 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 		args args
 		want int
 	}{
-		// TODO: Add test cases.
 		{
 			name: "no work done",
 			args: args{
@@ -128,7 +126,6 @@ func Test_createRangeForPeriod(t *testing.T) {
 		want    *Range
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{
 			name: "døgn duty",
 			args: args{
