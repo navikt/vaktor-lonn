@@ -110,126 +110,133 @@ func createRangeForPeriod(day, dutyBegin, dutyEnd, begin, end string) (*Range, e
 		}
 	}
 
-	if vaktBegin == periodBegin || vaktBegin.Before(periodEnd) {
-		periodeRange := &Range{
-			Begin: periodBegin.Hour()*60 + periodBegin.Minute(),
-			End:   periodEnd.Hour()*60 + periodEnd.Minute(),
-		}
-
-		if end == "24:00" {
-			periodeRange.End = 24 * 60
-		}
-
-		// sjekk om vakt starter senere enn "normalen"
-		if vaktBegin.After(periodBegin) {
-			periodeRange.Begin = vaktBegin.Hour()*60 + vaktBegin.Minute()
-		}
-		// sjekk om vakt slutter før "normalen"
-		if vaktEnd.Before(periodEnd) {
-			periodeRange.End = vaktEnd.Hour()*60 + vaktEnd.Minute()
-		}
-
-		// personen har vakt i denne perioden!
-		return periodeRange, nil
+	if vaktBegin.After(periodEnd) ||
+		vaktBegin.Equal(periodEnd) ||
+		vaktEnd.Before(periodBegin) ||
+		vaktEnd.Equal(periodBegin) {
+		return nil, nil
 	}
 
-	return nil, nil
+	periodeRange := &Range{
+		Begin: periodBegin.Hour()*60 + periodBegin.Minute(),
+		End:   periodEnd.Hour()*60 + periodEnd.Minute(),
+	}
+
+	if end == "24:00" {
+		periodeRange.End = 24 * 60
+	}
+
+	// sjekk om vakt starter senere enn "normalen"
+	if vaktBegin.After(periodBegin) {
+		periodeRange.Begin = vaktBegin.Hour()*60 + vaktBegin.Minute()
+	}
+	// sjekk om vakt slutter før "normalen"
+	if vaktEnd.Before(periodEnd) {
+		periodeRange.End = vaktEnd.Hour()*60 + vaktEnd.Minute()
+	}
+
+	// personen har vakt i denne perioden!
+	return periodeRange, nil
 }
 
-// ParsePeriode returns an object with the minutes you have been having guard duty each day in a given periode
-func ParsePeriode(report *models.Report, schedule map[string][]models.Period, timesheet map[string][]string) (map[string]models.GuardDuty, error) {
 // ParsePeriod returns an object with the minutes you have been having guard duty each day in a given periode
 func ParsePeriod(report *models.Report, schedule map[string][]models.Period, timesheet map[string][]string) (map[string]models.GuardDuty, error) {
 	guardHours := map[string]models.GuardDuty{}
 
 	for day, periods := range schedule {
-		// TODO: loop igjennom perioder
-		period := periods[0]
-		date, err := time.Parse("02.01.2006", day)
-		if err != nil {
-			return guardHours, err
-		}
-
 		dutyHours := models.GuardDuty{}
 
-		// sjekk om man har vakt i perioden 00-06
-		dutyHours.Hvilende2006, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "00:00", End: "06:00"}, timesheet[day])
+		modifier, err := calculateDaylightSavingTimeModifier(day)
 		if err != nil {
 			return nil, err
 		}
-		modifier, err := calculateDaylightSavingTimeModifier(day)
 		dutyHours.Hvilende2006 += modifier
 
-		// sjekk om man har vakt i perioden 20-24
-		minutesWorked, err := calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "20:00", End: "24:00"}, timesheet[day])
-		if err != nil {
-			return nil, err
-		}
-		dutyHours.Hvilende2006 += minutesWorked
-
-		// sjekk om man har vakt i perioden 06-20
-		dutyHours.Hvilende0620, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "06:00", End: "20:00"}, timesheet[day])
-		if err != nil {
-			return nil, err
-		}
-
-		validateHowMuchDutyHours, err := validateHowMuchDutyHours(date, period.Helligdag)
-		if err != nil {
-			return nil, err
-		}
-		if validateHowMuchDutyHours {
-			// TODO: En vaktperiode kan ikke være lengre enn 17t i døgnet mandag-fredag under sommertid, og 16t15m mandag-fredag under vintertid
-			// Sjekk om en person har Hvilende0620 mer enn 8,5t eller Hvilende0620+Hvilende2006 mer enn 17t/16t15min.
-			// Det er unntak følgende dager: onsdag før skjærtorsdag, julaften, romjulen, nyttårsaften
-
-			// Dette er tiden du ikke jobbet i kjernetiden. Da vil man ikke kunne få vakttillegg, da andre er på jobb til å ta uforutsette hendelser.
-			minutesNotWorkedInCoreWorkingHours := 0
-			minutesNotWorkedInCoreWorkingHours, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "09:00", End: "14:30"}, timesheet[day])
-			dutyHours.Hvilende0620 -= minutesNotWorkedInCoreWorkingHours
-			report.MinutesNotWorkedinCoreWorkHours = minutesNotWorkedInCoreWorkingHours
-
-			// TODO: Sjekk om det er sommertid eller vintertid for NAV, og at personen som jobber følger det
-			NAVSummerTimeBegin := time.Date(date.Year(), time.May, 15, 0, 0, 0, 0, time.UTC)
-			NAVSummerTimeEnd := time.Date(date.Year(), time.September, 15, 0, 0, 0, 0, time.UTC)
-			maxDutyMinutes := 16*60 + 15
-			if date.After(NAVSummerTimeBegin) && date.Before(NAVSummerTimeEnd) {
-				maxDutyMinutes = 17 * 60
+		for _, period := range periods {
+			date, err := time.Parse("02.01.2006", day)
+			if err != nil {
+				return guardHours, err
 			}
-			addedDutyMinutes := dutyHours.Hvilende0620 + dutyHours.Hvilende2006
-			if addedDutyMinutes > maxDutyMinutes {
-				// Personen har fått registert for mye vakt den dagen. Fjern diff-en
-				report.TooMuchDutyMinutes = maxDutyMinutes - addedDutyMinutes
-				dutyHours.Hvilende0620 -= maxDutyMinutes - addedDutyMinutes
-				if dutyHours.Hvilende0620 < 0 {
-					dutyHours.Hvilende2006 += dutyHours.Hvilende0620
-					dutyHours.Hvilende0620 = 0
+
+			// sjekk om man har vakt i perioden 00-06
+			minutesWorked, err := calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "00:00", End: "06:00"}, timesheet[day])
+			if err != nil {
+				return nil, err
+			}
+			dutyHours.Hvilende2006 += minutesWorked
+
+			// sjekk om man har vakt i perioden 20-24
+			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "20:00", End: "24:00"}, timesheet[day])
+			if err != nil {
+				return nil, err
+			}
+			dutyHours.Hvilende2006 += minutesWorked
+
+			// sjekk om man har vakt i perioden 06-20
+			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "06:00", End: "20:00"}, timesheet[day])
+			if err != nil {
+				return nil, err
+			}
+			dutyHours.Hvilende0620 += minutesWorked
+
+			validateHowMuchDutyHours, err := validateHowMuchDutyHours(date, period.Helligdag)
+			if err != nil {
+				return nil, err
+			}
+			if validateHowMuchDutyHours {
+				// TODO: En vaktperiode kan ikke være lengre enn 17t i døgnet mandag-fredag under sommertid, og 16t15m mandag-fredag under vintertid
+				// Sjekk om en person har Hvilende0620 mer enn 8,5t eller Hvilende0620+Hvilende2006 mer enn 17t/16t15min.
+				// Det er unntak følgende dager: onsdag før skjærtorsdag, julaften, romjulen, nyttårsaften
+
+				// Dette er tiden du ikke jobbet i kjernetiden. Da vil man ikke kunne få vakttillegg, da andre er på jobb til å ta uforutsette hendelser.
+				minutesNotWorkedInCoreWorkingHours := 0
+				minutesNotWorkedInCoreWorkingHours, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "09:00", End: "14:30"}, timesheet[day])
+				dutyHours.Hvilende0620 -= minutesNotWorkedInCoreWorkingHours
+				report.MinutesNotWorkedinCoreWorkHours = minutesNotWorkedInCoreWorkingHours
+
+				// TODO: Sjekk om det er sommertid eller vintertid for NAV, og at personen som jobber følger det
+				NAVSummerTimeBegin := time.Date(date.Year(), time.May, 15, 0, 0, 0, 0, time.UTC)
+				NAVSummerTimeEnd := time.Date(date.Year(), time.September, 15, 0, 0, 0, 0, time.UTC)
+				maxDutyMinutes := 16*60 + 15
+				if date.After(NAVSummerTimeBegin) && date.Before(NAVSummerTimeEnd) {
+					maxDutyMinutes = 17 * 60
+				}
+				addedDutyMinutes := dutyHours.Hvilende0620 + dutyHours.Hvilende2006
+				if addedDutyMinutes > maxDutyMinutes {
+					// Personen har fått registert for mye vakt den dagen. Fjern diff-en
+					report.TooMuchDutyMinutes = maxDutyMinutes - addedDutyMinutes
+					dutyHours.Hvilende0620 -= maxDutyMinutes - addedDutyMinutes
+					if dutyHours.Hvilende0620 < 0 {
+						dutyHours.Hvilende2006 += dutyHours.Hvilende0620
+						dutyHours.Hvilende0620 = 0
+					}
 				}
 			}
+
+			if date.Weekday() == time.Saturday || date.Weekday() == time.Sunday || period.Helligdag {
+				// sjekk om man har vakt i perioden 00-24
+				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "00:00", End: "24:00"}, timesheet[day])
+				if err != nil {
+					return nil, err
+				}
+				dutyHours.Helgetillegg += minutesWorked
+				dutyHours.WeekendOrHolidayCompensation = true
+			} else {
+				// sjekk om man har vakt i perioden 06-07
+				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "06:00", End: "07:00"}, timesheet[day])
+				if err != nil {
+					return nil, err
+				}
+				dutyHours.Skifttillegg += minutesWorked
+
+				// sjekk om man har vakt i perioden 17-20
+				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "17:00", End: "20:00"}, timesheet[day])
+				if err != nil {
+					return nil, err
+				}
+				dutyHours.Skifttillegg += minutesWorked
+			}
 		}
-
-		if date.Weekday() == time.Saturday || date.Weekday() == time.Sunday || period.Helligdag {
-			// sjekk om man har vakt i perioden 00-24
-			dutyHours.Helgetillegg, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "00:00", End: "24:00"}, timesheet[day])
-			if err != nil {
-				return nil, err
-			}
-
-			dutyHours.WeekendOrHolidayCompensation = true
-		} else {
-			// sjekk om man har vakt i perioden 06-07
-			dutyHours.Skifttillegg, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "06:00", End: "07:00"}, timesheet[day])
-			if err != nil {
-				return nil, err
-			}
-
-			// sjekk om man har vakt i perioden 17-20
-			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "17:00", End: "20:00"}, timesheet[day])
-			if err != nil {
-				return nil, err
-			}
-			dutyHours.Skifttillegg += minutesWorked
-		}
-
 		guardHours[day] = dutyHours
 		t := report.TimesheetEachDay[day]
 		t.MinutesWithDuty = dutyHours
