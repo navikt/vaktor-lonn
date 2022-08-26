@@ -166,6 +166,26 @@ func Test_createRangeForPeriod(t *testing.T) {
 			},
 			want: &Range{Begin: 840, End: 1200},
 		},
+		{
+			name: "work till duty begins",
+			args: args{
+				dutyBegin: "06:00",
+				dutyEnd:   "09:00",
+				begin:     "00:00",
+				end:       "06:00",
+			},
+			want: nil,
+		},
+		{
+			name: "work outside of duty",
+			args: args{
+				dutyBegin: "06:00",
+				dutyEnd:   "09:00",
+				begin:     "20:00",
+				end:       "24:00",
+			},
+			want: nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -235,6 +255,17 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 				timesheet:  []string{"10:00-18:00"},
 			},
 			want: 60,
+		},
+		{
+			name: "Morgenvakt",
+			args: args{
+				report:     report,
+				day:        day,
+				dutyPeriod: models.Period{Begin: "06:00", End: "09:00"},
+				compPeriod: models.Period{Begin: "20:00", End: "24:00"},
+				timesheet:  []string{"10:00-18:00"},
+			},
+			want: 0,
 		},
 	}
 	for _, tt := range tests {
