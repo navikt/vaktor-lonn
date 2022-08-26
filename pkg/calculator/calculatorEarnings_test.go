@@ -105,7 +105,7 @@ func TestDøgnvakt(t *testing.T) {
 		}
 		tests.args.report.TimesheetEachDay[day] = timesheet
 	}
-	minutes, _ := ParsePeriode(tests.args.report, pocPeriode, minWinTid)
+	minutes, _ := ParsePeriod(tests.args.report, pocPeriode, minWinTid)
 	tests.args.minutes = minutes
 
 	t.Run(tests.name, func(t *testing.T) {

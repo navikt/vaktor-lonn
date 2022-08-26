@@ -138,6 +138,8 @@ func createRangeForPeriod(day, dutyBegin, dutyEnd, begin, end string) (*Range, e
 
 // ParsePeriode returns an object with the minutes you have been having guard duty each day in a given periode
 func ParsePeriode(report *models.Report, schedule map[string][]models.Period, timesheet map[string][]string) (map[string]models.GuardDuty, error) {
+// ParsePeriod returns an object with the minutes you have been having guard duty each day in a given periode
+func ParsePeriod(report *models.Report, schedule map[string][]models.Period, timesheet map[string][]string) (map[string]models.GuardDuty, error) {
 	guardHours := map[string]models.GuardDuty{}
 
 	for day, periods := range schedule {
@@ -426,7 +428,7 @@ func GuarddutySalary(plan models.Plan) (models.Report, error) {
 		report.TimesheetEachDay[day] = timesheet
 	}
 
-	minutes, err := ParsePeriode(report, plan.Schedule, minWinTid)
+	minutes, err := ParsePeriod(report, plan.Schedule, minWinTid)
 	if err != nil {
 		return *report, err
 	}
