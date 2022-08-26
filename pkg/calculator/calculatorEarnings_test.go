@@ -250,6 +250,66 @@ func TestCalculateEarnings(t *testing.T) {
 			// Excel 2,075.68 vs 2,075.6639999999998
 			// Excel 10,681.08 vs 10,681.09
 		},
+
+		{
+			name: "Vakt ved spesielle hendelser",
+			args: args{
+				salary: 800_000,
+				report: &models.Report{
+					Ident:            "testv1",
+					TimesheetEachDay: map[string]models.Timesheet{},
+					Satser: map[string]float64{
+						"lørsøn":  55,
+						"0620":    10,
+						"2006":    20,
+						"utvidet": 15,
+					},
+				},
+			},
+			minWinTid: map[string][]string{},
+			pocPeriod: map[string][]models.Period{
+				"16.07.2022": {
+					{
+						Begin: "17:00",
+						End:   "24:00",
+					},
+				},
+				"17.07.2022": {
+					{
+						Begin: "07:00",
+						End:   "16:00",
+					},
+				},
+				"22.07.2022": {
+					{
+						Begin: "16:00",
+						End:   "24:00",
+					},
+				},
+				"23.07.2022": {
+					{
+						Begin: "00:00",
+						End:   "24:00",
+					},
+				},
+				"24.07.2022": {
+					{
+						Begin: "00:00",
+						End:   "24:00",
+					},
+				},
+
+				"25.07.2022": {
+					{
+						Begin: "00:00",
+						End:   "07:00",
+					},
+				},
+			},
+			want: 15_294.578000000001,
+			// TODO: Excel got 15_294.65, we got 15294.578000000001
+			// Some rounding error happens
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
