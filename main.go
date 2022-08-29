@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"github.com/navikt/vaktor-lonn/pkg/calculator"
 	"github.com/navikt/vaktor-lonn/pkg/models"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
 )
 
 func main() {
+	fmt.Println("Vaktor Lønn starting up...")
+	http.Handle("/metrics", promhttp.Handler())
 	http.HandleFunc("/period", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			var plan models.Plan
