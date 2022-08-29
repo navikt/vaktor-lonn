@@ -366,7 +366,7 @@ func CalculateCompensation(report *models.Report, minutes map[string]models.Guar
 	report.GuardDutyHours.Skifttillegg = int(math.Round(float64(compensation.Skifttillegg / 60)))
 	report.GuardDutyHours.Helgetillegg = int(math.Round(float64(compensation.Helgetillegg / 60)))
 
-	// TODO: runne av til nærmeste 2 desimaler
+	// TODO: runde av til nærmeste 2 desimaler
 	return math.Round(float64(compensation.Hvilende0620/60.0))*report.Satser["0620"] +
 		math.Round(float64(compensation.Hvilende2006/60.0))*report.Satser["2006"] +
 		(math.Round(float64(compensation.Helgetillegg/60.0)) * report.Satser["lørsøn"] / 5) +
