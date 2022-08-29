@@ -1,0 +1,24 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  labels:
+    team: navdig
+  name: vaktor-lonn
+  namespace: navdig
+spec:
+  image: {{ IMAGE }}
+  prometheus:
+    enabled: true
+  azure:
+    application:
+      enabled: true
+      allowAllUsers: false
+      tenant: nav.no
+  ingresses:
+    - https://vaktor-lonn.dev.intern.nav.no
+  gcp:
+    sqlInstances:
+      databases:
+        name: vaktor-lonn
+        envVarPrefix: DB
+      type: POSTGRES_14
