@@ -4,6 +4,8 @@ on: push
 jobs:
   test:
     runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.image.outputs.image }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
@@ -28,11 +30,17 @@ jobs:
       - uses: docker/build-push-action@v3
         with:
           push: true
-          tags: ${{ needs.image.outputs.image }}
+          tags: ${{ needs.test.outputs.image }}
+      - run: |
+          echo "Built new image! :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "${{ needs.test.outputs.image }}" >> $GITHUB_STEP_SUMMARY
 
   deploy:
     needs: docker
     runs-on: ubuntu-latest
+    env:
+      IMAGE: ${{ needs.test.outputs.image }}
     steps:
       - uses: actions/checkout@v3
       - name: dev-gcp
