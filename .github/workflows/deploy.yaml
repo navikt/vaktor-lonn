@@ -39,8 +39,6 @@ jobs:
   deploy:
     needs: docker
     runs-on: ubuntu-latest
-    env:
-      IMAGE: ${{ needs.test.outputs.image }}
     steps:
       - uses: actions/checkout@v3
       - name: dev-gcp
@@ -49,6 +47,7 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           RESOURCE: .nais/nais.yaml
+          IMAGE: ${{ needs.test.outputs.image }}
 #      - name: prod-gcp
 #        if: github.ref == 'refs/heads/main'
 #        uses: nais/deploy/actions/deploy@master
