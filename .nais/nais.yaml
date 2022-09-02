@@ -9,6 +9,7 @@ spec:
   image: {{image}}
   prometheus:
     enabled: true
+    path: /metrics
   azure:
     application:
       enabled: true
