@@ -51,48 +51,48 @@ func TestCalculateEarnings(t *testing.T) {
 				"14.03.2022": {
 					{
 						Begin: time.Date(2022, 3, 14, 0, 0, 0, 0, time.UTC),
-						End:   time.Date(2022, 3, 14, 23, 59, 59, 0, time.UTC),
+						End:   time.Date(2022, 3, 15, 0, 0, 0, 0, time.UTC),
 					},
 				},
 				"15.03.2022": {
 					{
 						Begin: time.Date(2022, 3, 15, 0, 0, 0, 0, time.UTC),
-						End:   time.Date(2022, 3, 15, 23, 59, 59, 0, time.UTC),
+						End:   time.Date(2022, 3, 16, 0, 0, 0, 0, time.UTC),
 					},
 				},
 				"16.03.2022": {
 					{
 						Begin: time.Date(2022, 3, 16, 0, 0, 0, 0, time.UTC),
-						End:   time.Date(2022, 3, 16, 23, 59, 59, 0, time.UTC),
+						End:   time.Date(2022, 3, 17, 0, 0, 0, 0, time.UTC),
 					},
 				},
 				"17.03.2022": {
 					{
 						Begin: time.Date(2022, 3, 17, 0, 0, 0, 0, time.UTC),
-						End:   time.Date(2022, 3, 17, 23, 59, 59, 0, time.UTC),
+						End:   time.Date(2022, 3, 18, 0, 0, 0, 0, time.UTC),
 					},
 				},
 				"18.03.2022": {
 					{
 						Begin: time.Date(2022, 3, 18, 0, 0, 0, 0, time.UTC),
-						End:   time.Date(2022, 3, 18, 23, 59, 59, 0, time.UTC),
+						End:   time.Date(2022, 3, 19, 0, 0, 0, 0, time.UTC),
 					},
 				},
 				"19.03.2022": {
 					{
 						Begin: time.Date(2022, 3, 19, 0, 0, 0, 0, time.UTC),
-						End:   time.Date(2022, 3, 19, 23, 59, 59, 0, time.UTC),
+						End:   time.Date(2022, 3, 20, 0, 0, 0, 0, time.UTC),
 					},
 				},
 				"20.03.2022": {
 					{
 						Begin: time.Date(2022, 3, 20, 0, 0, 0, 0, time.UTC),
-						End:   time.Date(2022, 3, 20, 23, 59, 59, 0, time.UTC),
+						End:   time.Date(2022, 3, 21, 0, 0, 0, 0, time.UTC),
 					},
 				},
 			},
-			// want: 15_739.036, // Old answere when we set 17.03 as a weekend
-			want: 15_381.879999999997,
+			// TODO: Excel returns .86, so we do something different with rounding,
+			want: 15_412.879999999997,
 		},
 
 		{
@@ -266,7 +266,7 @@ func TestCalculateEarnings(t *testing.T) {
 				"16.07.2022": {
 					{
 						Begin: time.Date(2022, 7, 16, 17, 0, 0, 0, time.UTC),
-						End:   time.Date(2022, 7, 16, 23, 59, 59, 0, time.UTC),
+						End:   time.Date(2022, 7, 17, 0, 0, 0, 0, time.UTC),
 					},
 				},
 				"17.07.2022": {
@@ -278,19 +278,19 @@ func TestCalculateEarnings(t *testing.T) {
 				"22.07.2022": {
 					{
 						Begin: time.Date(2022, 7, 22, 16, 0, 0, 0, time.UTC),
-						End:   time.Date(2022, 7, 22, 23, 59, 59, 0, time.UTC),
+						End:   time.Date(2022, 7, 23, 0, 0, 0, 0, time.UTC),
 					},
 				},
 				"23.07.2022": {
 					{
 						Begin: time.Date(2022, 7, 23, 0, 0, 0, 0, time.UTC),
-						End:   time.Date(2022, 7, 23, 23, 59, 59, 0, time.UTC),
+						End:   time.Date(2022, 7, 24, 0, 0, 0, 0, time.UTC),
 					},
 				},
 				"24.07.2022": {
 					{
 						Begin: time.Date(2022, 7, 24, 0, 0, 0, 0, time.UTC),
-						End:   time.Date(2022, 7, 24, 23, 59, 59, 0, time.UTC),
+						End:   time.Date(2022, 7, 25, 0, 0, 0, 0, time.UTC),
 					},
 				},
 
@@ -302,8 +302,7 @@ func TestCalculateEarnings(t *testing.T) {
 				},
 			},
 			want: 15_294.578000000001,
-			// TODO: Excel got 15_294.65, we got 15294.578000000001
-			// Some rounding error happens
+			// TODO: Excel returns .65, we got .578000000001, so some rounding happens
 		},
 	}
 	for _, tt := range tests {

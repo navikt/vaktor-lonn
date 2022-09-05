@@ -126,11 +126,11 @@ func Test_createRangeForPeriod(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "døgn duty",
+			name: "døgnvakt 06-20",
 			args: args{
 				period: models.Period{
 					Begin: time.Date(1987, 7, 9, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
+					End:   time.Date(1987, 7, 10, 0, 0, 0, 0, time.UTC),
 				},
 				threshold: models.Period{
 					Begin: time.Date(1987, 7, 9, 6, 0, 0, 0, time.UTC),
@@ -138,6 +138,20 @@ func Test_createRangeForPeriod(t *testing.T) {
 				},
 			},
 			want: &Range{Begin: 360, End: 1200},
+		},
+		{
+			name: "døgnvakt 20-00",
+			args: args{
+				period: models.Period{
+					Begin: time.Date(1987, 7, 9, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 10, 0, 0, 0, 0, time.UTC),
+				},
+				threshold: models.Period{
+					Begin: time.Date(1987, 7, 9, 20, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 10, 0, 0, 0, 0, time.UTC),
+				},
+			},
+			want: &Range{Begin: 1200, End: 1440},
 		},
 		{
 			name: "short duty",
@@ -172,7 +186,7 @@ func Test_createRangeForPeriod(t *testing.T) {
 			args: args{
 				period: models.Period{
 					Begin: time.Date(1987, 7, 9, 14, 0, 0, 0, time.UTC),
-					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
+					End:   time.Date(1987, 7, 10, 0, 0, 0, 0, time.UTC),
 				},
 				threshold: models.Period{
 					Begin: time.Date(1987, 7, 9, 6, 0, 0, 0, time.UTC),
@@ -204,7 +218,7 @@ func Test_createRangeForPeriod(t *testing.T) {
 				},
 				threshold: models.Period{
 					Begin: time.Date(1987, 7, 9, 20, 0, 0, 0, time.UTC),
-					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
+					End:   time.Date(1987, 7, 10, 0, 0, 0, 0, time.UTC),
 				},
 			},
 			want: nil,

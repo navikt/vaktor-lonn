@@ -93,6 +93,9 @@ func createRangeForPeriod(period, threshold models.Period) (*Range, error) {
 		Begin: threshold.Begin.Hour()*60 + threshold.Begin.Minute(),
 		End:   threshold.End.Hour()*60 + threshold.End.Minute(),
 	}
+	if threshold.End.Day() > threshold.Begin.Day() {
+		periodeRange.End = 24*60 + threshold.End.Minute()
+	}
 
 	// sjekk om vakt starter senere enn "normalen"
 	if period.Begin.After(threshold.Begin) {
@@ -100,7 +103,11 @@ func createRangeForPeriod(period, threshold models.Period) (*Range, error) {
 	}
 	// sjekk om vakt slutter før "normalen"
 	if period.End.Before(threshold.End) {
-		periodeRange.End = period.End.Hour()*60 + period.End.Minute()
+		if period.End.Day() > period.Begin.Day() {
+			periodeRange.End = 24*60 + period.End.Minute()
+		} else {
+			periodeRange.End = period.End.Hour()*60 + period.End.Minute()
+		}
 	}
 
 	// personen har vakt i denne perioden!
@@ -142,7 +149,7 @@ func ParsePeriod(report *models.Report, schedule map[string][]models.Period, tim
 			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period,
 				models.Period{
 					Begin: time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
-					End:   time.Date(date.Year(), date.Month(), date.Day(), 23, 59, 59, 0, time.UTC),
+					End:   time.Date(date.Year(), date.Month(), date.Day()+1, 0, 0, 0, 0, time.UTC),
 				},
 				timesheet[day])
 			if err != nil {
@@ -205,7 +212,7 @@ func ParsePeriod(report *models.Report, schedule map[string][]models.Period, tim
 				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period,
 					models.Period{
 						Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
-						End:   time.Date(date.Year(), date.Month(), date.Day(), 23, 59, 59, 0, time.UTC),},
+						End:   time.Date(date.Year(), date.Month(), date.Day()+1, 0, 0, 0, 0, time.UTC)},
 					timesheet[day])
 				if err != nil {
 					return nil, err
