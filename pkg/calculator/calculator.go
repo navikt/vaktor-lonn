@@ -224,7 +224,7 @@ func ParsePeriod(report *models.Report, schedule map[string][]models.Period, tim
 				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period,
 					models.Period{
 						Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
-						End:   time.Date(date.Year(), date.Month(), date.Day(), 7, 0, 0, 0, time.UTC),},
+						End:   time.Date(date.Year(), date.Month(), date.Day(), 7, 0, 0, 0, time.UTC)},
 					timesheet[day])
 				if err != nil {
 					return nil, err
@@ -235,7 +235,7 @@ func ParsePeriod(report *models.Report, schedule map[string][]models.Period, tim
 				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period,
 					models.Period{
 						Begin: time.Date(date.Year(), date.Month(), date.Day(), 17, 0, 0, 0, time.UTC),
-						End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),},
+						End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC)},
 					timesheet[day])
 				if err != nil {
 					return nil, err
