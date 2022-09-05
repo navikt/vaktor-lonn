@@ -1,7 +1,7 @@
 package dummy
 
 import (
-	"fmt"
+	"github.com/rs/zerolog/log"
 	"math/rand"
 )
 
@@ -15,6 +15,6 @@ func GetSatserFromAgresso() map[string]float64 {
 }
 
 func GetSalary(ident string) int {
-	fmt.Printf("Creating fake salary for %s\n", ident)
+	log.Printf("Creating fake salary for %s", ident)
 	return rand.Intn(700_000) + 300_000
 }

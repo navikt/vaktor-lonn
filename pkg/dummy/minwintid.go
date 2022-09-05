@@ -2,6 +2,7 @@ package dummy
 
 import (
 	"fmt"
+	"github.com/rs/zerolog/log"
 	"math/rand"
 )
 
@@ -10,7 +11,7 @@ func generateWorkhours() string {
 }
 
 func GetMinWinTid(ident string) map[string][]string {
-	fmt.Printf("Creating fake timesheet for %s\n", ident)
+	log.Printf("Creating fake timesheet for %s", ident)
 	return map[string][]string{
 		"14.03.2022": {generateWorkhours()},
 		"15.03.2022": {generateWorkhours()},
