@@ -18,7 +18,7 @@ func main() {
 	http.Handle("/metrics", promhttp.Handler())
 	http.HandleFunc("/period", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
-			var plan models.Plan
+			var plan models.Vaktplan
 			err := json.NewDecoder(r.Body).Decode(&plan)
 			if err != nil {
 				http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)

@@ -1,12 +1,13 @@
 package models
 
+import "time"
+
 type Period struct {
-	Begin     string `json:"start_timestamp"`
-	End       string `json:"end_timestamp"`
-	Helligdag bool   `json:"helligdag"`
+	Begin time.Time `json:"start_timestamp"`
+	End   time.Time `json:"end_timestamp"`
 }
 
-type Plan struct {
+type Vaktplan struct {
 	Ident    string              `json:"id"`
 	Schedule map[string][]Period `json:"schedule"`
 }

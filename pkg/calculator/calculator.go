@@ -80,59 +80,27 @@ func timeToRange(workHours string) (Range, error) {
 }
 
 // createRangeForPeriod creates a range of minutes based on two dates. This will fit the threshold used.
-func createRangeForPeriod(day, dutyBegin, dutyEnd, begin, end string) (*Range, error) {
-	vaktBegin, err := time.Parse("02.01.200615:04", day+dutyBegin)
-	if err != nil {
-		return nil, err
-	}
-
-	var vaktEnd time.Time
-	if dutyEnd == "24:00" {
-		vaktEnd = time.Date(vaktBegin.Year(), vaktBegin.Month(), vaktBegin.Day()+1, 0, 0, 0, 0, time.UTC)
-	} else {
-		vaktEnd, err = time.Parse("02.01.200615:04", day+dutyEnd)
-		if err != nil {
-			return nil, err
-		}
-	}
-	periodBegin, err := time.Parse("02.01.200615:04", day+begin)
-	if err != nil {
-		return nil, err
-	}
-
-	var periodEnd time.Time
-	if end == "24:00" {
-		periodEnd = time.Date(periodBegin.Year(), periodBegin.Month(), periodBegin.Day()+1, 0, 0, 0, 0, time.UTC)
-	} else {
-		periodEnd, err = time.Parse("02.01.200615:04", day+end)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if vaktBegin.After(periodEnd) ||
-		vaktBegin.Equal(periodEnd) ||
-		vaktEnd.Before(periodBegin) ||
-		vaktEnd.Equal(periodBegin) {
+// Returns nil if the period is outside the threshold.
+func createRangeForPeriod(period, threshold models.Period) (*Range, error) {
+	if period.Begin.After(threshold.End) ||
+		period.Begin.Equal(threshold.End) ||
+		period.End.Before(threshold.Begin) ||
+		period.End.Equal(threshold.Begin) {
 		return nil, nil
 	}
 
 	periodeRange := &Range{
-		Begin: periodBegin.Hour()*60 + periodBegin.Minute(),
-		End:   periodEnd.Hour()*60 + periodEnd.Minute(),
-	}
-
-	if end == "24:00" {
-		periodeRange.End = 24 * 60
+		Begin: threshold.Begin.Hour()*60 + threshold.Begin.Minute(),
+		End:   threshold.End.Hour()*60 + threshold.End.Minute(),
 	}
 
 	// sjekk om vakt starter senere enn "normalen"
-	if vaktBegin.After(periodBegin) {
-		periodeRange.Begin = vaktBegin.Hour()*60 + vaktBegin.Minute()
+	if period.Begin.After(threshold.Begin) {
+		periodeRange.Begin = period.Begin.Hour()*60 + period.Begin.Minute()
 	}
 	// sjekk om vakt slutter før "normalen"
-	if vaktEnd.Before(periodEnd) {
-		periodeRange.End = vaktEnd.Hour()*60 + vaktEnd.Minute()
+	if period.End.Before(threshold.End) {
+		periodeRange.End = period.End.Hour()*60 + period.End.Minute()
 	}
 
 	// personen har vakt i denne perioden!
@@ -159,27 +127,41 @@ func ParsePeriod(report *models.Report, schedule map[string][]models.Period, tim
 			}
 
 			// sjekk om man har vakt i perioden 00-06
-			minutesWorked, err := calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "00:00", End: "06:00"}, timesheet[day])
+			minutesWorked, err := calculateMinutesWithGuardDutyInPeriod(report, day, period,
+				models.Period{
+					Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
+					End:   time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
+				},
+				timesheet[day])
 			if err != nil {
 				return nil, err
 			}
 			dutyHours.Hvilende2006 += minutesWorked
 
 			// sjekk om man har vakt i perioden 20-24
-			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "20:00", End: "24:00"}, timesheet[day])
+			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period,
+				models.Period{
+					Begin: time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
+					End:   time.Date(date.Year(), date.Month(), date.Day(), 23, 59, 59, 0, time.UTC),
+				},
+				timesheet[day])
 			if err != nil {
 				return nil, err
 			}
 			dutyHours.Hvilende2006 += minutesWorked
 
 			// sjekk om man har vakt i perioden 06-20
-			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "06:00", End: "20:00"}, timesheet[day])
+			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period,
+				models.Period{
+					Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
+					End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
+				}, timesheet[day])
 			if err != nil {
 				return nil, err
 			}
 			dutyHours.Hvilende0620 += minutesWorked
 
-			validateHowMuchDutyHours, err := validateHowMuchDutyHours(date, period.Helligdag)
+			validateHowMuchDutyHours, err := validateHowMuchDutyHours(date, false) // TODO Helligdag
 			if err != nil {
 				return nil, err
 			}
@@ -189,8 +171,13 @@ func ParsePeriod(report *models.Report, schedule map[string][]models.Period, tim
 				// Det er unntak følgende dager: onsdag før skjærtorsdag, julaften, romjulen, nyttårsaften
 
 				// Dette er tiden du ikke jobbet i kjernetiden. Da vil man ikke kunne få vakttillegg, da andre er på jobb til å ta uforutsette hendelser.
+				// TODO: Bruk arbeidstid/kjernetid fra MinWinTid
+				kjerneTid := models.Period{
+					Begin: time.Date(date.Year(), date.Month(), date.Day(), 9, 0, 0, 0, time.UTC),
+					End:   time.Date(date.Year(), date.Month(), date.Day(), 14, 30, 0, 0, time.UTC),
+				}
 				minutesNotWorkedInCoreWorkingHours := 0
-				minutesNotWorkedInCoreWorkingHours, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "09:00", End: "14:30"}, timesheet[day])
+				minutesNotWorkedInCoreWorkingHours, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, kjerneTid, timesheet[day])
 				dutyHours.Hvilende0620 -= minutesNotWorkedInCoreWorkingHours
 				report.MinutesNotWorkedinCoreWorkHours = minutesNotWorkedInCoreWorkingHours
 
@@ -213,9 +200,13 @@ func ParsePeriod(report *models.Report, schedule map[string][]models.Period, tim
 				}
 			}
 
-			if date.Weekday() == time.Saturday || date.Weekday() == time.Sunday || period.Helligdag {
+			if date.Weekday() == time.Saturday || date.Weekday() == time.Sunday || false { // TODO: Hellidgdag
 				// sjekk om man har vakt i perioden 00-24
-				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "00:00", End: "24:00"}, timesheet[day])
+				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period,
+					models.Period{
+						Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
+						End:   time.Date(date.Year(), date.Month(), date.Day(), 23, 59, 59, 0, time.UTC),},
+					timesheet[day])
 				if err != nil {
 					return nil, err
 				}
@@ -223,14 +214,22 @@ func ParsePeriod(report *models.Report, schedule map[string][]models.Period, tim
 				dutyHours.WeekendOrHolidayCompensation = true
 			} else {
 				// sjekk om man har vakt i perioden 06-07
-				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "06:00", End: "07:00"}, timesheet[day])
+				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period,
+					models.Period{
+						Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
+						End:   time.Date(date.Year(), date.Month(), date.Day(), 7, 0, 0, 0, time.UTC),},
+					timesheet[day])
 				if err != nil {
 					return nil, err
 				}
 				dutyHours.Skifttillegg += minutesWorked
 
 				// sjekk om man har vakt i perioden 17-20
-				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, models.Period{Begin: "17:00", End: "20:00"}, timesheet[day])
+				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period,
+					models.Period{
+						Begin: time.Date(date.Year(), date.Month(), date.Day(), 17, 0, 0, 0, time.UTC),
+						End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),},
+					timesheet[day])
 				if err != nil {
 					return nil, err
 				}
@@ -303,8 +302,8 @@ func calculateDaylightSavingTimeModifier(day string) (int, error) {
 }
 
 // calculateMinutesWithGuardDutyInPeriod return the number of minutes that you have non-working guard duty
-func calculateMinutesWithGuardDutyInPeriod(report *models.Report, day string, dutyPeriod models.Period, compPeriod models.Period, timesheet []string) (int, error) {
-	dutyRange, err := createRangeForPeriod(day, dutyPeriod.Begin, dutyPeriod.End, compPeriod.Begin, compPeriod.End)
+func calculateMinutesWithGuardDutyInPeriod(report *models.Report, day string, vaktPeriod models.Period, compPeriod models.Period, timesheet []string) (int, error) {
+	dutyRange, err := createRangeForPeriod(vaktPeriod, compPeriod)
 	if err != nil {
 		return 0, err
 	}
@@ -321,23 +320,32 @@ func calculateMinutesWithGuardDutyInPeriod(report *models.Report, day string, du
 			minutesWorked += calculateMinutesOverlappingInPeriods(workRange, *dutyRange)
 		}
 
+		// TODO: Dette fungerer ikke for vilkårlige klokkeslett, altså at vakten ikke starter samtidig som en sats
+		startOfDayfunc, err := time.Parse("02.01.2006", day)
+		if err != nil {
+			return 0, err
+		}
+		sixOClock := startOfDayfunc.Add(6 * time.Hour)
+		sevenOClock := startOfDayfunc.Add(7 * time.Hour)
+		seventeenOClock := startOfDayfunc.Add(17 * time.Hour)
+		twentyOClock := startOfDayfunc.Add(20 * time.Hour)
 		timesheet := report.TimesheetEachDay[day]
 		switch compPeriod.Begin {
-		case "00:00":
-			if compPeriod.End == "06:00" {
+		case startOfDayfunc:
+			if compPeriod.End == sixOClock {
 				timesheet.MinutesWorked.Hvilende2006 += minutesWorked
 			} else {
 				timesheet.MinutesWorked.Helgetillegg += minutesWorked
 			}
-		case "06:00":
-			if compPeriod.End == "07:00" {
+		case sixOClock:
+			if compPeriod.End == sevenOClock {
 				timesheet.MinutesWorked.Skifttillegg += minutesWorked
 			} else {
 				timesheet.MinutesWorked.Hvilende0620 += minutesWorked
 			}
-		case "17:00":
+		case seventeenOClock:
 			timesheet.MinutesWorked.Skifttillegg += minutesWorked
-		case "20:00":
+		case twentyOClock:
 			timesheet.MinutesWorked.Hvilende2006 += minutesWorked
 		}
 		report.TimesheetEachDay[day] = timesheet
@@ -416,7 +424,7 @@ func CalculateEarnings(report *models.Report, minutes map[string]models.GuardDut
 	return nil
 }
 
-func GuarddutySalary(plan models.Plan) (models.Report, error) {
+func GuarddutySalary(plan models.Vaktplan) (models.Report, error) {
 	minWinTid := dummy.GetMinWinTid(plan.Ident)
 	salary := dummy.GetSalary(plan.Ident)
 

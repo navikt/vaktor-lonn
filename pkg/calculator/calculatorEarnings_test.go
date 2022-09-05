@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"testing"
+	"time"
 )
 
 func TestCalculateEarnings(t *testing.T) {
@@ -49,55 +50,49 @@ func TestCalculateEarnings(t *testing.T) {
 			pocPeriod: map[string][]models.Period{
 				"14.03.2022": {
 					{
-						Begin:     "00:00",
-						End:       "24:00",
-						Helligdag: false,
+						Begin: time.Date(2022, 3, 14, 0, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 3, 14, 23, 59, 59, 0, time.UTC),
 					},
 				},
 				"15.03.2022": {
 					{
-						Begin:     "00:00",
-						End:       "24:00",
-						Helligdag: false,
+						Begin: time.Date(2022, 3, 15, 0, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 3, 15, 23, 59, 59, 0, time.UTC),
 					},
 				},
 				"16.03.2022": {
 					{
-						Begin:     "00:00",
-						End:       "24:00",
-						Helligdag: false,
+						Begin: time.Date(2022, 3, 16, 0, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 3, 16, 23, 59, 59, 0, time.UTC),
 					},
 				},
 				"17.03.2022": {
 					{
-						Begin:     "00:00",
-						End:       "24:00",
-						Helligdag: true,
+						Begin: time.Date(2022, 3, 17, 0, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 3, 17, 23, 59, 59, 0, time.UTC),
 					},
 				},
 				"18.03.2022": {
 					{
-						Begin:     "00:00",
-						End:       "24:00",
-						Helligdag: false,
+						Begin: time.Date(2022, 3, 18, 0, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 3, 18, 23, 59, 59, 0, time.UTC),
 					},
 				},
 				"19.03.2022": {
 					{
-						Begin:     "00:00",
-						End:       "24:00",
-						Helligdag: false,
+						Begin: time.Date(2022, 3, 19, 0, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 3, 19, 23, 59, 59, 0, time.UTC),
 					},
 				},
 				"20.03.2022": {
 					{
-						Begin:     "00:00",
-						End:       "24:00",
-						Helligdag: false,
+						Begin: time.Date(2022, 3, 20, 0, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 3, 20, 23, 59, 59, 0, time.UTC),
 					},
 				},
 			},
-			want: 15_739.036,
+			// want: 15_739.036, // Old answere when we set 17.03 as a weekend
+			want: 15_381.879999999997,
 		},
 
 		{
@@ -133,115 +128,115 @@ func TestCalculateEarnings(t *testing.T) {
 			pocPeriod: map[string][]models.Period{
 				"04.07.2022": {
 					{
-						Begin: "06:00",
-						End:   "09:00",
+						Begin: time.Date(2022, 7, 4, 6, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 4, 9, 0, 0, 0, time.UTC),
 					},
 					{
-						Begin: "15:00",
-						End:   "21:00",
+						Begin: time.Date(2022, 7, 4, 15, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 4, 21, 0, 0, 0, time.UTC),
 					},
 				},
 				"05.07.2022": {
 					{
-						Begin: "06:00",
-						End:   "09:00",
+						Begin: time.Date(2022, 7, 5, 6, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 5, 9, 0, 0, 0, time.UTC),
 					},
 					{
-						Begin: "15:00",
-						End:   "21:00",
+						Begin: time.Date(2022, 7, 5, 15, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 5, 21, 0, 0, 0, time.UTC),
 					},
 				},
 				"06.07.2022": {
 					{
-						Begin: "06:00",
-						End:   "09:00",
+						Begin: time.Date(2022, 7, 6, 6, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 6, 9, 0, 0, 0, time.UTC),
 					},
 					{
-						Begin: "15:30",
-						End:   "21:00",
+						Begin: time.Date(2022, 7, 6, 15, 30, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 6, 21, 0, 0, 0, time.UTC),
 					},
 				},
 				"07.07.2022": {
 					{
-						Begin: "06:00",
-						End:   "09:00",
+						Begin: time.Date(2022, 7, 7, 6, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 7, 9, 0, 0, 0, time.UTC),
 					},
 					{
-						Begin: "15:00",
-						End:   "21:00",
+						Begin: time.Date(2022, 7, 7, 15, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 7, 21, 0, 0, 0, time.UTC),
 					},
 				},
 				"08.07.2022": {
 					{
-						Begin: "06:00",
-						End:   "09:00",
+						Begin: time.Date(2022, 7, 8, 6, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 8, 9, 0, 0, 0, time.UTC),
 					},
 					{
-						Begin: "15:30",
-						End:   "21:00",
+						Begin: time.Date(2022, 7, 8, 15, 30, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 8, 21, 0, 0, 0, time.UTC),
 					},
 				},
 
 				"11.07.2022": {
 					{
-						Begin: "06:00",
-						End:   "08:00",
+						Begin: time.Date(2022, 7, 11, 6, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 11, 8, 0, 0, 0, time.UTC),
 					},
 					{
-						Begin: "16:00",
-						End:   "21:00",
+						Begin: time.Date(2022, 7, 11, 16, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 11, 21, 0, 0, 0, time.UTC),
 					},
 				},
 				"12.07.2022": {
 					{
-						Begin: "06:00",
-						End:   "08:00",
+						Begin: time.Date(2022, 7, 12, 6, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 12, 8, 0, 0, 0, time.UTC),
 					},
 					{
-						Begin: "16:00",
-						End:   "21:00",
+						Begin: time.Date(2022, 7, 12, 16, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 12, 21, 0, 0, 0, time.UTC),
 					},
 				},
 				"13.07.2022": {
 					{
-						Begin: "06:00",
-						End:   "08:00",
+						Begin: time.Date(2022, 7, 13, 6, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 13, 8, 0, 0, 0, time.UTC),
 					},
 					{
-						Begin: "16:00",
-						End:   "21:00",
+						Begin: time.Date(2022, 7, 13, 16, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 13, 21, 0, 0, 0, time.UTC),
 					},
 				},
 				"14.07.2022": {
 					{
-						Begin: "06:00",
-						End:   "08:00",
+						Begin: time.Date(2022, 7, 14, 6, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 14, 8, 0, 0, 0, time.UTC),
 					},
 					{
-						Begin: "16:00",
-						End:   "21:00",
+						Begin: time.Date(2022, 7, 14, 16, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 14, 21, 0, 0, 0, time.UTC),
 					},
 				},
 				"15.07.2022": {
 					{
-						Begin: "06:00",
-						End:   "08:00",
+						Begin: time.Date(2022, 7, 15, 6, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 15, 8, 0, 0, 0, time.UTC),
 					},
 					{
-						Begin: "16:00",
-						End:   "21:00",
+						Begin: time.Date(2022, 7, 15, 16, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 15, 21, 0, 0, 0, time.UTC),
 					},
 				},
 				"16.07.2022": {
 					{
-						Begin: "09:00",
-						End:   "15:00",
+						Begin: time.Date(2022, 7, 16, 9, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 16, 15, 0, 0, 0, time.UTC),
 					},
 				},
 				"17.07.2022": {
 					{
-						Begin: "09:00",
-						End:   "15:00",
+						Begin: time.Date(2022, 7, 17, 9, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 17, 15, 0, 0, 0, time.UTC),
 					},
 				},
 			},
@@ -270,39 +265,39 @@ func TestCalculateEarnings(t *testing.T) {
 			pocPeriod: map[string][]models.Period{
 				"16.07.2022": {
 					{
-						Begin: "17:00",
-						End:   "24:00",
+						Begin: time.Date(2022, 7, 16, 17, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 16, 23, 59, 59, 0, time.UTC),
 					},
 				},
 				"17.07.2022": {
 					{
-						Begin: "07:00",
-						End:   "16:00",
+						Begin: time.Date(2022, 7, 17, 7, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 17, 16, 0, 0, 0, time.UTC),
 					},
 				},
 				"22.07.2022": {
 					{
-						Begin: "16:00",
-						End:   "24:00",
+						Begin: time.Date(2022, 7, 22, 16, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 22, 23, 59, 59, 0, time.UTC),
 					},
 				},
 				"23.07.2022": {
 					{
-						Begin: "00:00",
-						End:   "24:00",
+						Begin: time.Date(2022, 7, 23, 0, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 23, 23, 59, 59, 0, time.UTC),
 					},
 				},
 				"24.07.2022": {
 					{
-						Begin: "00:00",
-						End:   "24:00",
+						Begin: time.Date(2022, 7, 24, 0, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 24, 23, 59, 59, 0, time.UTC),
 					},
 				},
 
 				"25.07.2022": {
 					{
-						Begin: "00:00",
-						End:   "07:00",
+						Begin: time.Date(2022, 7, 25, 0, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 7, 25, 7, 0, 0, 0, time.UTC),
 					},
 				},
 			},

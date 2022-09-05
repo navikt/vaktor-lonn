@@ -4,6 +4,7 @@ import (
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func Test_timeToMinutes(t *testing.T) {
@@ -115,10 +116,8 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 
 func Test_createRangeForPeriod(t *testing.T) {
 	type args struct {
-		dutyBegin string
-		dutyEnd   string
-		begin     string
-		end       string
+		period    models.Period
+		threshold models.Period
 	}
 	tests := []struct {
 		name    string
@@ -129,67 +128,91 @@ func Test_createRangeForPeriod(t *testing.T) {
 		{
 			name: "døgn duty",
 			args: args{
-				dutyBegin: "00:00",
-				dutyEnd:   "24:00",
-				begin:     "06:00",
-				end:       "20:00",
+				period: models.Period{
+					Begin: time.Date(1987, 7, 9, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
+				},
+				threshold: models.Period{
+					Begin: time.Date(1987, 7, 9, 6, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 20, 0, 0, 0, time.UTC),
+				},
 			},
 			want: &Range{Begin: 360, End: 1200},
 		},
 		{
 			name: "short duty",
 			args: args{
-				dutyBegin: "04:00",
-				dutyEnd:   "07:00",
-				begin:     "06:00",
-				end:       "20:00",
+				period: models.Period{
+					Begin: time.Date(1987, 7, 9, 4, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 7, 0, 0, 0, time.UTC),
+				},
+				threshold: models.Period{
+					Begin: time.Date(1987, 7, 9, 6, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 20, 0, 0, 0, time.UTC),
+				},
 			},
 			want: &Range{Begin: 360, End: 420},
 		},
 		{
 			name: "no duty",
 			args: args{
-				dutyBegin: "07:00",
-				dutyEnd:   "17:00",
-				begin:     "00:00",
-				end:       "06:00",
+				period: models.Period{
+					Begin: time.Date(1987, 7, 9, 7, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 17, 0, 0, 0, time.UTC),
+				},
+				threshold: models.Period{
+					Begin: time.Date(1987, 7, 9, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 6, 0, 0, 0, time.UTC),
+				},
 			},
 			want: nil,
 		},
 		{
 			name: "late work duty",
 			args: args{
-				dutyBegin: "14:00",
-				dutyEnd:   "24:00",
-				begin:     "06:00",
-				end:       "20:00",
+				period: models.Period{
+					Begin: time.Date(1987, 7, 9, 14, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
+				},
+				threshold: models.Period{
+					Begin: time.Date(1987, 7, 9, 6, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 20, 0, 0, 0, time.UTC),
+				},
 			},
 			want: &Range{Begin: 840, End: 1200},
 		},
 		{
 			name: "work till duty begins",
 			args: args{
-				dutyBegin: "06:00",
-				dutyEnd:   "09:00",
-				begin:     "00:00",
-				end:       "06:00",
+				period: models.Period{
+					Begin: time.Date(1987, 7, 9, 6, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 9, 0, 0, 0, time.UTC),
+				},
+				threshold: models.Period{
+					Begin: time.Date(1987, 7, 9, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 6, 0, 0, 0, time.UTC),
+				},
 			},
 			want: nil,
 		},
 		{
 			name: "work outside of duty",
 			args: args{
-				dutyBegin: "06:00",
-				dutyEnd:   "09:00",
-				begin:     "20:00",
-				end:       "24:00",
+				period: models.Period{
+					Begin: time.Date(1987, 7, 9, 6, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 9, 59, 59, 0, time.UTC),
+				},
+				threshold: models.Period{
+					Begin: time.Date(1987, 7, 9, 20, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
+				},
 			},
 			want: nil,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := createRangeForPeriod("09.07.1987", tt.args.dutyBegin, tt.args.dutyEnd, tt.args.begin, tt.args.end)
+			got, err := createRangeForPeriod(tt.args.period, tt.args.threshold)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("createRangeForPeriod() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -226,44 +249,68 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Vanlig arbeidsdag",
 			args: args{
-				report:     report,
-				day:        day,
-				dutyPeriod: models.Period{Begin: "00:00", End: "24:00"},
-				compPeriod: models.Period{Begin: "09:00", End: "14:30"},
-				timesheet:  []string{"08:00-15:00"},
+				report: report,
+				day:    day,
+				dutyPeriod: models.Period{
+					Begin: time.Date(1987, 7, 9, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
+				},
+				compPeriod: models.Period{
+					Begin: time.Date(1987, 7, 9, 9, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 14, 30, 0, 0, time.UTC),
+				},
+				timesheet: []string{"08:00-15:00"},
 			},
 			want: 0,
 		},
 		{
 			name: "Uvanlig kort arbeidsdag",
 			args: args{
-				report:     report,
-				day:        day,
-				dutyPeriod: models.Period{Begin: "00:00", End: "24:00"},
-				compPeriod: models.Period{Begin: "09:00", End: "14:30"},
-				timesheet:  []string{"10:00-14:00"},
+				report: report,
+				day:    day,
+				dutyPeriod: models.Period{
+					Begin: time.Date(1987, 7, 9, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
+				},
+				compPeriod: models.Period{
+					Begin: time.Date(1987, 7, 9, 9, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 14, 30, 0, 0, time.UTC),
+				},
+				timesheet: []string{"10:00-14:00"},
 			},
 			want: 90,
 		},
 		{
 			name: "Forskjøvet arbeidsdag",
 			args: args{
-				report:     report,
-				day:        day,
-				dutyPeriod: models.Period{Begin: "00:00", End: "24:00"},
-				compPeriod: models.Period{Begin: "09:00", End: "14:30"},
-				timesheet:  []string{"10:00-18:00"},
+				report: report,
+				day:    day,
+				dutyPeriod: models.Period{
+					Begin: time.Date(1987, 7, 9, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
+				},
+				compPeriod: models.Period{
+					Begin: time.Date(1987, 7, 9, 9, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 14, 30, 0, 0, time.UTC),
+				},
+				timesheet: []string{"10:00-18:00"},
 			},
 			want: 60,
 		},
 		{
 			name: "Morgenvakt",
 			args: args{
-				report:     report,
-				day:        day,
-				dutyPeriod: models.Period{Begin: "06:00", End: "09:00"},
-				compPeriod: models.Period{Begin: "20:00", End: "24:00"},
-				timesheet:  []string{"10:00-18:00"},
+				report: report,
+				day:    day,
+				dutyPeriod: models.Period{
+					Begin: time.Date(1987, 7, 9, 6, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 9, 0, 0, 0, time.UTC),
+				},
+				compPeriod: models.Period{
+					Begin: time.Date(1987, 7, 9, 20, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
+				},
+				timesheet: []string{"10:00-18:00"},
 			},
 			want: 0,
 		},
