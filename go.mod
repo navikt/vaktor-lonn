@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/prometheus/client_golang v1.13.0
 	github.com/rs/zerolog v1.28.0
+	github.com/shopspring/decimal v1.3.1
 	github.com/vjeantet/eastertime v1.0.0
 )
 

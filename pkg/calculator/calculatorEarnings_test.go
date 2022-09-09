@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/navikt/vaktor-lonn/pkg/models"
+	"github.com/shopspring/decimal"
 	"testing"
 	"time"
 )
@@ -12,20 +13,20 @@ func TestCalculateEarnings(t *testing.T) {
 	type args struct {
 		report  *models.Report
 		minutes map[string]models.GuardDuty
-		salary  int
+		salary  decimal.Decimal
 	}
 	tests := []struct {
 		name      string
 		args      args
 		minWinTid map[string][]string
 		pocPeriod map[string][]models.Period
-		want      float64
+		want      decimal.Decimal
 		wantErr   bool
 	}{
 		{
 			name: "døgnvakt",
 			args: args{
-				salary: 500_000,
+				salary: decimal.NewFromInt(500_000),
 				report: &models.Report{
 					Ident:            "testv1",
 					TimesheetEachDay: map[string]models.Timesheet{},
@@ -91,14 +92,13 @@ func TestCalculateEarnings(t *testing.T) {
 					},
 				},
 			},
-			// TODO: Excel returns .86, so we do something different with rounding,
-			want: 15_412.879999999997,
+			want: decimal.NewFromFloat(15_412.86),
 		},
 
 		{
 			name: "Utvidet beredskap",
 			args: args{
-				salary: 800_000,
+				salary: decimal.NewFromInt(800_000),
 				report: &models.Report{
 					Ident:            "testv1",
 					TimesheetEachDay: map[string]models.Timesheet{},
@@ -240,16 +240,13 @@ func TestCalculateEarnings(t *testing.T) {
 					},
 				},
 			},
-			want: 14_018.754,
-			// TODO: Excel returns .76, so we do something different with rounding,
-			// Excel 2,075.68 vs 2,075.6639999999998
-			// Excel 10,681.08 vs 10,681.09
+			want: decimal.NewFromFloat(14_018.76),
 		},
 
 		{
 			name: "Vakt ved spesielle hendelser",
 			args: args{
-				salary: 800_000,
+				salary: decimal.NewFromInt(800_000),
 				report: &models.Report{
 					Ident:            "testv1",
 					TimesheetEachDay: map[string]models.Timesheet{},
@@ -301,13 +298,12 @@ func TestCalculateEarnings(t *testing.T) {
 					},
 				},
 			},
-			want: 15_294.578000000001,
-			// TODO: Excel returns .65, we got .578000000001, so some rounding happens
+			want: decimal.NewFromFloat(15_294.65),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.args.report.Salary = float64(tt.args.salary)
+			tt.args.report.Salary = tt.args.salary
 			for day, work := range tt.minWinTid {
 				timesheet := models.Timesheet{
 					Schedule: tt.pocPeriod[day],
@@ -327,7 +323,7 @@ func TestCalculateEarnings(t *testing.T) {
 				t.Errorf("CalculateEarnings() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if tt.args.report.Earnings.Total != tt.want {
+			if !tt.args.report.Earnings.Total.Equal(tt.want) {
 				t.Errorf("CalculateEarnings() got = %v, want %v", tt.args.report.Earnings.Total, tt.want)
 
 				bytes, err := json.Marshal(tt.args.report)

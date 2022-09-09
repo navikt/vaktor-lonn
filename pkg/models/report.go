@@ -1,5 +1,7 @@
 package models
 
+import "github.com/shopspring/decimal"
+
 // GuardDuty keeps track of minutes not worked in a given guard duty
 type GuardDuty struct {
 	Hvilende2006                 int
@@ -17,31 +19,31 @@ type Timesheet struct {
 }
 
 type Compensation struct {
-	Total float64
+	Total decimal.Decimal
 }
 
 type Overtime struct {
-	Work    float64
-	Weekend float64
-	Total   float64
+	Work    decimal.Decimal
+	Weekend decimal.Decimal
+	Total   decimal.Decimal
 }
 
 type Earnings struct {
 	Overtime     Overtime
 	Compensation Compensation
-	Total        float64
+	Total        decimal.Decimal
 }
 
 type Report struct {
 	Ident                           string
-	Salary                          float64
+	Salary                          decimal.Decimal
 	Satser                          map[string]float64
 	Earnings                        Earnings
 	TimesheetEachDay                map[string]Timesheet
 	GuardDutyMinutes                GuardDuty
 	GuardDutyHours                  GuardDuty
-	OTS50                           float64
-	OTS100                          float64
+	OTS50                           decimal.Decimal
+	OTS100                          decimal.Decimal
 	MinutesNotWorkedinCoreWorkHours int
 	TooMuchDutyMinutes              int
 }

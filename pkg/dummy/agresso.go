@@ -2,6 +2,7 @@ package dummy
 
 import (
 	"github.com/rs/zerolog/log"
+	"github.com/shopspring/decimal"
 	"math/rand"
 )
 
@@ -14,7 +15,7 @@ func GetSatserFromAgresso() map[string]float64 {
 	}
 }
 
-func GetSalary(ident string) int {
+func GetSalary(ident string) decimal.Decimal {
 	log.Printf("Creating fake salary for %s", ident)
-	return rand.Intn(700_000) + 300_000
+	return decimal.NewFromInt(int64(rand.Intn(700_000) + 300_000))
 }

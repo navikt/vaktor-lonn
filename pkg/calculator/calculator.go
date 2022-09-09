@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/shopspring/decimal"
 	"github.com/vjeantet/eastertime"
 )
 
@@ -362,33 +363,39 @@ func calculateMinutesWithGuardDutyInPeriod(report *models.Report, day string, va
 	return minutesWorked, nil
 }
 
-func CalculateCompensation(report *models.Report, minutes map[string]models.GuardDuty) (float64, error) {
-	var compensation models.GuardDuty
+func CalculateCompensation(report *models.Report, minutes map[string]models.GuardDuty) decimal.Decimal {
+	var compensationDuty models.GuardDuty
 
 	for _, duty := range minutes {
-		compensation.Hvilende0620 += duty.Hvilende0620
-		compensation.Hvilende2006 += duty.Hvilende2006
-		compensation.Skifttillegg += duty.Skifttillegg
-		compensation.Helgetillegg += duty.Helgetillegg
+		compensationDuty.Hvilende0620 += duty.Hvilende0620
+		compensationDuty.Hvilende2006 += duty.Hvilende2006
+		compensationDuty.Skifttillegg += duty.Skifttillegg
+		compensationDuty.Helgetillegg += duty.Helgetillegg
 	}
 
-	report.GuardDutyMinutes.Hvilende0620 = compensation.Hvilende0620
-	report.GuardDutyMinutes.Hvilende2006 = compensation.Hvilende2006
-	report.GuardDutyMinutes.Skifttillegg = compensation.Skifttillegg
-	report.GuardDutyMinutes.Helgetillegg = compensation.Helgetillegg
-	report.GuardDutyHours.Hvilende0620 = int(math.Round(float64(compensation.Hvilende0620 / 60)))
-	report.GuardDutyHours.Hvilende2006 = int(math.Round(float64(compensation.Hvilende2006 / 60)))
-	report.GuardDutyHours.Skifttillegg = int(math.Round(float64(compensation.Skifttillegg / 60)))
-	report.GuardDutyHours.Helgetillegg = int(math.Round(float64(compensation.Helgetillegg / 60)))
+	report.GuardDutyMinutes.Hvilende0620 = compensationDuty.Hvilende0620
+	report.GuardDutyMinutes.Hvilende2006 = compensationDuty.Hvilende2006
+	report.GuardDutyMinutes.Skifttillegg = compensationDuty.Skifttillegg
+	report.GuardDutyMinutes.Helgetillegg = compensationDuty.Helgetillegg
+	report.GuardDutyHours.Hvilende0620 = int(math.Round(float64(compensationDuty.Hvilende0620 / 60)))
+	report.GuardDutyHours.Hvilende2006 = int(math.Round(float64(compensationDuty.Hvilende2006 / 60)))
+	report.GuardDutyHours.Skifttillegg = int(math.Round(float64(compensationDuty.Skifttillegg / 60)))
+	report.GuardDutyHours.Helgetillegg = int(math.Round(float64(compensationDuty.Helgetillegg / 60)))
 
-	// TODO: runde av til nærmeste 2 desimaler
-	return math.Round(float64(compensation.Hvilende0620/60.0))*report.Satser["0620"] +
-		math.Round(float64(compensation.Hvilende2006/60.0))*report.Satser["2006"] +
-		(math.Round(float64(compensation.Helgetillegg/60.0)) * report.Satser["lørsøn"] / 5) +
-		(math.Round(float64(compensation.Skifttillegg/60.0)) * report.Satser["utvidet"] / 5), nil
+	minutesInHour := decimal.NewFromInt(60)
+	compensation := decimal.NewFromInt(int64(compensationDuty.Hvilende0620)).Div(minutesInHour).Mul(decimal.NewFromFloat(report.Satser["0620"])).
+		Add(decimal.NewFromInt(int64(compensationDuty.Hvilende2006)).Div(minutesInHour).Mul(decimal.NewFromFloat(report.Satser["2006"]))).
+		Add(decimal.NewFromInt(int64(compensationDuty.Helgetillegg)).Div(minutesInHour).Mul(decimal.NewFromFloat(report.Satser["lørsøn"])).Div(decimal.NewFromInt(5))).
+		Add(decimal.NewFromInt(int64(compensationDuty.Skifttillegg)).Div(minutesInHour).Mul(decimal.NewFromFloat(report.Satser["utvidet"])).Div(decimal.NewFromInt(5)))
+
+	return compensation.Round(2)
+	//return math.Round(float64(compensationDuty.Hvilende0620/60.0))*report.Satser["0620"] +
+	//	math.Round(float64(compensationDuty.Hvilende2006/60.0))*report.Satser["2006"] +
+	//	(math.Round(float64(compensationDuty.Helgetillegg/60.0)) * report.Satser["lørsøn"] / 5) +
+	//	(math.Round(float64(compensationDuty.Skifttillegg/60.0)) * report.Satser["utvidet"] / 5), nil
 }
 
-func CalculateOvertime(report *models.Report, minutes map[string]models.GuardDuty, salary float64) (float64, error) {
+func CalculateOvertime(report *models.Report, minutes map[string]models.GuardDuty, salary decimal.Decimal) decimal.Decimal {
 	overtimeWeekendMinutes := 0.0
 	overtimeWorkDayMinutes := 0.0
 	overtimeWorkNightMinutes := 0.0
@@ -402,32 +409,30 @@ func CalculateOvertime(report *models.Report, minutes map[string]models.GuardDut
 		}
 	}
 
-	ots50 := math.Round((salary/1850*1.5)*100) / 100
-	ots100 := math.Round((salary/1850*2.0)*100) / 100
+	ots50 := salary.Div(decimal.NewFromInt(1850)).Mul(decimal.NewFromFloat(1.5))
+	ots100 := salary.Div(decimal.NewFromInt(1850)).Mul(decimal.NewFromInt(2))
 
 	report.OTS100 = ots100
 	report.OTS50 = ots50
 
-	overtimeWork := (math.Round(overtimeWorkDayMinutes/60.0)*ots50 + math.Round(overtimeWorkNightMinutes/60.0)*ots100) / 5.0
-	overtimeWeekend := math.Round(overtimeWeekendMinutes/60.0) * ots100 / 5.0
+	//overtimeWork := (math.Round(overtimeWorkDayMinutes/60.0)*ots50 + math.Round(overtimeWorkNightMinutes/60.0)*ots100) / 5.0
+	//overtimeWeekend := math.Round(overtimeWeekendMinutes/60.0) * ots100 / 5.0
+	overTimeWorkDay := decimal.NewFromFloat(overtimeWorkDayMinutes).Div(decimal.NewFromInt(60)).Mul(ots50)
+	overTimeWorkNight := decimal.NewFromFloat(overtimeWorkNightMinutes).Div(decimal.NewFromInt(60)).Mul(ots100)
+	overtimeWork := overTimeWorkDay.Add(overTimeWorkNight).Div(decimal.NewFromInt(5))
+	overtimeWeekend := decimal.NewFromFloat(overtimeWeekendMinutes).Div(decimal.NewFromInt(60)).Mul(ots100).Div(decimal.NewFromInt(5))
 	report.Earnings.Overtime.Work = overtimeWork
 	report.Earnings.Overtime.Weekend = overtimeWeekend
-	return overtimeWeekend + overtimeWork, nil
+	return overtimeWeekend.Add(overtimeWork).Round(2)
 }
 
-func CalculateEarnings(report *models.Report, minutes map[string]models.GuardDuty, salary int) error {
-	compensation, err := CalculateCompensation(report, minutes)
-	if err != nil {
-		return err
-	}
-	overtime, err := CalculateOvertime(report, minutes, float64(salary))
-	if err != nil {
-		return err
-	}
+func CalculateEarnings(report *models.Report, minutes map[string]models.GuardDuty, salary decimal.Decimal) error {
+	compensation := CalculateCompensation(report, minutes)
+	overtime := CalculateOvertime(report, minutes, salary)
 
 	report.Earnings.Compensation.Total = compensation
 	report.Earnings.Overtime.Total = overtime
-	report.Earnings.Total = compensation + overtime
+	report.Earnings.Total = compensation.Add(overtime)
 	return nil
 }
 
@@ -437,7 +442,7 @@ func GuarddutySalary(plan models.Vaktplan) (models.Report, error) {
 
 	report := &models.Report{
 		Ident:            plan.Ident,
-		Salary:           float64(salary),
+		Salary:           salary,
 		Satser:           dummy.GetSatserFromAgresso(),
 		TimesheetEachDay: map[string]models.Timesheet{},
 	}
