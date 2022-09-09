@@ -311,20 +311,20 @@ func TestCalculateEarnings(t *testing.T) {
 				}
 				tt.args.report.TimesheetEachDay[day] = timesheet
 			}
-			minutes, err := ParsePeriod(tt.args.report, tt.pocPeriod, tt.minWinTid)
+			minutes, err := calculateMinutesToBeCompensated(tt.args.report, tt.pocPeriod, tt.minWinTid)
 			if err != nil {
-				t.Errorf("ParsePeriod() error : %v", err)
+				t.Errorf("calculateMinutesToBeCompensated() error : %v", err)
 				return
 			}
 			tt.args.minutes = minutes
 
-			err = CalculateEarnings(tt.args.report, tt.args.minutes, tt.args.salary)
+			err = calculateEarnings(tt.args.report, tt.args.minutes, tt.args.salary)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("CalculateEarnings() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("calculateEarnings() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !tt.args.report.Earnings.Total.Equal(tt.want) {
-				t.Errorf("CalculateEarnings() got = %v, want %v", tt.args.report.Earnings.Total, tt.want)
+				t.Errorf("calculateEarnings() got = %v, want %v", tt.args.report.Earnings.Total, tt.want)
 
 				bytes, err := json.Marshal(tt.args.report)
 				if err != nil {
