@@ -3,7 +3,9 @@ package calculator
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/navikt/vaktor-lonn/pkg/compensation"
 	"github.com/navikt/vaktor-lonn/pkg/models"
+	"github.com/navikt/vaktor-lonn/pkg/overtime"
 	"github.com/shopspring/decimal"
 	"testing"
 	"time"
@@ -318,11 +320,13 @@ func TestCalculateEarnings(t *testing.T) {
 			}
 			tt.args.minutes = minutes
 
-			err = calculateEarnings(tt.args.report, tt.args.minutes, tt.args.salary)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("calculateEarnings() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			compensationTotal := compensation.Calculate(tt.args.report, minutes)
+			overtimeTotal := overtime.Calculate(tt.args.report, minutes, tt.args.salary)
+
+			tt.args.report.Earnings.Compensation.Total = compensationTotal
+			tt.args.report.Earnings.Overtime.Total = overtimeTotal
+			tt.args.report.Earnings.Total = compensationTotal.Add(overtimeTotal)
+
 			if !tt.args.report.Earnings.Total.Equal(tt.want) {
 				t.Errorf("calculateEarnings() got = %v, want %v", tt.args.report.Earnings.Total, tt.want)
 
