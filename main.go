@@ -3,18 +3,43 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/navikt/vaktor-lonn/pkg/auth"
 	"github.com/navikt/vaktor-lonn/pkg/calculator"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/spf13/viper"
 	"net/http"
 )
+
+func workInProgress() (token string) {
+	bc, err := auth.New(viper.GetString("token_endpoint"),
+		viper.GetString("client_id"),
+		viper.GetString("client_secret"))
+	if err != nil {
+		log.Err(err)
+		return
+	}
+	token, err = bc.GenerateBearerToken()
+	if err != nil {
+		log.Err(err)
+		return
+	}
+
+	return
+}
 
 func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 
 	log.Print("Vaktor Lønn starting up...")
+
+	viper.SetEnvPrefix("vaktor")
+	viper.AutomaticEnv()
+
+	workInProgress()
+
 	http.Handle("/metrics", promhttp.Handler())
 	http.HandleFunc("/period", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
@@ -48,7 +73,7 @@ func main() {
 		}
 	})
 
-	err := http.ListenAndServe(":8080", nil)
+	err = http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Err(err)
 		return
