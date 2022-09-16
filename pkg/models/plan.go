@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"github.com/google/uuid"
+	"time"
+)
 
 type Period struct {
 	Begin time.Time `json:"start_timestamp"`
@@ -8,6 +11,7 @@ type Period struct {
 }
 
 type Vaktplan struct {
-	Ident    string              `json:"id"`
+	ID       uuid.UUID           `json:"id"`
+	Ident    string              `json:"ident"`
 	Schedule map[string][]Period `json:"schedule"`
 }
