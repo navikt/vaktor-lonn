@@ -5,6 +5,8 @@ import (
 	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
 	"net/http"
 	"time"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 type Handler struct {
@@ -14,7 +16,7 @@ type Handler struct {
 }
 
 func NewHandler(dbString string) (Handler, error) {
-	db, err := sql.Open("postgres", dbString)
+	db, err := sql.Open("pgx", dbString)
 	if err != nil {
 		return Handler{}, err
 	}

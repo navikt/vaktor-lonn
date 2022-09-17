@@ -30,7 +30,7 @@ func onStart() (endpoints.Handler, error) {
 		return handler, err
 	}
 
-	err = goose.Up(handler.DB, "migrations")
+	err = goose.Up(handler.DB, ".")
 
 	return handler, err
 }
