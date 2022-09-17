@@ -38,16 +38,18 @@ func onStart() (endpoints.Handler, error) {
 func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	log.Print("Vaktor Lønn starting up...")
+
 	handler, err := onStart()
 	if err != nil {
-		log.Err(err)
+		log.Err(err).Msg("Problem with onStart")
 		return
 	}
 
 	defer func(DB *sql.DB) {
 		err := DB.Close()
 		if err != nil {
-			log.Err(err)
+			log.Err(err).Msg("Problem with DB.close")
+			return
 		}
 	}(handler.DB)
 
@@ -57,7 +59,7 @@ func main() {
 
 	err = http.ListenAndServe(":8080", nil)
 	if err != nil {
-		log.Err(err)
+		log.Err(err).Msg("Problem with ListenAndServe")
 		return
 	}
 }
