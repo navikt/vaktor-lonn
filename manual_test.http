@@ -1,0 +1,39 @@
+###
+
+POST http://localhost:8080/period
+Content-Type: application/json
+
+{
+  "id": "4b161a58-b673-4af5-b3ae-9a3bdb9e3307",
+  "idesnt":  "e152435",
+  "schedule": {
+    "2022-03-14": {
+      "start_timestamp": "1647212400",
+      "end_timestamp": "1647298799"
+    },
+    "15.03.2022": {
+      "start_timestamp": "1647298800",
+      "end_timestamp": "1647385199"
+    },
+    "2022-03-16": {
+      "start_timestamp": "1647385200",
+      "end_timestamp": "1647471599"
+    },
+    "2022-03-17": {
+      "start_timestamp": "1647471600",
+      "end_timestamp": "1647557999"
+    },
+    "2022-03-18": {
+      "start_timestamp": "1647558000",
+      "end_timestamp": "1647644399"
+    },
+    "2022-03-19": {
+      "start_timestamp": "1647644400",
+      "end_timestamp": "1647730799"
+    },
+    "2022-03-20": {
+      "start_timestamp": "1647730800",
+      "end_timestamp": "1647817199"
+    }
+  }
+}
