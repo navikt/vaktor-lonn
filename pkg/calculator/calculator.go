@@ -2,10 +2,9 @@ package calculator
 
 import (
 	"fmt"
-	compensation "github.com/navikt/vaktor-lonn/pkg/compensation"
-	"github.com/navikt/vaktor-lonn/pkg/dummy"
+	"github.com/navikt/vaktor-lonn/pkg/compensation"
 	"github.com/navikt/vaktor-lonn/pkg/models"
-	overtime "github.com/navikt/vaktor-lonn/pkg/overtime"
+	"github.com/navikt/vaktor-lonn/pkg/overtime"
 	"strings"
 	"time"
 
@@ -208,7 +207,7 @@ func calculateMinutesToBeCompensated(report *models.Report, schedule map[string]
 				}
 			}
 
-			if date.Weekday() == time.Saturday || date.Weekday() == time.Sunday || false { // TODO: Hellidgdag
+			if date.Weekday() == time.Saturday || date.Weekday() == time.Sunday { // TODO: Hellidgdag
 				// sjekk om man har vakt i perioden 00-24
 				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period,
 					models.Period{
@@ -363,18 +362,14 @@ func calculateMinutesWithGuardDutyInPeriod(report *models.Report, day string, va
 	return minutesWorked, nil
 }
 
-func GuarddutySalary(plan models.Vaktplan) (models.Report, error) {
-	minWinTid := dummy.GetMinWinTid(plan)
-	salary := dummy.GetSalary(plan.Ident)
-
+func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.Report, error) {
 	report := &models.Report{
 		Ident:            plan.Ident,
-		Salary:           salary,
-		Satser:           dummy.GetSatserFromAgresso(),
+		MinWinTid:        minWinTid,
 		TimesheetEachDay: map[string]models.Timesheet{},
 	}
 
-	for day, work := range minWinTid {
+	for day, work := range minWinTid.Timesheet {
 		timesheet := models.Timesheet{
 			Schedule: plan.Schedule[day],
 			Work:     work,
@@ -382,13 +377,13 @@ func GuarddutySalary(plan models.Vaktplan) (models.Report, error) {
 		report.TimesheetEachDay[day] = timesheet
 	}
 
-	minutes, err := calculateMinutesToBeCompensated(report, plan.Schedule, minWinTid)
+	minutes, err := calculateMinutesToBeCompensated(report, plan.Schedule, minWinTid.Timesheet)
 	if err != nil {
 		return *report, err
 	}
 
-	compensationTotal := compensation.Calculate(report, minutes)
-	overtimeTotal := overtime.Calculate(report, minutes, salary)
+	compensationTotal := compensation.Calculate(report, minutes, minWinTid.Satser)
+	overtimeTotal := overtime.Calculate(report, minutes, minWinTid.Salary)
 
 	report.Earnings.Compensation.Total = compensationTotal
 	report.Earnings.Overtime.Total = overtimeTotal

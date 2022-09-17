@@ -32,11 +32,15 @@ func TestCalculateEarnings(t *testing.T) {
 				report: &models.Report{
 					Ident:            "testv1",
 					TimesheetEachDay: map[string]models.Timesheet{},
-					Satser: map[string]float64{
-						"lørsøn":  55,
-						"0620":    10,
-						"2006":    20,
-						"utvidet": 15,
+					MinWinTid: models.MinWinTid{
+						Timesheet: map[string][]string{},
+						Salary:    decimal.Decimal{},
+						Satser: map[string]decimal.Decimal{
+							"lørsøn":  decimal.NewFromInt(55),
+							"0620":    decimal.NewFromInt(10),
+							"2006":    decimal.NewFromInt(20),
+							"utvidet": decimal.NewFromInt(15),
+						},
 					},
 				},
 			},
@@ -104,11 +108,15 @@ func TestCalculateEarnings(t *testing.T) {
 				report: &models.Report{
 					Ident:            "testv1",
 					TimesheetEachDay: map[string]models.Timesheet{},
-					Satser: map[string]float64{
-						"lørsøn":  55,
-						"0620":    10,
-						"2006":    20,
-						"utvidet": 15,
+					MinWinTid: models.MinWinTid{
+						Timesheet: map[string][]string{},
+						Salary:    decimal.Decimal{},
+						Satser: map[string]decimal.Decimal{
+							"lørsøn":  decimal.NewFromInt(55),
+							"0620":    decimal.NewFromInt(10),
+							"2006":    decimal.NewFromInt(20),
+							"utvidet": decimal.NewFromInt(15),
+						},
 					},
 				},
 			},
@@ -252,11 +260,15 @@ func TestCalculateEarnings(t *testing.T) {
 				report: &models.Report{
 					Ident:            "testv1",
 					TimesheetEachDay: map[string]models.Timesheet{},
-					Satser: map[string]float64{
-						"lørsøn":  55,
-						"0620":    10,
-						"2006":    20,
-						"utvidet": 15,
+					MinWinTid: models.MinWinTid{
+						Timesheet: map[string][]string{},
+						Salary:    decimal.Decimal{},
+						Satser: map[string]decimal.Decimal{
+							"lørsøn":  decimal.NewFromInt(55),
+							"0620":    decimal.NewFromInt(10),
+							"2006":    decimal.NewFromInt(20),
+							"utvidet": decimal.NewFromInt(15),
+						},
 					},
 				},
 			},
@@ -303,9 +315,10 @@ func TestCalculateEarnings(t *testing.T) {
 			want: decimal.NewFromFloat(15_294.65),
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.args.report.Salary = tt.args.salary
+			tt.args.report.MinWinTid.Salary = tt.args.salary
 			for day, work := range tt.minWinTid {
 				timesheet := models.Timesheet{
 					Schedule: tt.pocPeriod[day],
@@ -319,7 +332,7 @@ func TestCalculateEarnings(t *testing.T) {
 				return
 			}
 			tt.args.minutes = minutes
-			compensationTotal := compensation.Calculate(tt.args.report, minutes)
+			compensationTotal := compensation.Calculate(tt.args.report, minutes, tt.args.report.MinWinTid.Satser)
 			overtimeTotal := overtime.Calculate(tt.args.report, minutes, tt.args.salary)
 
 			tt.args.report.Earnings.Compensation.Total = compensationTotal

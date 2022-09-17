@@ -6,7 +6,7 @@ import (
 	"math"
 )
 
-func Calculate(report *models.Report, minutes map[string]models.GuardDuty) decimal.Decimal {
+func Calculate(report *models.Report, minutes map[string]models.GuardDuty, satser map[string]decimal.Decimal) decimal.Decimal {
 	var compensationDuty models.GuardDuty
 
 	for _, duty := range minutes {
@@ -26,10 +26,10 @@ func Calculate(report *models.Report, minutes map[string]models.GuardDuty) decim
 	report.GuardDutyHours.Helgetillegg = int(math.Round(float64(compensationDuty.Helgetillegg / 60)))
 
 	minutesInHour := decimal.NewFromInt(60)
-	compensation := decimal.NewFromInt(int64(compensationDuty.Hvilende0620)).Div(minutesInHour).Mul(decimal.NewFromFloat(report.Satser["0620"])).
-		Add(decimal.NewFromInt(int64(compensationDuty.Hvilende2006)).Div(minutesInHour).Mul(decimal.NewFromFloat(report.Satser["2006"]))).
-		Add(decimal.NewFromInt(int64(compensationDuty.Helgetillegg)).Div(minutesInHour).Mul(decimal.NewFromFloat(report.Satser["lørsøn"])).Div(decimal.NewFromInt(5))).
-		Add(decimal.NewFromInt(int64(compensationDuty.Skifttillegg)).Div(minutesInHour).Mul(decimal.NewFromFloat(report.Satser["utvidet"])).Div(decimal.NewFromInt(5)))
+	compensation := decimal.NewFromInt(int64(compensationDuty.Hvilende0620)).Div(minutesInHour).Mul(satser["0620"]).
+		Add(decimal.NewFromInt(int64(compensationDuty.Hvilende2006)).Div(minutesInHour).Mul(satser["2006"])).
+		Add(decimal.NewFromInt(int64(compensationDuty.Helgetillegg)).Div(minutesInHour).Mul(satser["lørsøn"]).Div(decimal.NewFromInt(5))).
+		Add(decimal.NewFromInt(int64(compensationDuty.Skifttillegg)).Div(minutesInHour).Mul(satser["utvidet"]).Div(decimal.NewFromInt(5)))
 
 	return compensation.Round(2)
 }

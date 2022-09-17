@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/navikt/vaktor-lonn/pkg/calculator"
+	"github.com/navikt/vaktor-lonn/pkg/dummy"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/rs/zerolog/log"
 	"net/http"
@@ -33,8 +34,13 @@ func (h Handler) Nudge(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// TODO: Bytt med en korrekt implementasjon av kommunikasjon med MinWinTid
+		minWinTid := dummy.GetMinWinTid(vaktplan)
+
 		log.Printf("Calculating salary for %s", beredskapsvakt.Ident)
-		report, err := calculator.GuarddutySalary(vaktplan)
+		// TODO: Lage transaksjonsliste
+		// TODO: Bytt ut med en go routine, da vi ikke skal svare med lønn her
+		report, err := calculator.GuarddutySalary(vaktplan, minWinTid)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
 			log.Err(err)

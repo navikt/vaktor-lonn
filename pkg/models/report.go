@@ -1,6 +1,8 @@
 package models
 
-import "github.com/shopspring/decimal"
+import (
+	"github.com/shopspring/decimal"
+)
 
 // GuardDuty keeps track of minutes not worked in a given guard duty
 type GuardDuty struct {
@@ -36,8 +38,7 @@ type Earnings struct {
 
 type Report struct {
 	Ident                           string
-	Salary                          decimal.Decimal
-	Satser                          map[string]float64
+	MinWinTid                       MinWinTid
 	Earnings                        Earnings
 	TimesheetEachDay                map[string]Timesheet
 	GuardDutyMinutes                GuardDuty

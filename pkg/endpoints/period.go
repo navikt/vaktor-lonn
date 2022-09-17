@@ -23,7 +23,7 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: Skal vi validere input?
+	// TODO: Hvordan kan vi validere input?
 	var plan models.Vaktplan
 	err = h.Queries.CreatePlan(context.TODO(), gensql.CreatePlanParams{
 		ID:    plan.ID,
