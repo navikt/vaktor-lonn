@@ -3,14 +3,13 @@ package main
 import (
 	"database/sql"
 	"embed"
-	"net/http"
-	"os"
-
 	"github.com/navikt/vaktor-lonn/pkg/endpoints"
 	"github.com/pressly/goose/v3"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"net/http"
+	"os"
 )
 
 //go:embed pkg/sql/migrations/*.sql
@@ -37,7 +36,8 @@ func onStart() (endpoints.Handler, error) {
 
 func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	log.Print("Vaktor Lønn starting up...")
+
+	log.Print("Vaktor Lønn starting up...🚀")
 
 	handler, err := onStart()
 	if err != nil {
@@ -57,6 +57,7 @@ func main() {
 	http.HandleFunc("/nudge", handler.Nudge)
 	http.HandleFunc("/period", handler.Period)
 
+	log.Printf("Ready to serve 🙇")
 	err = http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Err(err).Msg("Problem with ListenAndServe")

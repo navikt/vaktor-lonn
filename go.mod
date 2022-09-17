@@ -5,7 +5,6 @@ go 1.19
 require (
 	github.com/google/uuid v1.3.0
 	github.com/jackc/pgx/v5 v5.0.0
-	github.com/pkg/errors v0.9.1
 	github.com/pressly/goose/v3 v3.7.0
 	github.com/prometheus/client_golang v1.13.0
 	github.com/rs/zerolog v1.28.0

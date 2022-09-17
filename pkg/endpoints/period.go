@@ -19,7 +19,7 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
-		log.Err(err)
+		log.Error().Msg(err.Error())
 		return
 	}
 
@@ -32,7 +32,7 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusInternalServerError)
-		log.Err(err)
+		log.Error().Msg(err.Error())
 		return
 	}
 }

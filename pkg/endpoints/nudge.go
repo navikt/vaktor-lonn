@@ -21,7 +21,7 @@ func (h Handler) Nudge(w http.ResponseWriter, r *http.Request) {
 	beredskapsvakter, err := h.Queries.ListBeredskapsvakter(context.TODO())
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
-		log.Err(err)
+		log.Error().Msg(err.Error())
 		return
 	}
 
@@ -30,7 +30,7 @@ func (h Handler) Nudge(w http.ResponseWriter, r *http.Request) {
 		err := json.Unmarshal(beredskapsvakt.Plan, &vaktplan)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
-			log.Err(err)
+			log.Error().Msg(err.Error())
 			return
 		}
 
@@ -43,13 +43,13 @@ func (h Handler) Nudge(w http.ResponseWriter, r *http.Request) {
 		report, err := calculator.GuarddutySalary(vaktplan, minWinTid)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
-			log.Err(err)
+			log.Error().Msg(err.Error())
 			return
 		}
 		err = json.NewEncoder(w).Encode(report)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
-			log.Err(err)
+			log.Error().Msg(err.Error())
 			return
 		}
 	}
