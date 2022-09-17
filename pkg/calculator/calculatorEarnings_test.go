@@ -319,7 +319,6 @@ func TestCalculateEarnings(t *testing.T) {
 				return
 			}
 			tt.args.minutes = minutes
-
 			compensationTotal := compensation.Calculate(tt.args.report, minutes)
 			overtimeTotal := overtime.Calculate(tt.args.report, minutes, tt.args.salary)
 

@@ -1,142 +1,59 @@
 package main
 
 import (
-	"context"
 	"database/sql"
 	"embed"
-	"encoding/json"
-	"fmt"
-	"github.com/navikt/vaktor-lonn/pkg/auth"
-	"github.com/navikt/vaktor-lonn/pkg/calculator"
-	"github.com/navikt/vaktor-lonn/pkg/models"
-	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
-	"github.com/pressly/goose/v3"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/rs/zerolog/log"
-<<<<<<< HEAD
-	"io"
-=======
-	"github.com/spf13/viper"
->>>>>>> main
 	"net/http"
 	"os"
+
+	"github.com/navikt/vaktor-lonn/pkg/endpoints"
+	"github.com/pressly/goose/v3"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
-<<<<<<< HEAD
 //go:embed pkg/sql/migrations/*.sql
 var embedMigrations embed.FS
-=======
-func workInProgress() (token string) {
-	bc, err := auth.New(viper.GetString("token_endpoint"),
-		viper.GetString("client_id"),
-		viper.GetString("client_secret"))
-	if err != nil {
-		log.Err(err)
-		return
-	}
-	token, err = bc.GenerateBearerToken()
-	if err != nil {
-		log.Err(err)
-		return
-	}
 
-	return
-}
-
-func main() {
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
->>>>>>> main
-
-func setupDB() (*sql.DB, error) {
+func onStart() (endpoints.Handler, error) {
 	dbString := getEnv("NAIS_DATABASE_NADA_BACKEND_NADA_URL", "postgres://postgres:postgres@127.0.0.1:5432/vaktor")
-	var db *sql.DB
-	db, err := sql.Open("postgres", dbString)
+	handler, err := endpoints.NewHandler(dbString)
 	if err != nil {
-		return nil, err
+		return handler, err
 	}
 
 	goose.SetBaseFS(embedMigrations)
 
 	err = goose.SetDialect("postgres")
 	if err != nil {
-		return nil, err
+		return handler, err
 	}
 
-	err = goose.Up(db, "migrations")
-	if err != nil {
-		return nil, err
-	}
+	err = goose.Up(handler.DB, "migrations")
 
-	return db, nil
+	return handler, err
 }
 
 func main() {
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	log.Print("Vaktor Lønn starting up...")
-<<<<<<< HEAD
-	db, err := setupDB()
+	handler, err := onStart()
 	if err != nil {
 		log.Err(err)
 		return
 	}
-=======
 
-	viper.SetEnvPrefix("vaktor")
-	viper.AutomaticEnv()
-
-	workInProgress()
->>>>>>> main
+	defer func(DB *sql.DB) {
+		err := DB.Close()
+		if err != nil {
+			log.Err(err)
+		}
+	}(handler.DB)
 
 	http.Handle("/metrics", promhttp.Handler())
-	http.HandleFunc("/period", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodPost {
-			var plan models.Vaktplan
-			err := json.NewDecoder(r.Body).Decode(&plan)
-			if err != nil {
-				http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
-				log.Err(err)
-				return
-			}
-			body, err := io.ReadAll(r.Body)
-			if err != nil {
-				http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
-				log.Err(err)
-				return
-			}
-
-			// TODO: Skal vi validere input?
-			queries := gensql.New(db)
-			err = queries.CreatePlan(context.TODO(), gensql.CreatePlanParams{
-				ID:    plan.ID,
-				Ident: plan.Ident,
-				Plan:  body,
-			})
-			if err != nil {
-				http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusInternalServerError)
-				log.Err(err)
-				return
-			}
-
-			log.Printf("Calculating salary for %s", plan.Ident)
-			report, err := calculator.GuarddutySalary(plan)
-			if err != nil {
-				http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
-				log.Err(err)
-				return
-			}
-			err = json.NewEncoder(w).Encode(report)
-			if err != nil {
-				http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
-				log.Err(err)
-				return
-			}
-			return
-		}
-		_, err := fmt.Fprintln(w, "Hello, we only support POST")
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
-			return
-		}
-	})
+	http.HandleFunc("/nudge", handler.Nudge)
+	http.HandleFunc("/period", handler.Period)
 
 	err = http.ListenAndServe(":8080", nil)
 	if err != nil {

@@ -364,7 +364,7 @@ func calculateMinutesWithGuardDutyInPeriod(report *models.Report, day string, va
 }
 
 func GuarddutySalary(plan models.Vaktplan) (models.Report, error) {
-	minWinTid := dummy.GetMinWinTid(plan.Ident)
+	minWinTid := dummy.GetMinWinTid(plan)
 	salary := dummy.GetSalary(plan.Ident)
 
 	report := &models.Report{
