@@ -6,19 +6,46 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"github.com/navikt/vaktor-lonn/pkg/auth"
 	"github.com/navikt/vaktor-lonn/pkg/calculator"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
 	"github.com/pressly/goose/v3"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog/log"
+<<<<<<< HEAD
 	"io"
+=======
+	"github.com/spf13/viper"
+>>>>>>> main
 	"net/http"
 	"os"
 )
 
+<<<<<<< HEAD
 //go:embed pkg/sql/migrations/*.sql
 var embedMigrations embed.FS
+=======
+func workInProgress() (token string) {
+	bc, err := auth.New(viper.GetString("token_endpoint"),
+		viper.GetString("client_id"),
+		viper.GetString("client_secret"))
+	if err != nil {
+		log.Err(err)
+		return
+	}
+	token, err = bc.GenerateBearerToken()
+	if err != nil {
+		log.Err(err)
+		return
+	}
+
+	return
+}
+
+func main() {
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+>>>>>>> main
 
 func setupDB() (*sql.DB, error) {
 	dbString := getEnv("NAIS_DATABASE_NADA_BACKEND_NADA_URL", "postgres://postgres:postgres@127.0.0.1:5432/vaktor")
@@ -45,11 +72,19 @@ func setupDB() (*sql.DB, error) {
 
 func main() {
 	log.Print("Vaktor Lønn starting up...")
+<<<<<<< HEAD
 	db, err := setupDB()
 	if err != nil {
 		log.Err(err)
 		return
 	}
+=======
+
+	viper.SetEnvPrefix("vaktor")
+	viper.AutomaticEnv()
+
+	workInProgress()
+>>>>>>> main
 
 	http.Handle("/metrics", promhttp.Handler())
 	http.HandleFunc("/period", func(w http.ResponseWriter, r *http.Request) {
