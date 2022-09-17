@@ -6,8 +6,7 @@ import (
 	"github.com/navikt/vaktor-lonn/pkg/endpoints"
 	"github.com/pressly/goose/v3"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
+	"go.uber.org/zap"
 	"net/http"
 	"os"
 )
@@ -15,9 +14,9 @@ import (
 //go:embed pkg/sql/migrations/*.sql
 var embedMigrations embed.FS
 
-func onStart() (endpoints.Handler, error) {
+func onStart(logger *zap.Logger) (endpoints.Handler, error) {
 	dbString := getEnv("NAIS_DATABASE_NADA_BACKEND_NADA_URL", "postgres://postgres:postgres@127.0.0.1:5432/vaktor")
-	handler, err := endpoints.NewHandler(dbString)
+	handler, err := endpoints.NewHandler(logger, dbString)
 	if err != nil {
 		return handler, err
 	}
@@ -35,20 +34,21 @@ func onStart() (endpoints.Handler, error) {
 }
 
 func main() {
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
 
-	log.Print("Vaktor Lønn starting up...🚀")
+	logger.Info("Vaktor Lønn starting up...🚀")
 
-	handler, err := onStart()
+	handler, err := onStart(logger)
 	if err != nil {
-		log.Err(err).Msg("Problem with onStart")
+		logger.Error("Problem with onStart", zap.Error(err))
 		return
 	}
 
 	defer func(DB *sql.DB) {
 		err := DB.Close()
 		if err != nil {
-			log.Err(err).Msg("Problem with DB.close")
+			logger.Error("Problem with DB.close", zap.Error(err))
 			return
 		}
 	}(handler.DB)
@@ -57,10 +57,10 @@ func main() {
 	http.HandleFunc("/nudge", handler.Nudge)
 	http.HandleFunc("/period", handler.Period)
 
-	log.Printf("Ready to serve 🙇")
+	logger.Info("Ready to serve 🙇")
 	err = http.ListenAndServe(":8080", nil)
 	if err != nil {
-		log.Err(err).Msg("Problem with ListenAndServe")
+		logger.Error("Problem with ListenAndServer", zap.Error(err))
 		return
 	}
 }

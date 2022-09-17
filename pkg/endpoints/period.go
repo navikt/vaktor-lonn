@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
-	"github.com/rs/zerolog/log"
+	"go.uber.org/zap"
 	"io"
 	"net/http"
 )
@@ -19,7 +19,7 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
-		log.Error().Msg(err.Error())
+		h.Log.Error("Error when reading body from request", zap.Error(err))
 		return
 	}
 
@@ -32,7 +32,7 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusInternalServerError)
-		log.Error().Msg(err.Error())
+		h.Log.Error("Error when trying to save period", zap.Error(err))
 		return
 	}
 }

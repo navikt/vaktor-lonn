@@ -3,7 +3,6 @@ package dummy
 import (
 	"fmt"
 	"github.com/navikt/vaktor-lonn/pkg/models"
-	"github.com/rs/zerolog/log"
 	"github.com/shopspring/decimal"
 	"math/rand"
 	"strings"
@@ -27,7 +26,6 @@ func generateWorkhours() string {
 }
 
 func GetMinWinTid(plan models.Vaktplan) models.MinWinTid {
-	log.Printf("Creating fake timesheet for %s", plan.Ident)
 	minWinTid := models.MinWinTid{
 		Salary:    getSalary(),
 		Satser:    getSatser(),
