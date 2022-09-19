@@ -4,28 +4,33 @@ import (
 	"database/sql"
 	"embed"
 	"github.com/navikt/vaktor-lonn/pkg/endpoints"
+	"net/http"
+	"os"
+
 	"github.com/pressly/goose/v3"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
-	"net/http"
-	"os"
 )
 
 //go:embed pkg/sql/migrations/*.sql
 var embedMigrations embed.FS
 
 func onStart(logger *zap.Logger) (endpoints.Handler, error) {
-	dbString := getEnv("NAIS_DATABASE_NADA_BACKEND_NADA_URL", "postgres://postgres:postgres@127.0.0.1:5432/vaktor")
-	handler, err := endpoints.NewHandler(logger, dbString)
+	dbString := getEnv("DB_URL", "postgres://postgres:postgres@127.0.0.1:5432/vaktor")
+	azureClientId := os.Getenv("AZURE_APP_CLIENT_ID")
+	azureClientSecret := os.Getenv("AZURE_APP_CLIENT_SECRET")
+	azureOpenIdTokenEndpoint := os.Getenv("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT")
+
+	handler, err := endpoints.NewHandler(logger, dbString, azureClientId, azureClientSecret, azureOpenIdTokenEndpoint)
 	if err != nil {
-		return handler, err
+		return endpoints.Handler{}, err
 	}
 
 	goose.SetBaseFS(embedMigrations)
 
 	err = goose.SetDialect("postgres")
 	if err != nil {
-		return handler, err
+		return endpoints.Handler{}, err
 	}
 
 	err = goose.Up(handler.DB, ".")

@@ -25,7 +25,7 @@ func generateWorkhours() string {
 	return fmt.Sprintf("%02d:%02d-%02d:%02d", rand.Intn(4)+6, rand.Intn(60), rand.Intn(4)+14, rand.Intn(60))
 }
 
-func GetMinWinTid(plan models.Vaktplan) models.MinWinTid {
+func GetMinWinTid(bearerToken string, plan models.Vaktplan) models.MinWinTid {
 	minWinTid := models.MinWinTid{
 		Salary:    getSalary(),
 		Satser:    getSatser(),

@@ -25,6 +25,13 @@ func (h Handler) Nudge(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	token, err := h.BearerClient.GenerateBearerToken()
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
+		h.Log.Error("Error when unmarshaling plan", zap.Error(err))
+		return
+	}
+
 	for _, beredskapsvakt := range beredskapsvakter {
 		var vaktplan models.Vaktplan
 		err := json.Unmarshal(beredskapsvakt.Plan, &vaktplan)
@@ -35,7 +42,7 @@ func (h Handler) Nudge(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// TODO: Bytt med en korrekt implementasjon av kommunikasjon med MinWinTid
-		minWinTid := dummy.GetMinWinTid(vaktplan)
+		minWinTid := dummy.GetMinWinTid(token, vaktplan)
 
 		h.Log.Info("Calculating salary", zap.String("ident", beredskapsvakt.Ident))
 		// TODO: Lage transaksjonsliste
