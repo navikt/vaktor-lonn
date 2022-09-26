@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
@@ -25,6 +26,13 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: Hvordan kan vi validere input?
 	var plan models.Vaktplan
+	err = json.NewDecoder(r.Body).Decode(&plan)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
+		h.Log.Error("Error when decoding body from request", zap.Error(err))
+		return
+	}
+
 	err = h.Queries.CreatePlan(context.TODO(), gensql.CreatePlanParams{
 		ID:    plan.ID,
 		Ident: plan.Ident,
