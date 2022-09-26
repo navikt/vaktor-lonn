@@ -60,4 +60,6 @@ func (h Handler) Nudge(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+
+	fmt.Fprint(w, "Nudged")
 }

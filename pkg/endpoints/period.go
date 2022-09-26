@@ -35,4 +35,6 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 		h.Log.Error("Error when trying to save period", zap.Error(err))
 		return
 	}
+
+	fmt.Fprint(w, "Period save")
 }
