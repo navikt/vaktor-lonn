@@ -33,7 +33,7 @@ func onStart(logger *zap.Logger) (endpoints.Handler, error) {
 		return endpoints.Handler{}, err
 	}
 
-	err = goose.Up(handler.DB, ".")
+	err = goose.Up(handler.DB, "pkg/sql/migrations")
 
 	return handler, err
 }
