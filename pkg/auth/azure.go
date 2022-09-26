@@ -21,7 +21,7 @@ type BearerClient struct {
 	request *http.Request
 }
 
-func New(authEndpoint, clientId, clientSecret string) (bc BearerClient, err error) {
+func New(clientId, clientSecret, authEndpoint string) (bc BearerClient, err error) {
 	bc.client = &http.Client{
 		Timeout: 10 * time.Second,
 	}
