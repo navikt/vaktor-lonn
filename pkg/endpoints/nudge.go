@@ -28,7 +28,7 @@ func (h Handler) Nudge(w http.ResponseWriter, r *http.Request) {
 	token, err := h.BearerClient.GenerateBearerToken()
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
-		h.Log.Error("Error when unmarshaling plan", zap.Error(err))
+		h.Log.Error("Error generating bearer token", zap.Error(err))
 		return
 	}
 
