@@ -115,7 +115,7 @@ func createRangeForPeriod(period, threshold models.Period) (*Range, error) {
 }
 
 // calculateMinutesToBeCompensated returns an object with the minutes you have been having guard duty each day in a given periode
-func calculateMinutesToBeCompensated(report *models.Report, schedule map[string][]models.Period, timesheet map[string][]string) (map[string]models.GuardDuty, error) {
+func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesheet map[string][]string) (map[string]models.GuardDuty, error) {
 	guardHours := map[string]models.GuardDuty{}
 
 	for day, periods := range schedule {
@@ -134,35 +134,30 @@ func calculateMinutesToBeCompensated(report *models.Report, schedule map[string]
 			}
 
 			// sjekk om man har vakt i perioden 00-06
-			minutesWorked, err := calculateMinutesWithGuardDutyInPeriod(report, day, period,
-				models.Period{
-					Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
-					End:   time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
-				},
-				timesheet[day])
+			minutesWorked, err := calculateMinutesWithGuardDutyInPeriod(day, period, models.Period{
+				Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
+				End:   time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
+			}, timesheet[day])
 			if err != nil {
 				return nil, err
 			}
 			dutyHours.Hvilende2006 += minutesWorked
 
 			// sjekk om man har vakt i perioden 20-24
-			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period,
-				models.Period{
-					Begin: time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
-					End:   time.Date(date.Year(), date.Month(), date.Day()+1, 0, 0, 0, 0, time.UTC),
-				},
-				timesheet[day])
+			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(day, period, models.Period{
+				Begin: time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
+				End:   time.Date(date.Year(), date.Month(), date.Day()+1, 0, 0, 0, 0, time.UTC),
+			}, timesheet[day])
 			if err != nil {
 				return nil, err
 			}
 			dutyHours.Hvilende2006 += minutesWorked
 
 			// sjekk om man har vakt i perioden 06-20
-			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period,
-				models.Period{
-					Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
-					End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
-				}, timesheet[day])
+			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(day, period, models.Period{
+				Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
+				End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
+			}, timesheet[day])
 			if err != nil {
 				return nil, err
 			}
@@ -184,9 +179,8 @@ func calculateMinutesToBeCompensated(report *models.Report, schedule map[string]
 					End:   time.Date(date.Year(), date.Month(), date.Day(), 14, 30, 0, 0, time.UTC),
 				}
 				minutesNotWorkedInCoreWorkingHours := 0
-				minutesNotWorkedInCoreWorkingHours, err = calculateMinutesWithGuardDutyInPeriod(report, day, period, kjerneTid, timesheet[day])
+				minutesNotWorkedInCoreWorkingHours, err = calculateMinutesWithGuardDutyInPeriod(day, period, kjerneTid, timesheet[day])
 				dutyHours.Hvilende0620 -= minutesNotWorkedInCoreWorkingHours
-				report.MinutesNotWorkedinCoreWorkHours = minutesNotWorkedInCoreWorkingHours
 
 				// TODO: Sjekk om det er sommertid eller vintertid for NAV, og at personen som jobber følger det
 				NAVSummerTimeBegin := time.Date(date.Year(), time.May, 15, 0, 0, 0, 0, time.UTC)
@@ -198,7 +192,6 @@ func calculateMinutesToBeCompensated(report *models.Report, schedule map[string]
 				addedDutyMinutes := dutyHours.Hvilende0620 + dutyHours.Hvilende2006
 				if addedDutyMinutes > maxDutyMinutes {
 					// Personen har fått registert for mye vakt den dagen. Fjern diff-en
-					report.TooMuchDutyMinutes = maxDutyMinutes - addedDutyMinutes
 					dutyHours.Hvilende0620 -= maxDutyMinutes - addedDutyMinutes
 					if dutyHours.Hvilende0620 < 0 {
 						dutyHours.Hvilende2006 += dutyHours.Hvilende0620
@@ -209,11 +202,9 @@ func calculateMinutesToBeCompensated(report *models.Report, schedule map[string]
 
 			if date.Weekday() == time.Saturday || date.Weekday() == time.Sunday { // TODO: Hellidgdag
 				// sjekk om man har vakt i perioden 00-24
-				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period,
-					models.Period{
-						Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
-						End:   time.Date(date.Year(), date.Month(), date.Day()+1, 0, 0, 0, 0, time.UTC)},
-					timesheet[day])
+				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(day, period, models.Period{
+					Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
+					End:   time.Date(date.Year(), date.Month(), date.Day()+1, 0, 0, 0, 0, time.UTC)}, timesheet[day])
 				if err != nil {
 					return nil, err
 				}
@@ -221,22 +212,18 @@ func calculateMinutesToBeCompensated(report *models.Report, schedule map[string]
 				dutyHours.WeekendOrHolidayCompensation = true
 			} else {
 				// sjekk om man har vakt i perioden 06-07
-				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period,
-					models.Period{
-						Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
-						End:   time.Date(date.Year(), date.Month(), date.Day(), 7, 0, 0, 0, time.UTC)},
-					timesheet[day])
+				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(day, period, models.Period{
+					Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
+					End:   time.Date(date.Year(), date.Month(), date.Day(), 7, 0, 0, 0, time.UTC)}, timesheet[day])
 				if err != nil {
 					return nil, err
 				}
 				dutyHours.Skifttillegg += minutesWorked
 
 				// sjekk om man har vakt i perioden 17-20
-				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(report, day, period,
-					models.Period{
-						Begin: time.Date(date.Year(), date.Month(), date.Day(), 17, 0, 0, 0, time.UTC),
-						End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC)},
-					timesheet[day])
+				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(day, period, models.Period{
+					Begin: time.Date(date.Year(), date.Month(), date.Day(), 17, 0, 0, 0, time.UTC),
+					End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC)}, timesheet[day])
 				if err != nil {
 					return nil, err
 				}
@@ -244,9 +231,6 @@ func calculateMinutesToBeCompensated(report *models.Report, schedule map[string]
 			}
 		}
 		guardHours[day] = dutyHours
-		t := report.TimesheetEachDay[day]
-		t.MinutesWithDuty = dutyHours
-		report.TimesheetEachDay[day] = t
 	}
 
 	return guardHours, nil
@@ -309,7 +293,7 @@ func calculateDaylightSavingTimeModifier(day string) (int, error) {
 }
 
 // calculateMinutesWithGuardDutyInPeriod return the number of minutes that you have non-working guard duty
-func calculateMinutesWithGuardDutyInPeriod(report *models.Report, day string, vaktPeriod models.Period, compPeriod models.Period, timesheet []string) (int, error) {
+func calculateMinutesWithGuardDutyInPeriod(day string, vaktPeriod models.Period, compPeriod models.Period, timesheet []string) (int, error) {
 	dutyRange, err := createRangeForPeriod(vaktPeriod, compPeriod)
 	if err != nil {
 		return 0, err
@@ -327,67 +311,26 @@ func calculateMinutesWithGuardDutyInPeriod(report *models.Report, day string, va
 			minutesWorked += calculateMinutesOverlappingInPeriods(workRange, *dutyRange)
 		}
 
-		// TODO: Dette fungerer ikke for vilkårlige klokkeslett, altså at vakten ikke starter samtidig som en sats
-		startOfDayfunc, err := time.Parse("02.01.2006", day)
-		if err != nil {
-			return 0, err
-		}
-		sixOClock := startOfDayfunc.Add(6 * time.Hour)
-		sevenOClock := startOfDayfunc.Add(7 * time.Hour)
-		seventeenOClock := startOfDayfunc.Add(17 * time.Hour)
-		twentyOClock := startOfDayfunc.Add(20 * time.Hour)
-		timesheet := report.TimesheetEachDay[day]
-		switch compPeriod.Begin {
-		case startOfDayfunc:
-			if compPeriod.End == sixOClock {
-				timesheet.MinutesWorked.Hvilende2006 += minutesWorked
-			} else {
-				timesheet.MinutesWorked.Helgetillegg += minutesWorked
-			}
-		case sixOClock:
-			if compPeriod.End == sevenOClock {
-				timesheet.MinutesWorked.Skifttillegg += minutesWorked
-			} else {
-				timesheet.MinutesWorked.Hvilende0620 += minutesWorked
-			}
-		case seventeenOClock:
-			timesheet.MinutesWorked.Skifttillegg += minutesWorked
-		case twentyOClock:
-			timesheet.MinutesWorked.Hvilende2006 += minutesWorked
-		}
-		report.TimesheetEachDay[day] = timesheet
 		return dutyRange.Count() - minutesWorked, nil
 	}
 
 	return minutesWorked, nil
 }
 
-func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.Report, error) {
-	report := &models.Report{
-		Ident:            plan.Ident,
-		MinWinTid:        minWinTid,
-		TimesheetEachDay: map[string]models.Timesheet{},
-	}
-
-	for day, work := range minWinTid.Timesheet {
-		timesheet := models.Timesheet{
-			Schedule: plan.Schedule[day],
-			Work:     work,
-		}
-		report.TimesheetEachDay[day] = timesheet
-	}
-
-	minutes, err := calculateMinutesToBeCompensated(report, plan.Schedule, minWinTid.Timesheet)
+func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) error {
+	minutes, err := calculateMinutesToBeCompensated(plan.Schedule, minWinTid.Timesheet)
 	if err != nil {
-		return *report, err
+		return err
 	}
 
-	compensationTotal := compensation.Calculate(report, minutes, minWinTid.Satser)
-	overtimeTotal := overtime.Calculate(report, minutes, minWinTid.Salary)
+	compensationTotal := compensation.Calculate(minutes, minWinTid.Satser)
+	overtimeTotal := overtime.Calculate(minutes, minWinTid.Salary)
 
-	report.Earnings.Compensation.Total = compensationTotal
-	report.Earnings.Overtime.Total = overtimeTotal
-	report.Earnings.Total = compensationTotal.Add(overtimeTotal)
+	// TODO: Må returnere penger, og hvor mye per tillegg!
+	fmt.Printf("Money earned %v + %v", compensationTotal, overtimeTotal)
+	//report.Earnings.Compensation.Total = compensationTotal
+	//report.Earnings.Overtime.Total = overtimeTotal
+	//report.Earnings.Total = compensationTotal.Add(overtimeTotal)
 
-	return *report, nil
+	return nil
 }

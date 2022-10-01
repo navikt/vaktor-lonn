@@ -240,7 +240,6 @@ func Test_createRangeForPeriod(t *testing.T) {
 
 func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 	type args struct {
-		report     *models.Report
 		day        string
 		dutyPeriod models.Period
 		compPeriod models.Period
@@ -248,11 +247,6 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 	}
 
 	day := "08.08.2022"
-	report := &models.Report{
-		TimesheetEachDay: map[string]models.Timesheet{},
-	}
-	timesheet := models.Timesheet{}
-	report.TimesheetEachDay[day] = timesheet
 
 	tests := []struct {
 		name    string
@@ -263,8 +257,7 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Vanlig arbeidsdag",
 			args: args{
-				report: report,
-				day:    day,
+				day: day,
 				dutyPeriod: models.Period{
 					Begin: time.Date(1987, 7, 9, 0, 0, 0, 0, time.UTC),
 					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
@@ -280,8 +273,7 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Uvanlig kort arbeidsdag",
 			args: args{
-				report: report,
-				day:    day,
+				day: day,
 				dutyPeriod: models.Period{
 					Begin: time.Date(1987, 7, 9, 0, 0, 0, 0, time.UTC),
 					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
@@ -297,8 +289,7 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Forskjøvet arbeidsdag",
 			args: args{
-				report: report,
-				day:    day,
+				day: day,
 				dutyPeriod: models.Period{
 					Begin: time.Date(1987, 7, 9, 0, 0, 0, 0, time.UTC),
 					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
@@ -314,8 +305,7 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Morgenvakt",
 			args: args{
-				report: report,
-				day:    day,
+				day: day,
 				dutyPeriod: models.Period{
 					Begin: time.Date(1987, 7, 9, 6, 0, 0, 0, time.UTC),
 					End:   time.Date(1987, 7, 9, 9, 0, 0, 0, time.UTC),
@@ -331,7 +321,7 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := calculateMinutesWithGuardDutyInPeriod(tt.args.report, tt.args.day, tt.args.dutyPeriod, tt.args.compPeriod, tt.args.timesheet)
+			got, err := calculateMinutesWithGuardDutyInPeriod(tt.args.day, tt.args.dutyPeriod, tt.args.compPeriod, tt.args.timesheet)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("calculateMinutesWithGuardDutyInPeriod() error = %v, wantErr %v", err, tt.wantErr)
 				return

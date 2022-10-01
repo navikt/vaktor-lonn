@@ -1,8 +1,6 @@
 package calculator
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/navikt/vaktor-lonn/pkg/compensation"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/navikt/vaktor-lonn/pkg/overtime"
@@ -13,7 +11,6 @@ import (
 
 func TestCalculateEarnings(t *testing.T) {
 	type args struct {
-		report  *models.Report
 		minutes map[string]models.GuardDuty
 		salary  decimal.Decimal
 	}
@@ -29,20 +26,6 @@ func TestCalculateEarnings(t *testing.T) {
 			name: "døgnvakt",
 			args: args{
 				salary: decimal.NewFromInt(500_000),
-				report: &models.Report{
-					Ident:            "testv1",
-					TimesheetEachDay: map[string]models.Timesheet{},
-					MinWinTid: models.MinWinTid{
-						Timesheet: map[string][]string{},
-						Salary:    decimal.Decimal{},
-						Satser: map[string]decimal.Decimal{
-							"lørsøn":  decimal.NewFromInt(55),
-							"0620":    decimal.NewFromInt(10),
-							"2006":    decimal.NewFromInt(20),
-							"utvidet": decimal.NewFromInt(15),
-						},
-					},
-				},
 			},
 			minWinTid: map[string][]string{
 				"14.03.2022": {"07:00-15:00"},
@@ -105,20 +88,6 @@ func TestCalculateEarnings(t *testing.T) {
 			name: "Utvidet beredskap",
 			args: args{
 				salary: decimal.NewFromInt(800_000),
-				report: &models.Report{
-					Ident:            "testv1",
-					TimesheetEachDay: map[string]models.Timesheet{},
-					MinWinTid: models.MinWinTid{
-						Timesheet: map[string][]string{},
-						Salary:    decimal.Decimal{},
-						Satser: map[string]decimal.Decimal{
-							"lørsøn":  decimal.NewFromInt(55),
-							"0620":    decimal.NewFromInt(10),
-							"2006":    decimal.NewFromInt(20),
-							"utvidet": decimal.NewFromInt(15),
-						},
-					},
-				},
 			},
 			minWinTid: map[string][]string{
 				"04.07.2022": {"09:00-15:00"},
@@ -257,20 +226,6 @@ func TestCalculateEarnings(t *testing.T) {
 			name: "Vakt ved spesielle hendelser",
 			args: args{
 				salary: decimal.NewFromInt(800_000),
-				report: &models.Report{
-					Ident:            "testv1",
-					TimesheetEachDay: map[string]models.Timesheet{},
-					MinWinTid: models.MinWinTid{
-						Timesheet: map[string][]string{},
-						Salary:    decimal.Decimal{},
-						Satser: map[string]decimal.Decimal{
-							"lørsøn":  decimal.NewFromInt(55),
-							"0620":    decimal.NewFromInt(10),
-							"2006":    decimal.NewFromInt(20),
-							"utvidet": decimal.NewFromInt(15),
-						},
-					},
-				},
 			},
 			minWinTid: map[string][]string{},
 			pocPeriod: map[string][]models.Period{
@@ -318,36 +273,19 @@ func TestCalculateEarnings(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.args.report.MinWinTid.Salary = tt.args.salary
-			for day, work := range tt.minWinTid {
-				timesheet := models.Timesheet{
-					Schedule: tt.pocPeriod[day],
-					Work:     work,
-				}
-				tt.args.report.TimesheetEachDay[day] = timesheet
-			}
-			minutes, err := calculateMinutesToBeCompensated(tt.args.report, tt.pocPeriod, tt.minWinTid)
+			minutes, err := calculateMinutesToBeCompensated(tt.pocPeriod, tt.minWinTid)
 			if err != nil {
 				t.Errorf("calculateMinutesToBeCompensated() error : %v", err)
 				return
 			}
 			tt.args.minutes = minutes
-			compensationTotal := compensation.Calculate(tt.args.report, minutes, tt.args.report.MinWinTid.Satser)
-			overtimeTotal := overtime.Calculate(tt.args.report, minutes, tt.args.salary)
+			compensationTotal := compensation.Calculate(minutes, tt.args.report.MinWinTid.Satser)
+			overtimeTotal := overtime.Calculate(minutes, tt.args.salary)
 
-			tt.args.report.Earnings.Compensation.Total = compensationTotal
-			tt.args.report.Earnings.Overtime.Total = overtimeTotal
-			tt.args.report.Earnings.Total = compensationTotal.Add(overtimeTotal)
+			total := compensationTotal.Add(overtimeTotal)
 
-			if !tt.args.report.Earnings.Total.Equal(tt.want) {
-				t.Errorf("calculateEarnings() got = %v, want %v", tt.args.report.Earnings.Total, tt.want)
-
-				bytes, err := json.Marshal(tt.args.report)
-				if err != nil {
-					t.Error(err)
-					return
-				}
-				fmt.Println(string(bytes))
+			if !total.Equal(tt.want) {
+				t.Errorf("calculateEarnings() got = %v, want %v", total, tt.want)
 			}
 		})
 	}
