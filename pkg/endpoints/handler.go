@@ -2,7 +2,6 @@ package endpoints
 
 import (
 	"database/sql"
-	"github.com/navikt/vaktor-lonn/pkg/auth"
 	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
 	"go.uber.org/zap"
 	"net/http"
@@ -11,30 +10,35 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-type Handler struct {
-	BearerClient auth.BearerClient
-	DB           *sql.DB
-	Client       http.Client
-	Queries      *gensql.Queries
-	Log          *zap.Logger
+type minWinTidConfig struct {
+	Username string
+	Password string
+	Endpoint string
 }
 
-func NewHandler(logger *zap.Logger, dbString, azureClientId, azureClientSecret, azureOpenIdTokenEndpoint string) (Handler, error) {
+type Handler struct {
+	DB              *sql.DB
+	Client          http.Client
+	MinWinTidConfig minWinTidConfig
+	Queries         *gensql.Queries
+	Log             *zap.Logger
+}
+
+func NewHandler(logger *zap.Logger, dbString, minWinTidUsername, minWinTidPassword, minWinTidEndpoint string) (Handler, error) {
 	db, err := sql.Open("pgx", dbString)
 	if err != nil {
 		return Handler{}, err
 	}
 
-	bearerClient, err := auth.New(azureClientId, azureClientSecret, azureOpenIdTokenEndpoint)
-	if err != nil {
-		return Handler{}, err
-	}
-
 	handler := Handler{
-		BearerClient: bearerClient,
-		DB:           db,
+		DB: db,
 		Client: http.Client{
 			Timeout: 10 * time.Second,
+		},
+		MinWinTidConfig: minWinTidConfig{
+			Username: minWinTidUsername,
+			Password: minWinTidPassword,
+			Endpoint: minWinTidEndpoint,
 		},
 		Queries: gensql.New(db),
 		Log:     logger,
