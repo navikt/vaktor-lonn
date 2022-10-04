@@ -9,38 +9,31 @@ import (
 
 func Test_timeToMinutes(t *testing.T) {
 	type args struct {
-		clock string
+		clock time.Time
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    int
-		wantErr bool
+		name string
+		args args
+		want int
 	}{
 		{
 			name: "first test",
 			args: args{
-				"02:33",
+				time.Date(2022, 10, 3, 2, 33, 0, 0, time.UTC),
 			},
-			want:    153,
-			wantErr: false,
+			want: 153,
 		},
 		{
 			name: "no leading zero padding for hour",
 			args: args{
-				"7:03",
+				time.Date(2022, 10, 3, 7, 3, 0, 0, time.UTC),
 			},
-			want:    423,
-			wantErr: false,
+			want: 423,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := timeToMinutes(tt.args.clock)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("timeToMinutes() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got := timeToMinutes(tt.args.clock)
 			if got != tt.want {
 				t.Errorf("timeToMinutes() got = %v, want %v", got, tt.want)
 			}
@@ -243,7 +236,7 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		day        string
 		dutyPeriod models.Period
 		compPeriod models.Period
-		timesheet  []string
+		timesheet  []models.Clocking
 	}
 
 	day := "08.08.2022"
@@ -266,7 +259,12 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 					Begin: time.Date(1987, 7, 9, 9, 0, 0, 0, time.UTC),
 					End:   time.Date(1987, 7, 9, 14, 30, 0, 0, time.UTC),
 				},
-				timesheet: []string{"08:00-15:00"},
+				timesheet: []models.Clocking{
+					{
+						In:  time.Date(2022, 10, 3, 8, 0, 0, 0, time.UTC),
+						Out: time.Date(2022, 10, 3, 15, 0, 0, 0, time.UTC),
+					},
+				},
 			},
 			want: 0,
 		},
@@ -282,7 +280,12 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 					Begin: time.Date(1987, 7, 9, 9, 0, 0, 0, time.UTC),
 					End:   time.Date(1987, 7, 9, 14, 30, 0, 0, time.UTC),
 				},
-				timesheet: []string{"10:00-14:00"},
+				timesheet: []models.Clocking{
+					{
+						In:  time.Date(2022, 10, 3, 10, 0, 0, 0, time.UTC),
+						Out: time.Date(2022, 10, 3, 14, 0, 0, 0, time.UTC),
+					},
+				},
 			},
 			want: 90,
 		},
@@ -298,7 +301,12 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 					Begin: time.Date(1987, 7, 9, 9, 0, 0, 0, time.UTC),
 					End:   time.Date(1987, 7, 9, 14, 30, 0, 0, time.UTC),
 				},
-				timesheet: []string{"10:00-18:00"},
+				timesheet: []models.Clocking{
+					{
+						In:  time.Date(2022, 10, 3, 10, 0, 0, 0, time.UTC),
+						Out: time.Date(2022, 10, 3, 18, 0, 0, 0, time.UTC),
+					},
+				},
 			},
 			want: 60,
 		},
@@ -314,14 +322,19 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 					Begin: time.Date(1987, 7, 9, 20, 0, 0, 0, time.UTC),
 					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
 				},
-				timesheet: []string{"10:00-18:00"},
+				timesheet: []models.Clocking{
+					{
+						In:  time.Date(2022, 10, 3, 10, 0, 0, 0, time.UTC),
+						Out: time.Date(2022, 10, 3, 18, 0, 0, 0, time.UTC),
+					},
+				},
 			},
 			want: 0,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := calculateMinutesWithGuardDutyInPeriod(tt.args.day, tt.args.dutyPeriod, tt.args.compPeriod, tt.args.timesheet)
+			got, err := calculateMinutesWithGuardDutyInPeriod(tt.args.dutyPeriod, tt.args.compPeriod, tt.args.timesheet)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("calculateMinutesWithGuardDutyInPeriod() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -60,7 +60,6 @@ func main() {
 	}(handler.DB)
 
 	http.Handle("/metrics", promhttp.Handler())
-	http.HandleFunc("/nudge", handler.Nudge)
 	http.HandleFunc("/period", handler.Period)
 
 	logger.Info("Ready to serve 🙇")

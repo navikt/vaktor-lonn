@@ -5,10 +5,13 @@ import (
 	"github.com/navikt/vaktor-lonn/pkg/compensation"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/navikt/vaktor-lonn/pkg/overtime"
-	"strings"
 	"time"
 
 	"github.com/vjeantet/eastertime"
+)
+
+const (
+	VaktorDateFormat = "2006-01-02" // TODO: Bytt ut alle date-formater til denne
 )
 
 // Range representere en rekke med stigende heltall
@@ -57,26 +60,13 @@ func calculateMinutesOverlappingInPeriods(a, b Range) int {
 }
 
 // timeToMinutes takes time in the format of 15:04 and converts it to minutes
-func timeToMinutes(clock string) (int, error) {
-	date, err := time.Parse("15:04", clock)
-	if err != nil {
-		return -1, err
-	}
-	return date.Hour()*60 + date.Minute(), nil
+func timeToMinutes(clock time.Time) int {
+	return clock.Hour()*60 + clock.Minute()
 }
 
 // timeToRange takes time in the format of 15:04-15:04 and converts it to a range of minutes
-func timeToRange(workHours string) (Range, error) {
-	hours := strings.Split(workHours, "-")
-	begin, err := timeToMinutes(hours[0])
-	if err != nil {
-		return Range{}, err
-	}
-	end, err := timeToMinutes(hours[1])
-	if err != nil {
-		return Range{}, err
-	}
-	return Range{begin, end}, nil
+func timeToRange(workHours models.Clocking) Range {
+	return Range{timeToMinutes(workHours.In), timeToMinutes(workHours.Out)}
 }
 
 // createRangeForPeriod creates a range of minutes based on two dates. This will fit the threshold used.
@@ -115,7 +105,7 @@ func createRangeForPeriod(period, threshold models.Period) (*Range, error) {
 }
 
 // calculateMinutesToBeCompensated returns an object with the minutes you have been having guard duty each day in a given periode
-func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesheet map[string][]string) (map[string]models.GuardDuty, error) {
+func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesheet map[string]models.TimeSheet) (map[string]models.GuardDuty, error) {
 	guardHours := map[string]models.GuardDuty{}
 
 	for day, periods := range schedule {
@@ -128,36 +118,34 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 		dutyHours.Hvilende2006 += modifier
 
 		for _, period := range periods {
-			date, err := time.Parse("02.01.2006", day)
-			if err != nil {
-				return guardHours, err
-			}
+			currentDay := timesheet[day]
+			date := currentDay.Date
 
 			// sjekk om man har vakt i perioden 00-06
-			minutesWorked, err := calculateMinutesWithGuardDutyInPeriod(day, period, models.Period{
+			minutesWorked, err := calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 				Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
 				End:   time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
-			}, timesheet[day])
+			}, currentDay.Clockings)
 			if err != nil {
 				return nil, err
 			}
 			dutyHours.Hvilende2006 += minutesWorked
 
 			// sjekk om man har vakt i perioden 20-24
-			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(day, period, models.Period{
+			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 				Begin: time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
 				End:   time.Date(date.Year(), date.Month(), date.Day()+1, 0, 0, 0, 0, time.UTC),
-			}, timesheet[day])
+			}, currentDay.Clockings)
 			if err != nil {
 				return nil, err
 			}
 			dutyHours.Hvilende2006 += minutesWorked
 
 			// sjekk om man har vakt i perioden 06-20
-			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(day, period, models.Period{
+			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 				Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
 				End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
-			}, timesheet[day])
+			}, currentDay.Clockings)
 			if err != nil {
 				return nil, err
 			}
@@ -179,7 +167,7 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 					End:   time.Date(date.Year(), date.Month(), date.Day(), 14, 30, 0, 0, time.UTC),
 				}
 				minutesNotWorkedInCoreWorkingHours := 0
-				minutesNotWorkedInCoreWorkingHours, err = calculateMinutesWithGuardDutyInPeriod(day, period, kjerneTid, timesheet[day])
+				minutesNotWorkedInCoreWorkingHours, err = calculateMinutesWithGuardDutyInPeriod(period, kjerneTid, currentDay.Clockings)
 				dutyHours.Hvilende0620 -= minutesNotWorkedInCoreWorkingHours
 
 				// TODO: Sjekk om det er sommertid eller vintertid for NAV, og at personen som jobber følger det
@@ -200,11 +188,11 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 				}
 			}
 
-			if date.Weekday() == time.Saturday || date.Weekday() == time.Sunday { // TODO: Hellidgdag
+			if currentDay.WeekendCompensation {
 				// sjekk om man har vakt i perioden 00-24
-				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(day, period, models.Period{
+				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 					Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
-					End:   time.Date(date.Year(), date.Month(), date.Day()+1, 0, 0, 0, 0, time.UTC)}, timesheet[day])
+					End:   time.Date(date.Year(), date.Month(), date.Day()+1, 0, 0, 0, 0, time.UTC)}, currentDay.Clockings)
 				if err != nil {
 					return nil, err
 				}
@@ -212,18 +200,18 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 				dutyHours.WeekendOrHolidayCompensation = true
 			} else {
 				// sjekk om man har vakt i perioden 06-07
-				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(day, period, models.Period{
+				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 					Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
-					End:   time.Date(date.Year(), date.Month(), date.Day(), 7, 0, 0, 0, time.UTC)}, timesheet[day])
+					End:   time.Date(date.Year(), date.Month(), date.Day(), 7, 0, 0, 0, time.UTC)}, currentDay.Clockings)
 				if err != nil {
 					return nil, err
 				}
 				dutyHours.Skifttillegg += minutesWorked
 
 				// sjekk om man har vakt i perioden 17-20
-				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(day, period, models.Period{
+				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 					Begin: time.Date(date.Year(), date.Month(), date.Day(), 17, 0, 0, 0, time.UTC),
-					End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC)}, timesheet[day])
+					End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC)}, currentDay.Clockings)
 				if err != nil {
 					return nil, err
 				}
@@ -270,7 +258,7 @@ func validateHowMuchDutyHours(date time.Time, helligdag bool) (bool, error) {
 
 // calculateDaylightSavingTimeModifier returns either -60 or 60 minutes if $day is when the clock is advanced
 func calculateDaylightSavingTimeModifier(day string) (int, error) {
-	date, err := time.Parse("02.01.2006", day)
+	date, err := time.Parse(VaktorDateFormat, day)
 	if err != nil {
 		return 0, err
 	}
@@ -293,7 +281,7 @@ func calculateDaylightSavingTimeModifier(day string) (int, error) {
 }
 
 // calculateMinutesWithGuardDutyInPeriod return the number of minutes that you have non-working guard duty
-func calculateMinutesWithGuardDutyInPeriod(day string, vaktPeriod models.Period, compPeriod models.Period, timesheet []string) (int, error) {
+func calculateMinutesWithGuardDutyInPeriod(vaktPeriod models.Period, compPeriod models.Period, timesheet []models.Clocking) (int, error) {
 	dutyRange, err := createRangeForPeriod(vaktPeriod, compPeriod)
 	if err != nil {
 		return 0, err
@@ -303,7 +291,7 @@ func calculateMinutesWithGuardDutyInPeriod(day string, vaktPeriod models.Period,
 
 	if dutyRange != nil {
 		for _, workHours := range timesheet {
-			workRange, err := timeToRange(workHours)
+			workRange := timeToRange(workHours)
 			if err != nil {
 				return 0, err
 			}
