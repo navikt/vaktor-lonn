@@ -12,10 +12,10 @@ func Calculate(minutes map[string]models.GuardDuty, salary decimal.Decimal) deci
 
 	for _, duty := range minutes {
 		if duty.WeekendOrHolidayCompensation {
-			overtimeWeekendMinutes += float64(duty.Hvilende0620 + duty.Hvilende2006)
+			overtimeWeekendMinutes += float64(duty.Hvilende0620 + duty.Hvilende2000 + duty.Hvilende0006)
 		} else {
 			overtimeWorkDayMinutes += float64(duty.Hvilende0620)
-			overtimeWorkNightMinutes += float64(duty.Hvilende2006)
+			overtimeWorkNightMinutes += float64(duty.Hvilende2000 + duty.Hvilende0006)
 		}
 	}
 

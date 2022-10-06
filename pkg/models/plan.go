@@ -20,7 +20,8 @@ type Vaktplan struct {
 
 // GuardDuty keeps track of minutes not worked in a given guard duty
 type GuardDuty struct {
-	Hvilende2006                 int
+	Hvilende2000                 int
+	Hvilende0006                 int
 	Hvilende0620                 int
 	Helgetillegg                 int
 	Skifttillegg                 int

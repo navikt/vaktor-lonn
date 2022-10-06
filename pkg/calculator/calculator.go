@@ -115,7 +115,7 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 		if err != nil {
 			return nil, err
 		}
-		dutyHours.Hvilende2006 += modifier
+		dutyHours.Hvilende0006 += modifier
 
 		for _, period := range periods {
 			currentDay := timesheet[day]
@@ -129,7 +129,7 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 			if err != nil {
 				return nil, err
 			}
-			dutyHours.Hvilende2006 += minutesWorked
+			dutyHours.Hvilende0006 += minutesWorked
 
 			// sjekk om man har vakt i perioden 20-24
 			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
@@ -139,7 +139,7 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 			if err != nil {
 				return nil, err
 			}
-			dutyHours.Hvilende2006 += minutesWorked
+			dutyHours.Hvilende2000 += minutesWorked
 
 			// sjekk om man har vakt i perioden 06-20
 			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
@@ -157,7 +157,7 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 			}
 			if validateHowMuchDutyHours {
 				// TODO: En vaktperiode kan ikke være lengre enn 17t i døgnet mandag-fredag under sommertid, og 16t15m mandag-fredag under vintertid
-				// Sjekk om en person har Hvilende0620 mer enn 8,5t eller Hvilende0620+Hvilende2006 mer enn 17t/16t15min.
+				// Sjekk om en person har Hvilende0620 mer enn 8,5t eller Hvilende0620+Hvilende2000 mer enn 17t/16t15min.
 				// Det er unntak følgende dager: onsdag før skjærtorsdag, julaften, romjulen, nyttårsaften
 
 				// Dette er tiden du ikke jobbet i kjernetiden. Da vil man ikke kunne få vakttillegg, da andre er på jobb til å ta uforutsette hendelser.
@@ -177,12 +177,12 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 				if date.After(NAVSummerTimeBegin) && date.Before(NAVSummerTimeEnd) {
 					maxDutyMinutes = 17 * 60
 				}
-				addedDutyMinutes := dutyHours.Hvilende0620 + dutyHours.Hvilende2006
+				addedDutyMinutes := dutyHours.Hvilende0620 + dutyHours.Hvilende2000 + dutyHours.Hvilende0006
 				if addedDutyMinutes > maxDutyMinutes {
 					// Personen har fått registert for mye vakt den dagen. Fjern diff-en
 					dutyHours.Hvilende0620 -= maxDutyMinutes - addedDutyMinutes
 					if dutyHours.Hvilende0620 < 0 {
-						dutyHours.Hvilende2006 += dutyHours.Hvilende0620
+						dutyHours.Hvilende0006 += dutyHours.Hvilende0620
 						dutyHours.Hvilende0620 = 0
 					}
 				}
