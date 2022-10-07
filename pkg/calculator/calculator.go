@@ -289,7 +289,10 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) error {
 	}
 
 	compensationTotal := compensation.Calculate(minutes, minWinTid.Satser)
-	overtimeTotal := overtime.Calculate(minutes, minWinTid.Salary)
+	overtimeTotal, err := overtime.Calculate(minutes, minWinTid.Timesheet)
+	if err != nil {
+		return err
+	}
 
 	// TODO: Må returnere penger, og hvor mye per tillegg!
 	fmt.Printf("Money earned %v + %v", compensationTotal, overtimeTotal)

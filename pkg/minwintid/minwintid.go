@@ -88,12 +88,17 @@ func formatTimesheet(days []models.Dag) (map[string]models.TimeSheet, error) {
 			return nil, err
 		}
 		simpleStemplingDate := stemplingDate.Format(calculator.VaktorDateFormat)
+		stillig := day.Stillinger[0]
 
 		ts := models.TimeSheet{
 			Date:                stemplingDate,
 			WorkingHours:        day.SkjemaTid,
 			WeekendCompensation: day.Virkedag != "Virkedag",
 			FormName:            day.SkjemaNavn,
+			Salary:              decimal.NewFromInt(int64(stillig.RATEK001)),
+			Koststed:            stillig.Koststed,
+			Formal:              stillig.Formal,
+			Aktivitet:           stillig.Aktivitet,
 			Clockings:           []models.Clocking{},
 		}
 
@@ -174,7 +179,7 @@ func helper(handler endpoints.Handler) error {
 			var dager []models.Dag
 			err := json.Unmarshal([]byte(row.VaktorDager), &dager)
 			if err != nil {
-				handler.Log.Error("Failed while unmarshaling VaktorDager", zap.Error(err))
+				handler.Log.Error("Failed while unmarshaling VaktorDager", zap.Error(err), zap.String("MinWinTid", row.VaktorResourceId))
 				continue
 			}
 			if !isTimesheetApproved(dager) {
@@ -184,13 +189,13 @@ func helper(handler endpoints.Handler) error {
 			var vaktplan models.Vaktplan
 			err = json.Unmarshal(beredskapsvakt.Plan, &vaktplan)
 			if err != nil {
-				handler.Log.Error("Failed while unmarshaling beredskapsvaktperiode", zap.Error(err))
+				handler.Log.Error("Failed while unmarshaling beredskapsvaktperiode", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
 				continue
 			}
 
 			vacationAtTheSameTimeAsGuardDuty, err := isThereRegisteredVacationAtTheSameTimeAsGuardDuty(dager, vaktplan)
 			if err != nil {
-				handler.Log.Error("Failed while parsing date from MinWinTid", zap.Error(err))
+				handler.Log.Error("Failed while parsing date from MinWinTid", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
 				continue
 			}
 			if vacationAtTheSameTimeAsGuardDuty {
@@ -200,14 +205,13 @@ func helper(handler endpoints.Handler) error {
 
 			timesheet, err := formatTimesheet(dager)
 			if err != nil {
-				handler.Log.Error("Failed trying to format MinWinTid stemplinger", zap.Error(err))
+				handler.Log.Error("Failed trying to format MinWinTid stemplinger", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
 				continue
 			}
 
 			minWinTid := models.MinWinTid{
 				Ident:      row.VaktorNavId,
 				ResourceID: row.VaktorResourceId,
-				Salary:     decimal.Decimal{},
 				Satser: map[string]decimal.Decimal{
 					"lørsøn":  decimal.NewFromInt(55),
 					"0620":    decimal.NewFromInt(10),
@@ -219,7 +223,7 @@ func helper(handler endpoints.Handler) error {
 
 			err = calculator.GuarddutySalary(vaktplan, minWinTid)
 			if err != nil {
-				handler.Log.Error("Failed while calculating salary", zap.Error(err))
+				handler.Log.Error("Failed while calculating salary", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
 				continue
 			}
 
@@ -229,7 +233,7 @@ func helper(handler endpoints.Handler) error {
 			// TODO: Slett vakt fra databasen
 			err = handler.Queries.DeletePlan(context.TODO(), beredskapsvakt.ID)
 			if err != nil {
-				handler.Log.Error("Failed while deleting beredskapsvakt", zap.Error(err))
+				handler.Log.Error("Failed while deleting beredskapsvakt", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
 				// TODO: Dette er litt krise, for det betyr at kjøringen fortsatt gjøres :thinking:
 				// Kan prøve å oppdatere feltet, og ha en slette-kolonne
 			}

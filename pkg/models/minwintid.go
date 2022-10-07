@@ -12,15 +12,23 @@ type Stempling struct {
 	FravarKode   int    `json:"Fravar_kode"`
 }
 
+type Stillinger struct {
+	Koststed  string `json:"koststed"`
+	Formal    string `json:"formal"`
+	Aktivitet string `json:"aktivitet"`
+	RATEK001  int    `json:"RATE_K001"`
+}
+
 type Dag struct {
-	Dato                 string      `json:"dato"`
-	SkjemaTid            float64     `json:"skjema_tid"`
-	SkjemaNavn           string      `json:"skjema_navn"`
-	Godkjent             int         `json:"godkjent"`
-	AnsattDatoGodkjentAv string      `json:"ansatt_dato_godkjent_av"`
-	GodkjentDato         string      `json:"godkjent_dato"`
-	Virkedag             string      `json:"virkedag"`
-	Stemplinger          []Stempling `json:"Stemplinger"`
+	Dato                 string       `json:"dato"`
+	SkjemaTid            float64      `json:"skjema_tid"`
+	SkjemaNavn           string       `json:"skjema_navn"`
+	Godkjent             int          `json:"godkjent"`
+	AnsattDatoGodkjentAv string       `json:"ansatt_dato_godkjent_av"`
+	GodkjentDato         string       `json:"godkjent_dato"`
+	Virkedag             string       `json:"virkedag"`
+	Stemplinger          []Stempling  `json:"Stemplinger"`
+	Stillinger           []Stillinger `json:"Stillinger"`
 }
 
 type Response struct {
@@ -45,6 +53,10 @@ type TimeSheet struct {
 	WorkingHours        float64
 	WeekendCompensation bool
 	FormName            string
+	Salary              decimal.Decimal
+	Formal              string
+	Koststed            string
+	Aktivitet           string
 	Clockings           []Clocking
 }
 
@@ -52,6 +64,5 @@ type MinWinTid struct {
 	Ident      string
 	ResourceID string
 	Timesheet  map[string]TimeSheet
-	Salary     decimal.Decimal
 	Satser     map[string]decimal.Decimal
 }
