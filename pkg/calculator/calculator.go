@@ -251,14 +251,12 @@ func calculateDaylightSavingTimeModifier(day string) (int, error) {
 	summerTime := time.Date(date.Year(), time.March, 31, 0, 0, 0, 0, time.UTC)
 	summerTime = summerTime.AddDate(0, 0, -int(summerTime.Weekday()))
 	if summerTime.Year() == date.Year() && summerTime.YearDay() == date.YearDay() {
-		fmt.Println("It's summertime madness!")
 		return -60, nil
 	}
 
 	winterTime := time.Date(date.Year(), time.March, 31, 0, 0, 0, 0, time.UTC)
 	winterTime = winterTime.AddDate(0, 0, -int(winterTime.Weekday()))
 	if winterTime.Year() == date.Year() && winterTime.YearDay() == date.YearDay() {
-		fmt.Println("It's wintertime sadness!")
 		return 60, nil
 	}
 
