@@ -234,7 +234,7 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		timesheet  []models.Clocking
 	}
 
-	day := "08.08.2022"
+	day := "2022-08-08"
 
 	tests := []struct {
 		name string

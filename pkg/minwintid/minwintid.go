@@ -230,7 +230,6 @@ func helper(handler endpoints.Handler) error {
 			// TODO: Kall til Vaktor Plan
 			// curl -X POST -h "Authorization: bearer $TOKEN" -d {"id": uuid, "artskoder": [{"2600B": 1234.00, "2603B": 4132.00}]} vaktor/
 
-			// TODO: Slett vakt fra databasen
 			err = handler.Queries.DeletePlan(context.TODO(), beredskapsvakt.ID)
 			if err != nil {
 				handler.Log.Error("Failed while deleting beredskapsvakt", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))

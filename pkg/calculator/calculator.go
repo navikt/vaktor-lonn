@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	VaktorDateFormat = "2006-01-02" // TODO: Bytt ut alle date-formater til denne
+	VaktorDateFormat = "2006-01-02"
 )
 
 // Range representere en rekke med stigende heltall

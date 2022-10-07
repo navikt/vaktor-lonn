@@ -17,7 +17,6 @@ func Test_formatTimesheet(t *testing.T) {
 		want    map[string]models.TimeSheet
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{
 			name: "",
 			args: args{
