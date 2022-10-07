@@ -2,12 +2,11 @@ package calculator
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/navikt/vaktor-lonn/pkg/compensation"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/navikt/vaktor-lonn/pkg/overtime"
-	"time"
-
-	"github.com/vjeantet/eastertime"
 )
 
 const (
@@ -140,43 +139,12 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 				Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
 				End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
 			}, currentDay.Clockings)
-
-			validateHowMuchDutyHours, err := validateHowMuchDutyHours(date, false) // TODO Helligdag
-			if validateHowMuchDutyHours {
-				// TODO: En vaktperiode kan ikke være lengre enn 17t i døgnet mandag-fredag under sommertid, og 16t15m mandag-fredag under vintertid
-				// Sjekk om en person har Hvilende0620 mer enn 8,5t eller Hvilende0620+Hvilende2000 mer enn 17t/16t15min.
-				// Det er unntak følgende dager: onsdag før skjærtorsdag, julaften, romjulen, nyttårsaften
-
 			dutyHours.Hvilende0620 += minutesWithGuardDuty
 
-				// Dette er tiden du ikke jobbet i kjernetiden. Da vil man ikke kunne få vakttillegg, da andre er på jobb til å ta uforutsette hendelser.
-				// TODO: Bruk arbeidstid/kjernetid fra MinWinTid
-				kjerneTid := models.Period{
-					Begin: time.Date(date.Year(), date.Month(), date.Day(), 9, 0, 0, 0, time.UTC),
-					End:   time.Date(date.Year(), date.Month(), date.Day(), 14, 30, 0, 0, time.UTC),
-				}
-				minutesNotWorkedInCoreWorkingHours := 0
-				minutesNotWorkedInCoreWorkingHours = calculateMinutesWithGuardDutyInPeriod(period, kjerneTid, currentDay.Clockings)
-				dutyHours.Hvilende0620 -= minutesNotWorkedInCoreWorkingHours
+			checkForGuardDutyInKjernetid(currentDay, date, period, dutyHours)
+			checkForMaxGuardDutyTime(currentDay, dutyHours)
 
-				// TODO: Sjekk om det er sommertid eller vintertid for NAV, og at personen som jobber følger det
-				NAVSummerTimeBegin := time.Date(date.Year(), time.May, 15, 0, 0, 0, 0, time.UTC)
-				NAVSummerTimeEnd := time.Date(date.Year(), time.September, 15, 0, 0, 0, 0, time.UTC)
-				maxDutyMinutes := 16*60 + 15
-				if date.After(NAVSummerTimeBegin) && date.Before(NAVSummerTimeEnd) {
-					maxDutyMinutes = 17 * 60
-				}
-				addedDutyMinutes := dutyHours.Hvilende0620 + dutyHours.Hvilende2000 + dutyHours.Hvilende0006
-				if addedDutyMinutes > maxDutyMinutes {
-					// Personen har fått registert for mye vakt den dagen. Fjern diff-en
-					dutyHours.Hvilende0620 -= maxDutyMinutes - addedDutyMinutes
-					if dutyHours.Hvilende0620 < 0 {
-						dutyHours.Hvilende0006 += dutyHours.Hvilende0620
-						dutyHours.Hvilende0620 = 0
-					}
-				}
-			}
-
+			// Der skal man få 100% betalt fra kl12, så det må registreres på helg
 			if currentDay.WeekendCompensation {
 				// sjekk om man har vakt i perioden 00-24
 				minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
@@ -209,36 +177,42 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 	return guardHours, nil
 }
 
-func validateHowMuchDutyHours(date time.Time, helligdag bool) (bool, error) {
-	// Det er unntak følgende dager: onsdag før skjærtorsdag, julaften, romjulen, nyttårsaften
-	christmasEve := time.Date(date.Year(), time.December, 24, 0, 0, 0, 0, time.UTC)
-	if date.YearDay() == christmasEve.YearDay() {
-		return false, nil
+// checkForMaxGuardDutyTime fjerner minutter som overstiger lovlig antall tid med vakt man kan gå per dag.
+func checkForMaxGuardDutyTime(currentDay models.TimeSheet, dutyHours models.GuardDuty) {
+	maxGuardDutyInMinutes := 24*60 - int(currentDay.WorkingHours*60)
+	totalGuardDutyInADayInMinutes := dutyHours.Hvilende0620 + dutyHours.Hvilende2000 + dutyHours.Hvilende0006
+	if totalGuardDutyInADayInMinutes > maxGuardDutyInMinutes {
+		dutyHours.Hvilende0620 -= maxGuardDutyInMinutes - totalGuardDutyInADayInMinutes
 	}
-	newYearsEve := time.Date(date.Year(), time.December, 31, 0, 0, 0, 0, time.UTC)
-	if date.YearDay() == newYearsEve.YearDay() {
-		return false, nil
+}
+
+// checkForGuardDutyInKjernetid sjekker om man hadde vakt i kjernetiden. Man vil ikke kunne få vakttillegg i
+// kjernetiden, da andre skal være på jobb til å ta seg av uforutsette hendelser.
+func checkForGuardDutyInKjernetid(currentDay models.TimeSheet, date time.Time, period models.Period, dutyHours models.GuardDuty) {
+	if !currentDay.WeekendCompensation {
+		kjernetid := createKjernetid(date, currentDay.FormName)
+		minutesNotWorkedInCoreWorkingHours := 0
+		minutesNotWorkedInCoreWorkingHours = calculateMinutesWithGuardDutyInPeriod(period, kjernetid, currentDay.Clockings)
+		dutyHours.Hvilende0620 -= minutesNotWorkedInCoreWorkingHours
 	}
-	if date.After(christmasEve) && date.Before(newYearsEve) {
-		return false, nil
+}
+
+// createKjernetid returns the current day kjernetid. Except for three days, it's always from 09 til 1430
+func createKjernetid(date time.Time, formName string) models.Period {
+	startOfKjernetid := time.Date(date.Year(), date.Month(), date.Day(), 9, 0, 0, 0, time.UTC)
+	endOfKjernetid := time.Date(date.Year(), date.Month(), date.Day(), 14, 30, 0, 0, time.UTC)
+	if formName == "Julaften 0800-1200 *" || formName == "Onsdag før Påske 0800-1200 *" {
+		startOfKjernetid = time.Date(date.Year(), date.Month(), date.Day(), 8, 0, 0, 0, time.UTC)
+		endOfKjernetid = time.Date(date.Year(), date.Month(), date.Day(), 12, 0, 0, 0, time.UTC)
+	} else if formName == "Nyttårsaften 1000-1200 *" {
+		startOfKjernetid = time.Date(date.Year(), date.Month(), date.Day(), 10, 0, 0, 0, time.UTC)
+		endOfKjernetid = time.Date(date.Year(), date.Month(), date.Day(), 12, 0, 0, 0, time.UTC)
 	}
-	easterEve, err := eastertime.CatholicByYear(date.Year())
-	if err != nil {
-		return false, err
+
+	return models.Period{
+		Begin: startOfKjernetid,
+		End:   endOfKjernetid,
 	}
-	if date.YearDay() == easterEve.YearDay()-3 {
-		return false, nil
-	}
-	if date.Weekday() == time.Saturday {
-		return false, nil
-	}
-	if date.Weekday() == time.Sunday {
-		return false, err
-	}
-	if helligdag {
-		return false, err
-	}
-	return true, nil
 }
 
 // calculateDaylightSavingTimeModifier returns either -60 or 60 minutes if $day is when the clock is advanced
