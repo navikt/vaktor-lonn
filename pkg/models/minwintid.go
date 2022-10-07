@@ -43,6 +43,7 @@ type TimeSheet struct {
 	Date                time.Time
 	WorkingHours        float64
 	WeekendCompensation bool
+	FormName            string
 	Clockings           []Clocking
 }
 

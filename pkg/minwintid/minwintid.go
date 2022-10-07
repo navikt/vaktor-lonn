@@ -92,6 +92,7 @@ func formatTimesheet(days []models.Dag) (map[string]models.TimeSheet, error) {
 			Date:                stemplingDate,
 			WorkingHours:        day.SkjemaTid,
 			WeekendCompensation: day.Virkedag != "Virkedag",
+			FormName:            day.SkjemaNavn,
 			Clockings:           []models.Clocking{},
 		}
 
