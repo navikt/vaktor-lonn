@@ -13,7 +13,7 @@ func getSalary(timesheet map[string]models.TimeSheet) (decimal.Decimal, error) {
 			salary = period.Salary
 			continue
 		}
-		if salary != period.Salary {
+		if !salary.Equal(period.Salary) {
 			return decimal.Decimal{}, fmt.Errorf("salary has changed")
 		}
 	}
