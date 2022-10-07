@@ -524,7 +524,11 @@ func TestCalculateEarnings(t *testing.T) {
 				return
 			}
 			compensationTotal := compensation.Calculate(minutes, tt.args.satser)
-			overtimeTotal := overtime.Calculate(minutes, tt.args.timesheet)
+			overtimeTotal, err := overtime.Calculate(minutes, tt.args.timesheet)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("calculateEarnings() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
 
 			total := compensationTotal.Add(overtimeTotal)
 
