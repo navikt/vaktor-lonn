@@ -113,10 +113,9 @@ func Test_createRangeForPeriod(t *testing.T) {
 		threshold models.Period
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    *Range
-		wantErr bool
+		name string
+		args args
+		want *Range
 	}{
 		{
 			name: "døgnvakt 06-20",
@@ -219,11 +218,7 @@ func Test_createRangeForPeriod(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := createRangeForPeriod(tt.args.period, tt.args.threshold)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("createRangeForPeriod() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got := createRangeForPeriod(tt.args.period, tt.args.threshold)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("createRangeForPeriod() got = %v, want %v", got, tt.want)
 			}
@@ -242,10 +237,9 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 	day := "08.08.2022"
 
 	tests := []struct {
-		name    string
-		args    args
-		want    int
-		wantErr bool
+		name string
+		args args
+		want int
 	}{
 		{
 			name: "Vanlig arbeidsdag",
@@ -334,11 +328,7 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := calculateMinutesWithGuardDutyInPeriod(tt.args.dutyPeriod, tt.args.compPeriod, tt.args.timesheet)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("calculateMinutesWithGuardDutyInPeriod() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got := calculateMinutesWithGuardDutyInPeriod(tt.args.dutyPeriod, tt.args.compPeriod, tt.args.timesheet)
 			if got != tt.want {
 				t.Errorf("calculateMinutesWithGuardDutyInPeriod() got = %v, want %v", got, tt.want)
 			}
