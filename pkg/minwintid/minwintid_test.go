@@ -2,6 +2,7 @@ package minwintid
 
 import (
 	"github.com/navikt/vaktor-lonn/pkg/models"
+	"github.com/shopspring/decimal"
 	"reflect"
 	"testing"
 	"time"
@@ -41,6 +42,14 @@ func Test_formatTimesheet(t *testing.T) {
 								Type:         "B2",
 							},
 						},
+						Stillinger: []models.Stillinger{
+							{
+								Koststed:  "855210",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
 					},
 				},
 			},
@@ -49,6 +58,11 @@ func Test_formatTimesheet(t *testing.T) {
 					Date:                time.Date(2022, 7, 15, 0, 0, 0, 0, time.UTC),
 					WorkingHours:        7,
 					WeekendCompensation: false,
+					FormName:            "Heltid 0800-1500 (2018)",
+					Salary:              decimal.NewFromInt(500_000),
+					Formal:              "000000",
+					Koststed:            "855210",
+					Aktivitet:           "000000",
 					Clockings:           []models.Clocking{},
 				},
 			},
@@ -98,6 +112,14 @@ func Test_formatTimesheet(t *testing.T) {
 								Type:         "B1",
 							},
 						},
+						Stillinger: []models.Stillinger{
+							{
+								Koststed:  "855210",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
 					},
 				},
 			},
@@ -106,6 +128,11 @@ func Test_formatTimesheet(t *testing.T) {
 					Date:                time.Date(2022, 8, 2, 0, 0, 0, 0, time.UTC),
 					WorkingHours:        7,
 					WeekendCompensation: false,
+					FormName:            "Heltid 0800-1500 (2018)",
+					Salary:              decimal.NewFromInt(500_000),
+					Formal:              "000000",
+					Koststed:            "855210",
+					Aktivitet:           "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 8, 2, 7, 45, 10, 0, time.UTC),
