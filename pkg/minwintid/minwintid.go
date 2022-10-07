@@ -15,7 +15,8 @@ import (
 )
 
 const (
-	DateTimeFormat = "2006-01-02T15:04:05"
+	DateTimeFormat  = "2006-01-02T15:04:05"
+	fravarKodeFerie = 210
 )
 
 func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd time.Time, handler endpoints.Handler) (models.Response, error) {
@@ -62,8 +63,8 @@ func isTimesheetApproved(days []models.Dag) bool {
 func isThereRegisteredVacationAtTheSameTimeAsGuardDuty(days []models.Dag, vaktplan models.Vaktplan) (bool, error) {
 	for _, day := range days {
 		for _, stempling := range day.Stemplinger {
-			// TODO: Dobbeltsjekke at B4 == ferie
-			if stempling.Type == "B4" {
+			// TODO: Denne tar ikke høyde for planlagt ferie over lengre tid
+			if stempling.FravarKode == fravarKodeFerie {
 				date, err := time.Parse(DateTimeFormat, stempling.StemplingTid)
 				if err != nil {
 					return false, err

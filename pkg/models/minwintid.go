@@ -9,6 +9,7 @@ type Stempling struct {
 	StemplingTid string `json:"Stempling_Tid"`
 	Retning      string `json:"Retning"`
 	Type         string `json:"Type"`
+	FravarKode   int    `json:"Fravar_kode"`
 }
 
 type Dag struct {
