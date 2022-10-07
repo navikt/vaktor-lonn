@@ -144,7 +144,6 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 			checkForGuardDutyInKjernetid(currentDay, date, period, dutyHours)
 			checkForMaxGuardDutyTime(currentDay, dutyHours)
 
-			// Der skal man få 100% betalt fra kl12, så det må registreres på helg
 			if currentDay.WeekendCompensation {
 				// sjekk om man har vakt i perioden 00-24
 				minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
