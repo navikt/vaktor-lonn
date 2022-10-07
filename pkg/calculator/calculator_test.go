@@ -53,7 +53,7 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want int
+		want float64
 	}{
 		{
 			name: "no work done",
@@ -239,7 +239,7 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want int
+		want float64
 	}{
 		{
 			name: "Vanlig arbeidsdag",

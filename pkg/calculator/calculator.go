@@ -20,8 +20,8 @@ type Range struct {
 	End   int
 }
 
-func (r Range) Count() int {
-	return r.End - r.Begin
+func (r Range) Count() float64 {
+	return float64(r.End - r.Begin)
 }
 
 func (r Range) String() string {
@@ -30,7 +30,7 @@ func (r Range) String() string {
 
 // calculateMinutesOverlappingInPeriods returns the number of minutes that are overlapping two ranges.
 // Returns 0 if the ranges does not overlap.
-func calculateMinutesOverlappingInPeriods(a, b Range) int {
+func calculateMinutesOverlappingInPeriods(a, b Range) float64 {
 	if a.End <= b.Begin || a.Begin >= b.End {
 		return 0
 	}
@@ -141,8 +141,9 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 			}, currentDay.Clockings)
 			dutyHours.Hvilende0620 += minutesWithGuardDuty
 
-			checkForGuardDutyInKjernetid(currentDay, date, period, dutyHours)
-			checkForMaxGuardDutyTime(currentDay, dutyHours)
+			kjernetidModifier := checkForGuardDutyInKjernetid(currentDay, date, period)
+			maxGuardDutyModifier := checkForMaxGuardDutyTime(currentDay, dutyHours.Hvilende0620+dutyHours.Hvilende2000+dutyHours.Hvilende0006)
+			dutyHours.Hvilende0620 += kjernetidModifier - maxGuardDutyModifier
 
 			if currentDay.WeekendCompensation {
 				// sjekk om man har vakt i perioden 00-24
@@ -156,18 +157,13 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 				minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 					Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
 					End:   time.Date(date.Year(), date.Month(), date.Day(), 7, 0, 0, 0, time.UTC)}, currentDay.Clockings)
+				dutyHours.Skifttillegg += minutesWithGuardDuty
 
 				// sjekk om man har vakt i perioden 17-20
-				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
+				minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 					Begin: time.Date(date.Year(), date.Month(), date.Day(), 17, 0, 0, 0, time.UTC),
 					End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC)}, currentDay.Clockings)
 				dutyHours.Skifttillegg += minutesWithGuardDuty
-					// sjekk om man har vakt i perioden 17-20
-					minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
-						Begin: time.Date(date.Year(), date.Month(), date.Day(), 17, 0, 0, 0, time.UTC),
-						End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC)}, currentDay.Clockings)
-					dutyHours.Skifttillegg += minutesWithGuardDuty
-				}
 			}
 		}
 		guardHours[day] = dutyHours
@@ -177,23 +173,24 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 }
 
 // checkForMaxGuardDutyTime fjerner minutter som overstiger lovlig antall tid med vakt man kan gå per dag.
-func checkForMaxGuardDutyTime(currentDay models.TimeSheet, dutyHours models.GuardDuty) {
-	maxGuardDutyInMinutes := 24*60 - int(currentDay.WorkingHours*60)
-	totalGuardDutyInADayInMinutes := dutyHours.Hvilende0620 + dutyHours.Hvilende2000 + dutyHours.Hvilende0006
+func checkForMaxGuardDutyTime(currentDay models.TimeSheet, totalGuardDutyInADayInMinutes float64) float64 {
+	maxGuardDutyInMinutes := 24*60 - currentDay.WorkingHours*60
 	if totalGuardDutyInADayInMinutes > maxGuardDutyInMinutes {
-		dutyHours.Hvilende0620 -= maxGuardDutyInMinutes - totalGuardDutyInADayInMinutes
+		return maxGuardDutyInMinutes - totalGuardDutyInADayInMinutes
 	}
+
+	return 0
 }
 
 // checkForGuardDutyInKjernetid sjekker om man hadde vakt i kjernetiden. Man vil ikke kunne få vakttillegg i
 // kjernetiden, da andre skal være på jobb til å ta seg av uforutsette hendelser.
-func checkForGuardDutyInKjernetid(currentDay models.TimeSheet, date time.Time, period models.Period, dutyHours models.GuardDuty) {
+func checkForGuardDutyInKjernetid(currentDay models.TimeSheet, date time.Time, period models.Period) float64 {
 	if !currentDay.WeekendCompensation {
 		kjernetid := createKjernetid(date, currentDay.FormName)
-		minutesNotWorkedInCoreWorkingHours := 0
-		minutesNotWorkedInCoreWorkingHours = calculateMinutesWithGuardDutyInPeriod(period, kjernetid, currentDay.Clockings)
-		dutyHours.Hvilende0620 -= minutesNotWorkedInCoreWorkingHours
+		return calculateMinutesWithGuardDutyInPeriod(period, kjernetid, currentDay.Clockings)
 	}
+
+	return 0
 }
 
 // createKjernetid returns the current day kjernetid. Except for three days, it's always from 09 til 1430
@@ -214,8 +211,9 @@ func createKjernetid(date time.Time, formName string) models.Period {
 	}
 }
 
+// TODO: Lag en egen test av at vi stiller klokken
 // calculateDaylightSavingTimeModifier returns either -60 or 60 minutes if $day is when the clock is advanced
-func calculateDaylightSavingTimeModifier(day string) (int, error) {
+func calculateDaylightSavingTimeModifier(day string) (float64, error) {
 	date, err := time.Parse(VaktorDateFormat, day)
 	if err != nil {
 		return 0, err
@@ -237,9 +235,9 @@ func calculateDaylightSavingTimeModifier(day string) (int, error) {
 }
 
 // calculateMinutesWithGuardDutyInPeriod return the number of minutes that you have non-working guard duty
-func calculateMinutesWithGuardDutyInPeriod(vaktPeriod models.Period, compPeriod models.Period, timesheet []models.Clocking) int {
+func calculateMinutesWithGuardDutyInPeriod(vaktPeriod models.Period, compPeriod models.Period, timesheet []models.Clocking) float64 {
 	dutyRange := createRangeForPeriod(vaktPeriod, compPeriod)
-	minutesWithGuardDuty := 0
+	minutesWithGuardDuty := 0.0
 
 	if dutyRange != nil {
 		for _, workHours := range timesheet {
