@@ -122,31 +122,32 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 			date := currentDay.Date
 
 			// sjekk om man har vakt i perioden 00-06
-			minutesWorked, err := calculateMinutesWithGuardDutyInPeriod(period, models.Period{
+			minutesWithGuardDuty := calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 				Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
 				End:   time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
 			}, currentDay.Clockings)
-			dutyHours.Hvilende0006 += minutesWorked
+			dutyHours.Hvilende0006 += minutesWithGuardDuty
 
 			// sjekk om man har vakt i perioden 20-24
-			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
+			minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 				Begin: time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
 				End:   time.Date(date.Year(), date.Month(), date.Day()+1, 0, 0, 0, 0, time.UTC),
 			}, currentDay.Clockings)
-			dutyHours.Hvilende2000 += minutesWorked
+			dutyHours.Hvilende2000 += minutesWithGuardDuty
 
 			// sjekk om man har vakt i perioden 06-20
-			minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
+			minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 				Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
 				End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
 			}, currentDay.Clockings)
-			dutyHours.Hvilende0620 += minutesWorked
 
 			validateHowMuchDutyHours, err := validateHowMuchDutyHours(date, false) // TODO Helligdag
 			if validateHowMuchDutyHours {
 				// TODO: En vaktperiode kan ikke være lengre enn 17t i døgnet mandag-fredag under sommertid, og 16t15m mandag-fredag under vintertid
 				// Sjekk om en person har Hvilende0620 mer enn 8,5t eller Hvilende0620+Hvilende2000 mer enn 17t/16t15min.
 				// Det er unntak følgende dager: onsdag før skjærtorsdag, julaften, romjulen, nyttårsaften
+
+			dutyHours.Hvilende0620 += minutesWithGuardDuty
 
 				// Dette er tiden du ikke jobbet i kjernetiden. Da vil man ikke kunne få vakttillegg, da andre er på jobb til å ta uforutsette hendelser.
 				// TODO: Bruk arbeidstid/kjernetid fra MinWinTid
@@ -155,7 +156,7 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 					End:   time.Date(date.Year(), date.Month(), date.Day(), 14, 30, 0, 0, time.UTC),
 				}
 				minutesNotWorkedInCoreWorkingHours := 0
-				minutesNotWorkedInCoreWorkingHours, err = calculateMinutesWithGuardDutyInPeriod(period, kjerneTid, currentDay.Clockings)
+				minutesNotWorkedInCoreWorkingHours = calculateMinutesWithGuardDutyInPeriod(period, kjerneTid, currentDay.Clockings)
 				dutyHours.Hvilende0620 -= minutesNotWorkedInCoreWorkingHours
 
 				// TODO: Sjekk om det er sommertid eller vintertid for NAV, og at personen som jobber følger det
@@ -178,24 +179,28 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 
 			if currentDay.WeekendCompensation {
 				// sjekk om man har vakt i perioden 00-24
-				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
+				minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 					Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
 					End:   time.Date(date.Year(), date.Month(), date.Day()+1, 0, 0, 0, 0, time.UTC)}, currentDay.Clockings)
-				dutyHours.Helgetillegg += minutesWorked
+				dutyHours.Helgetillegg += minutesWithGuardDuty
 				dutyHours.WeekendOrHolidayCompensation = true
 			} else {
 				// sjekk om man har vakt i perioden 06-07
-				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
+				minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 					Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
 					End:   time.Date(date.Year(), date.Month(), date.Day(), 7, 0, 0, 0, time.UTC)}, currentDay.Clockings)
-				dutyHours.Skifttillegg += minutesWorked
 
 				// sjekk om man har vakt i perioden 17-20
 				minutesWorked, err = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 					Begin: time.Date(date.Year(), date.Month(), date.Day(), 17, 0, 0, 0, time.UTC),
 					End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC)}, currentDay.Clockings)
+				dutyHours.Skifttillegg += minutesWithGuardDuty
+					// sjekk om man har vakt i perioden 17-20
+					minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
+						Begin: time.Date(date.Year(), date.Month(), date.Day(), 17, 0, 0, 0, time.UTC),
+						End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC)}, currentDay.Clockings)
+					dutyHours.Skifttillegg += minutesWithGuardDuty
 				}
-				dutyHours.Skifttillegg += minutesWorked
 			}
 		}
 		guardHours[day] = dutyHours
