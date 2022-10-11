@@ -9,5 +9,6 @@ INSERT INTO beredskapsvakt
 VALUES ($1, $2, $3);
 
 -- name: DeletePlan :exec
-DELETE FROM beredskapsvakt
+DELETE
+FROM beredskapsvakt
 WHERE id = $1;

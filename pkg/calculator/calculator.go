@@ -2,11 +2,11 @@ package calculator
 
 import (
 	"fmt"
+	"github.com/navikt/vaktor-lonn/pkg/overtime"
 	"time"
 
 	"github.com/navikt/vaktor-lonn/pkg/compensation"
 	"github.com/navikt/vaktor-lonn/pkg/models"
-	"github.com/navikt/vaktor-lonn/pkg/overtime"
 )
 
 const (
