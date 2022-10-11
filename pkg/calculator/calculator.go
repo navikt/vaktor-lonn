@@ -141,8 +141,8 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 			}, currentDay.Clockings)
 			dutyHours.Hvilende0620 += minutesWithGuardDuty
 
-			kjernetidModifier := checkForGuardDutyInKjernetid(currentDay, date, period)
-			maxGuardDutyModifier := checkForMaxGuardDutyTime(currentDay, dutyHours.Hvilende0620+dutyHours.Hvilende2000+dutyHours.Hvilende0006)
+			kjernetidModifier := calculateGuardDutyInKjernetid(currentDay, date, period)
+			maxGuardDutyModifier := calculateMaxGuardDutyTime(currentDay, dutyHours.Hvilende0620+dutyHours.Hvilende2000+dutyHours.Hvilende0006)
 			dutyHours.Hvilende0620 += kjernetidModifier - maxGuardDutyModifier
 
 			if currentDay.WeekendCompensation {
@@ -172,8 +172,8 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 	return guardHours, nil
 }
 
-// checkForMaxGuardDutyTime fjerner minutter som overstiger lovlig antall tid med vakt man kan gå per dag.
-func checkForMaxGuardDutyTime(currentDay models.TimeSheet, totalGuardDutyInADayInMinutes float64) float64 {
+// calculateMaxGuardDutyTime fjerner minutter som overstiger lovlig antall tid med vakt man kan gå per dag.
+func calculateMaxGuardDutyTime(currentDay models.TimeSheet, totalGuardDutyInADayInMinutes float64) float64 {
 	maxGuardDutyInMinutes := 24*60 - currentDay.WorkingHours*60
 	if totalGuardDutyInADayInMinutes > maxGuardDutyInMinutes {
 		return maxGuardDutyInMinutes - totalGuardDutyInADayInMinutes
@@ -182,12 +182,13 @@ func checkForMaxGuardDutyTime(currentDay models.TimeSheet, totalGuardDutyInADayI
 	return 0
 }
 
-// checkForGuardDutyInKjernetid sjekker om man hadde vakt i kjernetiden. Man vil ikke kunne få vakttillegg i
+// calculateGuardDutyInKjernetid sjekker om man hadde vakt i kjernetiden. Man vil ikke kunne få vakttillegg i
 // kjernetiden, da andre skal være på jobb til å ta seg av uforutsette hendelser.
 func checkForGuardDutyInKjernetid(currentDay models.TimeSheet, date time.Time, period models.Period) float64 {
 	if !currentDay.WeekendCompensation {
 		kjernetid := createKjernetid(date, currentDay.FormName)
 		return calculateMinutesWithGuardDutyInPeriod(period, kjernetid, currentDay.Clockings)
+func calculateGuardDutyInKjernetid(currentDay models.TimeSheet, date time.Time, period models.Period) float64 {
 	}
 
 	return 0
