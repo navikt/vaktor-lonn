@@ -33,10 +33,10 @@ func Calculate(minutes map[string]models.GuardDuty, timesheet map[string]models.
 
 	for _, duty := range minutes {
 		if duty.WeekendOrHolidayCompensation {
-			overtimeWeekendMinutes += float64(duty.Hvilende0620 + duty.Hvilende2000 + duty.Hvilende0006)
+			overtimeWeekendMinutes += duty.Hvilende0620 + duty.Hvilende2000 + duty.Hvilende0006
 		} else {
-			overtimeWorkDayMinutes += float64(duty.Hvilende0620)
-			overtimeWorkNightMinutes += float64(duty.Hvilende2000 + duty.Hvilende0006)
+			overtimeWorkDayMinutes += duty.Hvilende0620
+			overtimeWorkNightMinutes += duty.Hvilende2000 + duty.Hvilende0006
 		}
 	}
 
