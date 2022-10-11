@@ -91,15 +91,15 @@ func formatTimesheet(days []models.Dag) (map[string]models.TimeSheet, error) {
 		stillig := day.Stillinger[0]
 
 		ts := models.TimeSheet{
-			Date:                stemplingDate,
-			WorkingHours:        day.SkjemaTid,
-			WeekendCompensation: day.Virkedag == "Lørdag" || day.Virkedag == "Søndag",
-			FormName:            day.SkjemaNavn,
-			Salary:              decimal.NewFromInt(int64(stillig.RATEK001)),
-			Koststed:            stillig.Koststed,
-			Formal:              stillig.Formal,
-			Aktivitet:           stillig.Aktivitet,
-			Clockings:           []models.Clocking{},
+			Date:         stemplingDate,
+			WorkingHours: day.SkjemaTid,
+			WorkingDay:   day.Virkedag,
+			FormName:     day.SkjemaNavn,
+			Salary:       decimal.NewFromInt(int64(stillig.RATEK001)),
+			Koststed:     stillig.Koststed,
+			Formal:       stillig.Formal,
+			Aktivitet:    stillig.Aktivitet,
+			Clockings:    []models.Clocking{},
 		}
 
 		stemplinger := day.Stemplinger

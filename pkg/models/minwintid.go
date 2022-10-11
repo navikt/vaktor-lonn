@@ -49,15 +49,15 @@ type Clocking struct {
 }
 
 type TimeSheet struct {
-	Date                time.Time
-	WorkingHours        float64
-	WeekendCompensation bool
-	FormName            string
-	Salary              decimal.Decimal
-	Formal              string
-	Koststed            string
-	Aktivitet           string
-	Clockings           []Clocking
+	Date         time.Time
+	WorkingHours float64
+	WorkingDay   string
+	FormName     string
+	Salary       decimal.Decimal
+	Formal       string
+	Koststed     string
+	Aktivitet    string
+	Clockings    []Clocking
 }
 
 type MinWinTid struct {

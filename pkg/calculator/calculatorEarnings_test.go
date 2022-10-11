@@ -33,10 +33,10 @@ func TestCalculateEarnings(t *testing.T) {
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-03-14": {
-						Date:                time.Date(2022, 3, 14, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        7.75,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(500_000),
+						Date:         time.Date(2022, 3, 14, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 3, 14, 7, 0, 0, 0, time.UTC),
@@ -45,10 +45,10 @@ func TestCalculateEarnings(t *testing.T) {
 						},
 					},
 					"2022-03-15": {
-						Date:                time.Date(2022, 3, 15, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        7.75,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(500_000),
+						Date:         time.Date(2022, 3, 15, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 3, 15, 7, 0, 0, 0, time.UTC),
@@ -58,10 +58,10 @@ func TestCalculateEarnings(t *testing.T) {
 						//"07:00-16:00"
 					},
 					"2022-03-16": {
-						Date:                time.Date(2022, 3, 16, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        7.75,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(500_000),
+						Date:         time.Date(2022, 3, 16, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 3, 16, 7, 0, 0, 0, time.UTC),
@@ -70,10 +70,10 @@ func TestCalculateEarnings(t *testing.T) {
 						},
 					},
 					"2022-03-17": {
-						Date:                time.Date(2022, 3, 17, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        7.75,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(500_000),
+						Date:         time.Date(2022, 3, 17, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 3, 17, 8, 0, 0, 0, time.UTC),
@@ -82,10 +82,10 @@ func TestCalculateEarnings(t *testing.T) {
 						},
 					},
 					"2022-03-18": {
-						Date:                time.Date(2022, 3, 18, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        7.75,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(500_000),
+						Date:         time.Date(2022, 3, 18, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 3, 18, 7, 0, 0, 0, time.UTC),
@@ -94,18 +94,18 @@ func TestCalculateEarnings(t *testing.T) {
 						},
 					},
 					"2022-03-19": {
-						Date:                time.Date(2022, 3, 19, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        0,
-						WeekendCompensation: true,
-						Salary:              decimal.NewFromInt(500_000),
-						Clockings:           []models.Clocking{},
+						Date:         time.Date(2022, 3, 19, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Lørdag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
 					},
 					"2022-03-20": {
-						Date:                time.Date(2022, 3, 20, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        0,
-						WeekendCompensation: true,
-						Salary:              decimal.NewFromInt(500_000),
-						Clockings:           []models.Clocking{},
+						Date:         time.Date(2022, 3, 20, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Søndag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
 					},
 				},
 				guardPeriod: map[string][]models.Period{
@@ -167,10 +167,10 @@ func TestCalculateEarnings(t *testing.T) {
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-07-04": {
-						Date:                time.Date(2022, 7, 4, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        7.75,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(800_000),
+						Date:         time.Date(2022, 7, 4, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(800_000),
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 7, 4, 9, 0, 0, 0, time.UTC),
@@ -179,10 +179,10 @@ func TestCalculateEarnings(t *testing.T) {
 						},
 					},
 					"2022-07-05": {
-						Date:                time.Date(2022, 7, 5, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        7.75,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(800_000),
+						Date:         time.Date(2022, 7, 5, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(800_000),
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 7, 5, 9, 0, 0, 0, time.UTC),
@@ -191,10 +191,10 @@ func TestCalculateEarnings(t *testing.T) {
 						},
 					},
 					"2022-07-06": {
-						Date:                time.Date(2022, 7, 6, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        7.75,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(800_000),
+						Date:         time.Date(2022, 7, 6, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(800_000),
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 7, 6, 9, 0, 0, 0, time.UTC),
@@ -203,10 +203,10 @@ func TestCalculateEarnings(t *testing.T) {
 						},
 					},
 					"2022-07-07": {
-						Date:                time.Date(2022, 7, 7, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        7.75,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(800_000),
+						Date:         time.Date(2022, 7, 7, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(800_000),
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 7, 7, 9, 0, 0, 0, time.UTC),
@@ -215,10 +215,10 @@ func TestCalculateEarnings(t *testing.T) {
 						},
 					},
 					"2022-07-08": {
-						Date:                time.Date(2022, 7, 8, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        7.75,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(800_000),
+						Date:         time.Date(2022, 7, 8, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(800_000),
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 7, 8, 9, 0, 0, 0, time.UTC),
@@ -228,10 +228,10 @@ func TestCalculateEarnings(t *testing.T) {
 					},
 
 					"2022-07-11": {
-						Date:                time.Date(2022, 7, 11, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        7.75,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(800_000),
+						Date:         time.Date(2022, 7, 11, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(800_000),
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 7, 11, 8, 0, 0, 0, time.UTC),
@@ -240,10 +240,10 @@ func TestCalculateEarnings(t *testing.T) {
 						},
 					},
 					"2022-07-12": {
-						Date:                time.Date(2022, 7, 12, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        7.75,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(800_000),
+						Date:         time.Date(2022, 7, 12, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(800_000),
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 7, 12, 8, 0, 0, 0, time.UTC),
@@ -252,10 +252,10 @@ func TestCalculateEarnings(t *testing.T) {
 						},
 					},
 					"2022-07-13": {
-						Date:                time.Date(2022, 7, 13, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        7.75,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(800_000),
+						Date:         time.Date(2022, 7, 13, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(800_000),
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 7, 13, 8, 0, 0, 0, time.UTC),
@@ -264,10 +264,10 @@ func TestCalculateEarnings(t *testing.T) {
 						},
 					},
 					"2022-07-14": {
-						Date:                time.Date(2022, 7, 14, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        7.75,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(800_000),
+						Date:         time.Date(2022, 7, 14, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(800_000),
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 7, 14, 8, 0, 0, 0, time.UTC),
@@ -276,10 +276,10 @@ func TestCalculateEarnings(t *testing.T) {
 						},
 					},
 					"2022-07-15": {
-						Date:                time.Date(2022, 7, 15, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        7.75,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(800_000),
+						Date:         time.Date(2022, 7, 15, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(800_000),
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 7, 15, 8, 0, 0, 0, time.UTC),
@@ -288,17 +288,17 @@ func TestCalculateEarnings(t *testing.T) {
 						},
 					},
 					"2022-07-16": {Date: time.Date(2022, 7, 16, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        0,
-						WeekendCompensation: true,
-						Salary:              decimal.NewFromInt(800_000),
-						Clockings:           []models.Clocking{},
+						WorkingHours: 0,
+						WorkingDay:   "Lørdag",
+						Salary:       decimal.NewFromInt(800_000),
+						Clockings:    []models.Clocking{},
 					},
 					"2022-07-17": {
-						Date:                time.Date(2022, 7, 17, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        0,
-						WeekendCompensation: true,
-						Salary:              decimal.NewFromInt(800_000),
-						Clockings:           []models.Clocking{},
+						Date:         time.Date(2022, 7, 17, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Søndag",
+						Salary:       decimal.NewFromInt(800_000),
+						Clockings:    []models.Clocking{},
 					},
 				},
 				guardPeriod: map[string][]models.Period{
@@ -432,46 +432,46 @@ func TestCalculateEarnings(t *testing.T) {
 				// TODO: Mangler vi arbeidstid her?
 				timesheet: map[string]models.TimeSheet{
 					"2022-07-16": {
-						Date:                time.Date(2022, 7, 16, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        0,
-						WeekendCompensation: true,
-						Salary:              decimal.NewFromInt(800_000),
-						Clockings:           []models.Clocking{},
+						Date:         time.Date(2022, 7, 16, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Lørdag",
+						Salary:       decimal.NewFromInt(800_000),
+						Clockings:    []models.Clocking{},
 					},
 					"2022-07-17": {
-						Date:                time.Date(2022, 7, 17, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        0,
-						WeekendCompensation: true,
-						Salary:              decimal.NewFromInt(800_000),
-						Clockings:           []models.Clocking{},
+						Date:         time.Date(2022, 7, 17, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Søndag",
+						Salary:       decimal.NewFromInt(800_000),
+						Clockings:    []models.Clocking{},
 					},
 					"2022-07-22": {
-						Date:                time.Date(2022, 7, 22, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        0,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(800_000),
-						Clockings:           []models.Clocking{},
+						Date:         time.Date(2022, 7, 22, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(800_000),
+						Clockings:    []models.Clocking{},
 					},
 					"2022-07-23": {
-						Date:                time.Date(2022, 7, 23, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        0,
-						WeekendCompensation: true,
-						Salary:              decimal.NewFromInt(800_000),
-						Clockings:           []models.Clocking{},
+						Date:         time.Date(2022, 7, 23, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Lørdag",
+						Salary:       decimal.NewFromInt(800_000),
+						Clockings:    []models.Clocking{},
 					},
 					"2022-07-24": {
-						Date:                time.Date(2022, 7, 24, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        0,
-						WeekendCompensation: true,
-						Salary:              decimal.NewFromInt(800_000),
-						Clockings:           []models.Clocking{},
+						Date:         time.Date(2022, 7, 24, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Søndag",
+						Salary:       decimal.NewFromInt(800_000),
+						Clockings:    []models.Clocking{},
 					},
 					"2022-07-25": {
-						Date:                time.Date(2022, 7, 25, 0, 0, 0, 0, time.UTC),
-						WorkingHours:        0,
-						WeekendCompensation: false,
-						Salary:              decimal.NewFromInt(800_000),
-						Clockings:           []models.Clocking{},
+						Date:         time.Date(2022, 7, 25, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(800_000),
+						Clockings:    []models.Clocking{},
 					},
 				},
 				guardPeriod: map[string][]models.Period{

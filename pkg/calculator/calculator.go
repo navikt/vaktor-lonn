@@ -145,13 +145,12 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 			maxGuardDutyModifier := calculateMaxGuardDutyTime(currentDay, dutyHours.Hvilende0620+dutyHours.Hvilende2000+dutyHours.Hvilende0006)
 			dutyHours.Hvilende0620 += kjernetidModifier - maxGuardDutyModifier
 
-			if currentDay.WeekendCompensation {
+			if isWeekend(currentDay.WorkingDay) {
 				// sjekk om man har vakt i perioden 00-24
 				minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 					Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
 					End:   time.Date(date.Year(), date.Month(), date.Day()+1, 0, 0, 0, 0, time.UTC)}, currentDay.Clockings)
 				dutyHours.Helgetillegg += minutesWithGuardDuty
-				dutyHours.WeekendOrHolidayCompensation = true
 			} else {
 				// sjekk om man har vakt i perioden 06-07
 				minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
@@ -165,6 +164,8 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 					End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC)}, currentDay.Clockings)
 				dutyHours.Skifttillegg += minutesWithGuardDuty
 			}
+
+			dutyHours.WeekendOrHolidayCompensation = isWeekendOrHoliday(currentDay.WorkingDay)
 		}
 		guardHours[day] = dutyHours
 	}
@@ -174,6 +175,10 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 
 // calculateMaxGuardDutyTime fjerner minutter som overstiger lovlig antall tid med vakt man kan gå per dag.
 func calculateMaxGuardDutyTime(currentDay models.TimeSheet, totalGuardDutyInADayInMinutes float64) float64 {
+	if isWeekendOrHoliday(currentDay.WorkingDay) {
+		return 0
+	}
+
 	maxGuardDutyInMinutes := 24*60 - currentDay.WorkingHours*60
 	if totalGuardDutyInADayInMinutes > maxGuardDutyInMinutes {
 		return maxGuardDutyInMinutes - totalGuardDutyInADayInMinutes
@@ -182,16 +187,23 @@ func calculateMaxGuardDutyTime(currentDay models.TimeSheet, totalGuardDutyInADay
 	return 0
 }
 
+func isWeekendOrHoliday(day string) bool {
+	return day != "Virkedag"
+}
+
+func isWeekend(day string) bool {
+	return day == "Lørdag" || day == "Søndag"
+}
+
 // calculateGuardDutyInKjernetid sjekker om man hadde vakt i kjernetiden. Man vil ikke kunne få vakttillegg i
 // kjernetiden, da andre skal være på jobb til å ta seg av uforutsette hendelser.
-func checkForGuardDutyInKjernetid(currentDay models.TimeSheet, date time.Time, period models.Period) float64 {
-	if !currentDay.WeekendCompensation {
-		kjernetid := createKjernetid(date, currentDay.FormName)
-		return calculateMinutesWithGuardDutyInPeriod(period, kjernetid, currentDay.Clockings)
 func calculateGuardDutyInKjernetid(currentDay models.TimeSheet, date time.Time, period models.Period) float64 {
+	if isWeekendOrHoliday(currentDay.WorkingDay) {
+		return 0
 	}
 
-	return 0
+	kjernetid := createKjernetid(date, currentDay.FormName)
+	return calculateMinutesWithGuardDutyInPeriod(period, kjernetid, currentDay.Clockings)
 }
 
 // createKjernetid returns the current day kjernetid. Except for three days, it's always from 09 til 1430

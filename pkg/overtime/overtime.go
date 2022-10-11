@@ -27,13 +27,13 @@ func Calculate(minutes map[string]models.GuardDuty, timesheet map[string]models.
 		return decimal.Decimal{}, err
 	}
 
-	overtimeWeekendMinutes := 0.0
+	overtimeWeekendOrHolidayMinutes := 0.0
 	overtimeWorkDayMinutes := 0.0
 	overtimeWorkNightMinutes := 0.0
 
 	for _, duty := range minutes {
 		if duty.WeekendOrHolidayCompensation {
-			overtimeWeekendMinutes += duty.Hvilende0620 + duty.Hvilende2000 + duty.Hvilende0006
+			overtimeWeekendOrHolidayMinutes += duty.Hvilende0620 + duty.Hvilende2000 + duty.Hvilende0006
 		} else {
 			overtimeWorkDayMinutes += duty.Hvilende0620
 			overtimeWorkNightMinutes += duty.Hvilende2000 + duty.Hvilende0006
@@ -46,6 +46,6 @@ func Calculate(minutes map[string]models.GuardDuty, timesheet map[string]models.
 	overTimeWorkDay := decimal.NewFromFloat(overtimeWorkDayMinutes).Div(decimal.NewFromInt(60)).Mul(ots50)
 	overTimeWorkNight := decimal.NewFromFloat(overtimeWorkNightMinutes).Div(decimal.NewFromInt(60)).Mul(ots100)
 	overtimeWork := overTimeWorkDay.Add(overTimeWorkNight)
-	overtimeWeekend := decimal.NewFromFloat(overtimeWeekendMinutes).Div(decimal.NewFromInt(60)).Mul(ots100)
+	overtimeWeekend := decimal.NewFromFloat(overtimeWeekendOrHolidayMinutes).Div(decimal.NewFromInt(60)).Mul(ots100)
 	return overtimeWeekend.Add(overtimeWork).Div(decimal.NewFromInt(5)).Round(2), nil
 }
