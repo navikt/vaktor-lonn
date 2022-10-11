@@ -215,7 +215,7 @@ func helper(handler endpoints.Handler) error {
 				continue
 			}
 			if vacationAtTheSameTimeAsGuardDuty {
-				// TODO: Informere om at man ikke kan ha vakt og ferie samtidig
+				handler.Log.Info("En bruker har hatt beredskapsvakt under ferien", zap.String("vaktplanId", vaktplan.ID.String()))
 				continue
 			}
 
