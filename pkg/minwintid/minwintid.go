@@ -93,7 +93,7 @@ func formatTimesheet(days []models.Dag) (map[string]models.TimeSheet, error) {
 		ts := models.TimeSheet{
 			Date:                stemplingDate,
 			WorkingHours:        day.SkjemaTid,
-			WeekendCompensation: day.Virkedag != "Virkedag",
+			WeekendCompensation: day.Virkedag == "Lørdag" || day.Virkedag == "Søndag",
 			FormName:            day.SkjemaNavn,
 			Salary:              decimal.NewFromInt(int64(stillig.RATEK001)),
 			Koststed:            stillig.Koststed,
