@@ -32,9 +32,26 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 	values.Add("fra_dato", periodBegin.Format(calculator.VaktorDateFormat))
 	values.Add("til_dato", periodEnd.Format(calculator.VaktorDateFormat))
 
+	backoffSchedule := []time.Duration{
+		1 * time.Second,
+		3 * time.Second,
+		10 * time.Second,
+	}
+
 	r, err := handler.Client.Do(req)
 	if err != nil {
-		return models.Response{}, err
+		for _, duration := range backoffSchedule {
+			handler.Log.Info("Problem connecting to MinWinTid", zap.Error(err))
+			time.Sleep(duration)
+			r, err = handler.Client.Do(req)
+			if err == nil {
+				break
+			}
+		}
+
+		if err != nil {
+			return models.Response{}, err
+		}
 	}
 
 	if r.StatusCode != http.StatusOK {
@@ -168,7 +185,6 @@ func helper(handler endpoints.Handler) error {
 	for _, beredskapsvakt := range beredskapsvakter {
 		response, err := getTimesheetFromMinWinTid(beredskapsvakt.Ident, beredskapsvakt.PeriodBegin, beredskapsvakt.PeriodEnd, handler)
 		if err != nil {
-			// TODO: Retries mot MinWinTid, og logge feilmelding
 			handler.Log.Error("Failed while retrieving data from MinWinTid", zap.Error(err))
 			continue
 		}
