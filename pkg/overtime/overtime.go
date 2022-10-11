@@ -45,7 +45,7 @@ func Calculate(minutes map[string]models.GuardDuty, timesheet map[string]models.
 
 	overTimeWorkDay := decimal.NewFromFloat(overtimeWorkDayMinutes).Div(decimal.NewFromInt(60)).Mul(ots50)
 	overTimeWorkNight := decimal.NewFromFloat(overtimeWorkNightMinutes).Div(decimal.NewFromInt(60)).Mul(ots100)
-	overtimeWork := overTimeWorkDay.Add(overTimeWorkNight).Div(decimal.NewFromInt(5))
-	overtimeWeekend := decimal.NewFromFloat(overtimeWeekendMinutes).Div(decimal.NewFromInt(60)).Mul(ots100).Div(decimal.NewFromInt(5))
-	return overtimeWeekend.Add(overtimeWork).Round(2), nil
+	overtimeWork := overTimeWorkDay.Add(overTimeWorkNight)
+	overtimeWeekend := decimal.NewFromFloat(overtimeWeekendMinutes).Div(decimal.NewFromInt(60)).Mul(ots100)
+	return overtimeWeekend.Add(overtimeWork).Div(decimal.NewFromInt(5)).Round(2), nil
 }
