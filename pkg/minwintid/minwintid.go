@@ -19,11 +19,11 @@ const (
 	fravarKodeFerie = 210
 )
 
-func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd time.Time, handler endpoints.Handler) (models.Response, error) {
+func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd time.Time, handler endpoints.Handler) (*http.Response, error) {
 	config := handler.MinWinTidConfig
 	req, err := http.NewRequest(http.MethodGet, config.Endpoint, nil)
 	if err != nil {
-		return models.Response{}, err
+		return nil, err
 	}
 
 	req.SetBasicAuth(config.Username, config.Password)
@@ -50,21 +50,15 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 		}
 
 		if err != nil {
-			return models.Response{}, err
+			return nil, err
 		}
 	}
 
 	if r.StatusCode != http.StatusOK {
-		return models.Response{}, fmt.Errorf("minWinTid returned http(%v)", r.StatusCode)
+		return nil, fmt.Errorf("minWinTid returned http(%v)", r.StatusCode)
 	}
 
-	var response models.Response
-	err = json.NewDecoder(r.Body).Decode(&response)
-	if err != nil {
-		return models.Response{}, err
-	}
-
-	return response, nil
+	return r, nil
 }
 
 func isTimesheetApproved(days []models.Dag) bool {
@@ -175,7 +169,25 @@ func formatTimesheet(days []models.Dag) (map[string]models.TimeSheet, error) {
 	return timesheet, nil
 }
 
-func helper(handler endpoints.Handler) error {
+func Run(ctx context.Context, handler endpoints.Handler) {
+	ticker := time.NewTicker(1 * time.Hour)
+	defer ticker.Stop()
+
+	for {
+		err := handleTransactions(handler)
+		if err != nil {
+			handler.Log.Error("Failed while handling transactions", zap.Error(err))
+		}
+
+		select {
+		case <-ticker.C:
+		case <-ctx.Done():
+			return
+		}
+	}
+}
+
+func handleTransactions(handler endpoints.Handler) error {
 	beredskapsvakter, err := handler.Queries.ListBeredskapsvakter(context.TODO())
 	if err != nil {
 		handler.Log.Error("Failed while listing beredskapsvakter", zap.Error(err))
@@ -183,10 +195,16 @@ func helper(handler endpoints.Handler) error {
 	}
 
 	for _, beredskapsvakt := range beredskapsvakter {
-		response, err := getTimesheetFromMinWinTid(beredskapsvakt.Ident, beredskapsvakt.PeriodBegin, beredskapsvakt.PeriodEnd, handler)
+		httpResponse, err := getTimesheetFromMinWinTid(beredskapsvakt.Ident, beredskapsvakt.PeriodBegin, beredskapsvakt.PeriodEnd, handler)
 		if err != nil {
 			handler.Log.Error("Failed while retrieving data from MinWinTid", zap.Error(err))
 			continue
+		}
+
+		var response models.Response
+		err = json.NewDecoder(httpResponse.Body).Decode(&response)
+		if err != nil {
+			return err
 		}
 
 		rows := response.VaktorVaktorTiddataResponse.VaktorVaktorTiddataResult.VaktorRow

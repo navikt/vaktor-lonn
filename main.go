@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"embed"
 	"github.com/navikt/vaktor-lonn/pkg/endpoints"
+	"github.com/navikt/vaktor-lonn/pkg/minwintid"
 	"net/http"
 	"os"
 
@@ -50,6 +52,8 @@ func main() {
 		logger.Error("Problem with onStart", zap.Error(err))
 		return
 	}
+
+	go minwintid.Run(context.TODO(), handler)
 
 	defer func(DB *sql.DB) {
 		err := DB.Close()
