@@ -6,13 +6,16 @@ package gensql
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 type Beredskapsvakt struct {
 	// Created by Vaktor Plan
-	ID    uuid.UUID
-	Ident string
-	Plan  json.RawMessage
+	ID          uuid.UUID
+	Ident       string
+	Plan        json.RawMessage
+	PeriodBegin time.Time
+	PeriodEnd   time.Time
 }

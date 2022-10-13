@@ -11,15 +11,25 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-type Handler struct {
-	BearerClient auth.BearerClient
-	DB           *sql.DB
-	Client       http.Client
-	Queries      *gensql.Queries
-	Log          *zap.Logger
+type minWinTidConfig struct {
+	Username string
+	Password string
+	Endpoint string
 }
 
-func NewHandler(logger *zap.Logger, dbString, azureClientId, azureClientSecret, azureOpenIdTokenEndpoint string) (Handler, error) {
+type Handler struct {
+	BearerClient       auth.BearerClient
+	DB                 *sql.DB
+	Client             http.Client
+	MinWinTidConfig    minWinTidConfig
+	Queries            *gensql.Queries
+	Log                *zap.Logger
+	VaktorPlanEndpoint string
+}
+
+func NewHandler(logger *zap.Logger, dbString, vaktorPlanEndpoint,
+	azureClientId, azureClientSecret, azureOpenIdTokenEndpoint,
+	minWinTidUsername, minWinTidPassword, minWinTidEndpoint string) (Handler, error) {
 	db, err := sql.Open("pgx", dbString)
 	if err != nil {
 		return Handler{}, err
@@ -36,8 +46,14 @@ func NewHandler(logger *zap.Logger, dbString, azureClientId, azureClientSecret, 
 		Client: http.Client{
 			Timeout: 10 * time.Second,
 		},
-		Queries: gensql.New(db),
-		Log:     logger,
+		MinWinTidConfig: minWinTidConfig{
+			Username: minWinTidUsername,
+			Password: minWinTidPassword,
+			Endpoint: minWinTidEndpoint,
+		},
+		Queries:            gensql.New(db),
+		Log:                logger,
+		VaktorPlanEndpoint: vaktorPlanEndpoint,
 	}
 
 	return handler, nil

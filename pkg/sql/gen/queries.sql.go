@@ -29,8 +29,18 @@ func (q *Queries) CreatePlan(ctx context.Context, arg CreatePlanParams) error {
 	return err
 }
 
+const deletePlan = `-- name: DeletePlan :exec
+DELETE FROM beredskapsvakt
+WHERE id = $1
+`
+
+func (q *Queries) DeletePlan(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deletePlan, id)
+	return err
+}
+
 const listBeredskapsvakter = `-- name: ListBeredskapsvakter :many
-SELECT id, ident, plan
+SELECT id, ident, plan, period_begin, period_end
 FROM beredskapsvakt
 ORDER BY ident
 `
@@ -44,7 +54,13 @@ func (q *Queries) ListBeredskapsvakter(ctx context.Context) ([]Beredskapsvakt, e
 	var items []Beredskapsvakt
 	for rows.Next() {
 		var i Beredskapsvakt
-		if err := rows.Scan(&i.ID, &i.Ident, &i.Plan); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.Ident,
+			&i.Plan,
+			&i.PeriodBegin,
+			&i.PeriodEnd,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

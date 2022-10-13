@@ -14,4 +14,16 @@ type Vaktplan struct {
 	ID       uuid.UUID           `json:"id"`
 	Ident    string              `json:"ident"`
 	Schedule map[string][]Period `json:"schedule"`
+	Begin    time.Time
+	End      time.Time
+}
+
+// GuardDuty keeps track of minutes not worked in a given guard duty
+type GuardDuty struct {
+	Hvilende2000                 float64
+	Hvilende0006                 float64
+	Hvilende0620                 float64
+	Helgetillegg                 float64
+	Skifttillegg                 float64
+	WeekendOrHolidayCompensation bool
 }
