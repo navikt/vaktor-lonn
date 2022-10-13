@@ -1,6 +1,7 @@
 package calculator
 
 import (
+	"github.com/google/uuid"
 	"github.com/navikt/vaktor-lonn/pkg/compensation"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/navikt/vaktor-lonn/pkg/overtime"
@@ -525,14 +526,30 @@ func TestCalculateEarnings(t *testing.T) {
 				t.Errorf("calculateMinutesToBeCompensated() error : %v", err)
 				return
 			}
-			compensationTotal := compensation.Calculate(minutes, tt.args.satser)
-			overtimeTotal, err := overtime.Calculate(minutes, tt.args.timesheet)
+
+			var payroll *models.Payroll
+			payroll = &models.Payroll{
+				ID:       uuid.UUID{},
+				Approver: "Scathan",
+				TypeCodes: map[string]decimal.Decimal{
+					models.ArtskodeMorgen: {},
+					models.ArtskodeDag:    {},
+					models.ArtskodeKveld:  {},
+					models.ArtskodeHelg:   {},
+				},
+			}
+
+			compensation.Calculate(minutes, tt.args.satser, *payroll)
+			err = overtime.Calculate(minutes, tt.args.timesheet, payroll)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("calculateEarnings() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
-			total := compensationTotal.Add(overtimeTotal)
+			total := decimal.Decimal{}
+			for _, typeCode := range payroll.TypeCodes {
+				total = total.Add(typeCode)
+			}
 
 			if !total.Equal(tt.want) {
 				t.Errorf("calculateEarnings() got = %v, want %v", total, tt.want)

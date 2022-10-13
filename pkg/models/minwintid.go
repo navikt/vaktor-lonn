@@ -38,6 +38,7 @@ type Response struct {
 				VaktorNavId      string `json:"Vaktor.nav_id"`
 				VaktorResourceId string `json:"Vaktor.resource_id"`
 				VaktorDager      string `json:"Vaktor.dager"`
+				VaktorLederNavId string `json:"Vaktor.leder_nav_id"`
 			} `json:"Vaktor.row"`
 		} `json:"Vaktor.Vaktor_TiddataResult"`
 	} `json:"Vaktor.Vaktor_TiddataResponse"`
@@ -63,6 +64,7 @@ type TimeSheet struct {
 type MinWinTid struct {
 	Ident      string
 	ResourceID string
+	Approver   string
 	Timesheet  map[string]TimeSheet
 	Satser     map[string]decimal.Decimal
 }

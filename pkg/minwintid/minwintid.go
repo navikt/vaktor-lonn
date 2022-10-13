@@ -246,6 +246,7 @@ func handleTransactions(handler endpoints.Handler) error {
 			minWinTid := models.MinWinTid{
 				Ident:      row.VaktorNavId,
 				ResourceID: row.VaktorResourceId,
+				Approver:   row.VaktorLederNavId,
 				Satser: map[string]decimal.Decimal{
 					"lørsøn":  decimal.NewFromInt(55),
 					"0620":    decimal.NewFromInt(10),
@@ -255,7 +256,7 @@ func handleTransactions(handler endpoints.Handler) error {
 				Timesheet: timesheet,
 			}
 
-			err = calculator.GuarddutySalary(vaktplan, minWinTid)
+			payroll, err := calculator.GuarddutySalary(vaktplan, minWinTid)
 			if err != nil {
 				handler.Log.Error("Failed while calculating salary", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
 				continue

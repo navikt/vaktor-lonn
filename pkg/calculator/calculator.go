@@ -3,6 +3,7 @@ package calculator
 import (
 	"fmt"
 	"github.com/navikt/vaktor-lonn/pkg/overtime"
+	"github.com/shopspring/decimal"
 	"time"
 
 	"github.com/navikt/vaktor-lonn/pkg/compensation"
@@ -264,23 +265,27 @@ func calculateMinutesWithGuardDutyInPeriod(vaktPeriod models.Period, compPeriod 
 	return minutesWithGuardDuty
 }
 
-func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) error {
+func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.Payroll, error) {
 	minutes, err := calculateMinutesToBeCompensated(plan.Schedule, minWinTid.Timesheet)
 	if err != nil {
-		return err
+		return models.Payroll{}, err
 	}
 
-	compensationTotal := compensation.Calculate(minutes, minWinTid.Satser)
-	overtimeTotal, err := overtime.Calculate(minutes, minWinTid.Timesheet)
+	var payroll *models.Payroll
+	payroll.ID = plan.ID
+	payroll.Approver = minWinTid.Approver
+	payroll.TypeCodes = map[string]decimal.Decimal{
+		models.ArtskodeMorgen: {},
+		models.ArtskodeDag:    {},
+		models.ArtskodeKveld:  {},
+		models.ArtskodeHelg:   {},
+	}
+
+	compensation.Calculate(minutes, minWinTid.Satser, *payroll)
+	err = overtime.Calculate(minutes, minWinTid.Timesheet, payroll)
 	if err != nil {
-		return err
+		return models.Payroll{}, err
 	}
 
-	// TODO: Må returnere penger, og hvor mye per tillegg!
-	fmt.Printf("Money earned %v + %v", compensationTotal, overtimeTotal)
-	//report.Earnings.Compensation.Total = compensationTotal
-	//report.Earnings.Overtime.Total = overtimeTotal
-	//report.Earnings.Total = compensationTotal.Add(overtimeTotal)
-
-	return nil
+	return *payroll, nil
 }
