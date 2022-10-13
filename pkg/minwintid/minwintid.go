@@ -1,6 +1,7 @@
 package minwintid
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
+	"io"
 	"net/http"
 	"sort"
 	"time"
@@ -169,6 +171,41 @@ func formatTimesheet(days []models.Dag) (map[string]models.TimeSheet, error) {
 	return timesheet, nil
 }
 
+func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll) error {
+	body, err := json.Marshal(payroll)
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest(http.MethodPost, handler.VaktorPlanEndpoint, bytes.NewBuffer(body))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
+
+	bearer, err := handler.BearerClient.GenerateBearerToken()
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Authorization", fmt.Sprintf("bearer %v", bearer))
+
+	response, err := handler.Client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			handler.Log.Error("Failed while closing body", zap.Error(err))
+		}
+	}(response.Body)
+
+	if response.StatusCode != http.StatusOK {
+		return fmt.Errorf("vaktorPlan returned http(%v)", response.StatusCode)
+	}
+
+	return nil
+}
+
 func Run(ctx context.Context, handler endpoints.Handler) {
 	ticker := time.NewTicker(1 * time.Hour)
 	defer ticker.Stop()
@@ -262,8 +299,11 @@ func handleTransactions(handler endpoints.Handler) error {
 				continue
 			}
 
-			// TODO: Kall til Vaktor Plan
-			// curl -X POST -h "Authorization: bearer $TOKEN" -d {"id": uuid, "artskoder": [{"2600B": 1234.00, "2603B": 4132.00}]} vaktor/
+			err = postToVaktorPlan(handler, payroll)
+			if err != nil {
+				handler.Log.Error("Failed while posting to Vaktor Plan", zap.Error(err))
+				continue
+			}
 
 			err = handler.Queries.DeletePlan(context.TODO(), beredskapsvakt.ID)
 			if err != nil {

@@ -19,11 +19,16 @@ var embedMigrations embed.FS
 
 func onStart(logger *zap.Logger) (endpoints.Handler, error) {
 	dbString := getEnv("DB_URL", "postgres://postgres:postgres@127.0.0.1:5432/vaktor")
+	azureClientId := os.Getenv("AZURE_APP_CLIENT_ID")
+	azureClientSecret := os.Getenv("AZURE_APP_CLIENT_SECRET")
+	azureOpenIdTokenEndpoint := os.Getenv("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT")
 	minWinTidEndpoint := os.Getenv("MINWINTID_ENDPOINT")
 	minWinTidUsername := os.Getenv("MINWINTID_USERNAME")
 	minWinTidPassword := os.Getenv("MINWINTID_PASSWORD")
+	vaktorPlanEndpoint := os.Getenv("VAKTOR_PLAN_ENDPOINT")
 
-	handler, err := endpoints.NewHandler(logger, dbString,
+	handler, err := endpoints.NewHandler(logger, dbString, vaktorPlanEndpoint,
+		azureClientId, azureClientSecret, azureOpenIdTokenEndpoint,
 		minWinTidUsername, minWinTidPassword, minWinTidEndpoint)
 	if err != nil {
 		return endpoints.Handler{}, err
