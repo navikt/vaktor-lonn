@@ -206,20 +206,7 @@ func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll) error {
 	return nil
 }
 
-func Run(ctx context.Context, handler endpoints.Handler) {
-	ticker := time.NewTicker(1 * time.Hour)
-	defer ticker.Stop()
-
-	for {
-		err := handleTransactions(handler)
-		if err != nil {
-			handler.Log.Error("Failed while handling transactions", zap.Error(err))
 		}
-
-		select {
-		case <-ticker.C:
-		case <-ctx.Done():
-			return
 		}
 	}
 }
@@ -309,10 +296,29 @@ func handleTransactions(handler endpoints.Handler) error {
 			if err != nil {
 				handler.Log.Error("Failed while deleting beredskapsvakt", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
 				// TODO: Dette er litt krise, for det betyr at kjøringen fortsatt gjøres :thinking:
-				// Kan prøve å oppdatere feltet, og ha en slette-kolonne
+				// Hvis vi kan sende den samme utregningen til Vaktor Plan så er ikke dette et like stort problem.
+				continue
 			}
 		}
 	}
 
 	return nil
+}
+
+func Run(ctx context.Context, handler endpoints.Handler) {
+	ticker := time.NewTicker(1 * time.Hour)
+	defer ticker.Stop()
+
+	for {
+		err := handleTransactions(handler)
+		if err != nil {
+			handler.Log.Error("Failed while handling transactions", zap.Error(err))
+		}
+
+		select {
+		case <-ticker.C:
+		case <-ctx.Done():
+			return
+		}
+	}
 }
