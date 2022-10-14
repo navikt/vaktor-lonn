@@ -16,4 +16,5 @@ type Payroll struct {
 	ID        uuid.UUID
 	Approver  string
 	TypeCodes map[string]decimal.Decimal
+	CommitSHA string
 }

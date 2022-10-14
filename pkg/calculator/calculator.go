@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/navikt/vaktor-lonn/pkg/overtime"
 	"github.com/shopspring/decimal"
+	"os"
 	"time"
 
 	"github.com/navikt/vaktor-lonn/pkg/compensation"
@@ -279,6 +280,11 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 		models.ArtskodeDag:    {},
 		models.ArtskodeKveld:  {},
 		models.ArtskodeHelg:   {},
+	}
+
+	naisAppImage := os.Getenv("NAIS_APP_IMAGE")
+	if naisAppImage != "" {
+		payroll.CommitSHA = naisAppImage
 	}
 
 	compensation.Calculate(minutes, minWinTid.Satser, *payroll)
