@@ -206,11 +206,6 @@ func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll) error {
 	return nil
 }
 
-		}
-		}
-	}
-}
-
 func handleTransactions(handler endpoints.Handler) error {
 	beredskapsvakter, err := handler.Queries.ListBeredskapsvakter(context.TODO())
 	if err != nil {
@@ -272,11 +267,11 @@ func handleTransactions(handler endpoints.Handler) error {
 				ResourceID: row.VaktorResourceId,
 				Approver:   row.VaktorLederNavId,
 				Satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(55),
-					"0620":    decimal.NewFromInt(10),
-					"2006":    decimal.NewFromInt(20),
-					"utvidet": decimal.NewFromInt(15),
-				}, // TODO: Dette skal egentlig komme fra MinWinTid
+					"lørsøn":  decimal.NewFromInt(65),
+					"0620":    decimal.NewFromInt(15),
+					"2006":    decimal.NewFromInt(25),
+					"utvidet": decimal.NewFromInt(25),
+				},
 				Timesheet: timesheet,
 			}
 
