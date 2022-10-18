@@ -240,7 +240,7 @@ func calculateDaylightSavingTimeModifier(day string) (float64, error) {
 		return -60, nil
 	}
 
-	winterTime := time.Date(date.Year(), time.March, 31, 0, 0, 0, 0, time.UTC)
+	winterTime := time.Date(date.Year(), time.October, 31, 0, 0, 0, 0, time.UTC)
 	winterTime = winterTime.AddDate(0, 0, -int(winterTime.Weekday()))
 	if winterTime.Year() == date.Year() && winterTime.YearDay() == date.YearDay() {
 		return 60, nil
