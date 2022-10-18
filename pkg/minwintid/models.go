@@ -16,14 +16,13 @@ type Stilling struct {
 }
 
 type Dag struct {
-	Dato              string  `json:"dato"`
-	SkjemaTid         float64 `json:"skjema_tid"`
-	SkjemaNavn        string  `json:"skjema_navn"`
-	Godkjent          int     `json:"godkjent"`
-	Virkedag          string  `json:"virkedag"`
-	StringStemplinger string  `json:"Stemplinger"`
-	Stemplinger       []Stempling
-	Stillinger        []Stilling `json:"Stillinger"`
+	Dato        string      `json:"dato"`
+	SkjemaTid   float64     `json:"skjema_tid"`
+	SkjemaNavn  string      `json:"skjema_navn"`
+	Godkjent    int         `json:"godkjent"`
+	Virkedag    string      `json:"virkedag"`
+	Stemplinger []Stempling `json:"Stemplinger"`
+	Stillinger  []Stilling  `json:"Stillinger"`
 }
 
 type TiddataResult struct {

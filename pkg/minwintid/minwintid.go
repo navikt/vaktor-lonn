@@ -226,16 +226,6 @@ func decodeMinWinTid(httpResponse *http.Response) (TiddataResult, error) {
 		return TiddataResult{}, err
 	}
 
-	for i, dag := range dager {
-		var stemplinger []Stempling
-		err := json.Unmarshal([]byte(dag.StringStemplinger), &stemplinger)
-		if err != nil {
-			return TiddataResult{}, err
-		}
-		dager[i].Stemplinger = stemplinger
-		dager[i].StringStemplinger = ""
-	}
-
 	result.Dager = dager
 	result.VaktorDager = ""
 
