@@ -279,8 +279,8 @@ func handleTransactions(handler endpoints.Handler) error {
 		}
 
 		minWinTid := models.MinWinTid{
-			Ident:      tiddataResult.VaktorNavId,
-			ResourceID: tiddataResult.VaktorResourceId,
+			Ident:      tiddataResult.VaktorResourceId,
+			ResourceID: tiddataResult.VaktorNavId,
 			Approver:   tiddataResult.VaktorLederNavId,
 			Satser: map[string]decimal.Decimal{
 				"lørsøn":  decimal.NewFromInt(65),
