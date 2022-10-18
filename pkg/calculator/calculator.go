@@ -274,6 +274,7 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 
 	var payroll *models.Payroll
 	payroll.ID = plan.ID
+	payroll.ResourceID = minWinTid.ResourceID
 	payroll.Approver = minWinTid.Approver
 	payroll.TypeCodes = map[string]decimal.Decimal{
 		models.ArtskodeMorgen: {},
