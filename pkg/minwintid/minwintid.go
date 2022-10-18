@@ -172,6 +172,11 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 }
 
 func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll) error {
+	bearer, err := handler.BearerClient.GenerateBearerToken()
+	if err != nil {
+		return err
+	}
+
 	body, err := json.Marshal(payroll)
 	if err != nil {
 		return err
@@ -180,12 +185,8 @@ func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll) error {
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
 
-	bearer, err := handler.BearerClient.GenerateBearerToken()
-	if err != nil {
-		return err
-	}
+	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
 	req.Header.Set("Authorization", fmt.Sprintf("bearer %v", bearer))
 
 	response, err := handler.Client.Do(req)
@@ -206,6 +207,41 @@ func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll) error {
 	return nil
 }
 
+func decodeMinWinTid(httpResponse *http.Response) (TiddataResult, error) {
+	var response Response
+	err := json.NewDecoder(httpResponse.Body).Decode(&response)
+	if err != nil {
+		return TiddataResult{}, err
+	}
+
+	results := response.VaktorVaktorTiddataResponse.VaktorVaktorTiddataResult
+	if len(results) != 1 {
+		return TiddataResult{}, fmt.Errorf("not enough data from MinWinTid, missing TiddataResult")
+	}
+
+	result := results[0]
+	var dager []Dag
+	err = json.Unmarshal([]byte(result.VaktorDager), &dager)
+	if err != nil {
+		return TiddataResult{}, err
+	}
+
+	for i, dag := range dager {
+		var stemplinger []Stempling
+		err := json.Unmarshal([]byte(dag.StringStemplinger), &stemplinger)
+		if err != nil {
+			return TiddataResult{}, err
+		}
+		dager[i].Stemplinger = stemplinger
+		dager[i].StringStemplinger = ""
+	}
+
+	result.Dager = dager
+	result.VaktorDager = ""
+
+	return result, err
+}
+
 func handleTransactions(handler endpoints.Handler) error {
 	beredskapsvakter, err := handler.Queries.ListBeredskapsvakter(context.TODO())
 	if err != nil {
@@ -220,80 +256,69 @@ func handleTransactions(handler endpoints.Handler) error {
 			continue
 		}
 
-		var response models.Response
-		err = json.NewDecoder(httpResponse.Body).Decode(&response)
+		tiddataResult, err := decodeMinWinTid(httpResponse)
 		if err != nil {
 			return err
 		}
 
-		rows := response.VaktorVaktorTiddataResponse.VaktorVaktorTiddataResult.VaktorRow
-		if len(rows) == 1 {
-			row := rows[0]
-			var dager []models.Dag
-			err := json.Unmarshal([]byte(row.VaktorDager), &dager)
-			if err != nil {
-				handler.Log.Error("Failed while unmarshaling VaktorDager", zap.Error(err), zap.String("MinWinTid", row.VaktorResourceId))
-				continue
-			}
-			if !isTimesheetApproved(dager) {
-				continue
-			}
+		if !isTimesheetApproved(tiddataResult.Dager) {
+			continue
+		}
 
-			var vaktplan models.Vaktplan
-			err = json.Unmarshal(beredskapsvakt.Plan, &vaktplan)
-			if err != nil {
-				handler.Log.Error("Failed while unmarshaling beredskapsvaktperiode", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
-				continue
-			}
+		var vaktplan models.Vaktplan
+		err = json.Unmarshal(beredskapsvakt.Plan, &vaktplan)
+		if err != nil {
+			handler.Log.Error("Failed while unmarshaling beredskapsvaktperiode", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
+			continue
+		}
 
-			vacationAtTheSameTimeAsGuardDuty, err := isThereRegisteredVacationAtTheSameTimeAsGuardDuty(dager, vaktplan)
-			if err != nil {
-				handler.Log.Error("Failed while parsing date from MinWinTid", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
-				continue
-			}
-			if vacationAtTheSameTimeAsGuardDuty {
-				handler.Log.Info("En bruker har hatt beredskapsvakt under ferien", zap.String("vaktplanId", vaktplan.ID.String()))
-				continue
-			}
+		vacationAtTheSameTimeAsGuardDuty, err := isThereRegisteredVacationAtTheSameTimeAsGuardDuty(tiddataResult.Dager, vaktplan)
+		if err != nil {
+			handler.Log.Error("Failed while parsing date from MinWinTid", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
+			continue
+		}
+		if vacationAtTheSameTimeAsGuardDuty {
+			handler.Log.Info("En bruker har hatt beredskapsvakt under ferien", zap.String("vaktplanId", vaktplan.ID.String()))
+			continue
+		}
 
-			timesheet, err := formatTimesheet(dager)
-			if err != nil {
-				handler.Log.Error("Failed trying to format MinWinTid stemplinger", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
-				continue
-			}
+		timesheet, err := formatTimesheet(tiddataResult.Dager)
+		if err != nil {
+			handler.Log.Error("Failed trying to format MinWinTid stemplinger", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
+			continue
+		}
 
-			minWinTid := models.MinWinTid{
-				Ident:      row.VaktorNavId,
-				ResourceID: row.VaktorResourceId,
-				Approver:   row.VaktorLederNavId,
-				Satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(65),
-					"0620":    decimal.NewFromInt(15),
-					"2006":    decimal.NewFromInt(25),
-					"utvidet": decimal.NewFromInt(25),
-				},
-				Timesheet: timesheet,
-			}
+		minWinTid := models.MinWinTid{
+			Ident:      tiddataResult.VaktorNavId,
+			ResourceID: tiddataResult.VaktorResourceId,
+			Approver:   tiddataResult.VaktorLederNavId,
+			Satser: map[string]decimal.Decimal{
+				"lørsøn":  decimal.NewFromInt(65),
+				"0620":    decimal.NewFromInt(15),
+				"2006":    decimal.NewFromInt(25),
+				"utvidet": decimal.NewFromInt(25),
+			},
+			Timesheet: timesheet,
+		}
 
-			payroll, err := calculator.GuarddutySalary(vaktplan, minWinTid)
-			if err != nil {
-				handler.Log.Error("Failed while calculating salary", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
-				continue
-			}
+		payroll, err := calculator.GuarddutySalary(vaktplan, minWinTid)
+		if err != nil {
+			handler.Log.Error("Failed while calculating salary", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
+			continue
+		}
 
-			err = postToVaktorPlan(handler, payroll)
-			if err != nil {
-				handler.Log.Error("Failed while posting to Vaktor Plan", zap.Error(err))
-				continue
-			}
+		err = postToVaktorPlan(handler, payroll)
+		if err != nil {
+			handler.Log.Error("Failed while posting to Vaktor Plan", zap.Error(err))
+			continue
+		}
 
-			err = handler.Queries.DeletePlan(context.TODO(), beredskapsvakt.ID)
-			if err != nil {
-				handler.Log.Error("Failed while deleting beredskapsvakt", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
-				// TODO: Dette er litt krise, for det betyr at kjøringen fortsatt gjøres :thinking:
-				// Hvis vi kan sende den samme utregningen til Vaktor Plan så er ikke dette et like stort problem.
-				continue
-			}
+		err = handler.Queries.DeletePlan(context.TODO(), beredskapsvakt.ID)
+		if err != nil {
+			handler.Log.Error("Failed while deleting beredskapsvakt", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
+			// TODO: Dette er litt krise, for det betyr at kjøringen fortsatt gjøres :thinking:
+			// Hvis vi kan sende den samme utregningen til Vaktor Plan så er ikke dette et like stort problem.
+			continue
 		}
 	}
 
