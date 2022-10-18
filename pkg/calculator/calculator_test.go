@@ -335,3 +335,40 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		})
 	}
 }
+
+func Test_calculateDaylightSavingTimeModifier(t *testing.T) {
+	type args struct {
+		day string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    float64
+		wantErr bool
+	}{
+		{
+			name:    "Test når vi stiller klokken tilbake (normaltid)",
+			args:    args{day: "2022-10-30"},
+			want:    60,
+			wantErr: false,
+		},
+		{
+			name:    "Test når vi stiller klokken fremover (sommertid)",
+			args:    args{day: "2022-03-27"},
+			want:    -60,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := calculateDaylightSavingTimeModifier(tt.args.day)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("calculateDaylightSavingTimeModifier() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("calculateDaylightSavingTimeModifier() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
