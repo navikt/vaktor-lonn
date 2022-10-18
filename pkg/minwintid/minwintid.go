@@ -129,40 +129,83 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 				utStempling := stemplinger[0]
 				stemplinger = stemplinger[1:]
 
-				if innStempling.Retning == "Inn" && innStempling.Type == "B1" &&
-					utStempling.Retning == "Ut" && utStempling.Type == "B2" {
-					// A correct stempling!
-					innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
-					if err != nil {
-						return nil, err
+				if innStempling.Retning == "Inn" && innStempling.Type == "B1" {
+					// Dette er en vanlig stempling
+					if utStempling.Retning == "Ut" && utStempling.Type == "B2" {
+						innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
+						if err != nil {
+							return nil, err
+						}
+
+						utStemplingDate, err := time.Parse(DateTimeFormat, utStempling.StemplingTid)
+						if err != nil {
+							return nil, err
+						}
+
+						ts.Clockings = append(ts.Clockings, models.Clocking{
+							In:  innStemplingDate,
+							Out: utStemplingDate,
+						})
+						continue
 					}
 
-					utStemplingDate, err := time.Parse(DateTimeFormat, utStempling.StemplingTid)
-					if err != nil {
-						return nil, err
+					// Dette er en stempling med overtid
+					if utStempling.Retning == "Overtid                 " && utStempling.Type == "B6" {
+						utOvertid := stemplinger[0]
+						stemplinger = stemplinger[1:]
+
+						if utOvertid.Retning == "Ut" && utOvertid.Type == "B2" {
+							innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
+							if err != nil {
+								return nil, err
+							}
+
+							utStemplingDate, err := time.Parse(DateTimeFormat, utOvertid.StemplingTid)
+							if err != nil {
+								return nil, err
+							}
+
+							ts.Clockings = append(ts.Clockings, models.Clocking{
+								In:  innStemplingDate,
+								Out: utStemplingDate,
+							})
+							continue
+						}
+						// TODO: feilhåndtering
 					}
 
-					ts.Clockings = append(ts.Clockings, models.Clocking{
-						In:  innStemplingDate,
-						Out: utStemplingDate,
-					})
-					continue
+					// Dette er en stempling med fravær
+					if utStempling.Retning == "Ut på fravær" && utStempling.Type == "B5" {
+						innFravar := stemplinger[0]
+						stemplinger = stemplinger[1:]
+
+						utFravar := stemplinger[0]
+						stemplinger = stemplinger[1:]
+
+						if innFravar.Retning == "Inn fra fravær" && innFravar.Type == "B4" &&
+							utFravar.Retning == "Ut" && utFravar.Type == "B2" {
+
+							innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
+							if err != nil {
+								return nil, err
+							}
+
+							utStemplingDate, err := time.Parse(DateTimeFormat, utFravar.StemplingTid)
+							if err != nil {
+								return nil, err
+							}
+
+							ts.Clockings = append(ts.Clockings, models.Clocking{
+								In:  innStemplingDate,
+								Out: utStemplingDate,
+							})
+							continue
+						}
+						// TODO: feilhåndtering
+					}
 				}
 
-				if innStempling.Retning == "B4" && innStempling.Type == "B4" && // kan dette ha noe med dette er siste dag i ferien?
-					utStempling.Retning == "Ut" && utStempling.Type == "B2" {
-					// TODO: Kan dette være at man avslutter en lengre stempling (som både kan være ferie og avspasering)?
-					// Bruker har hatt ferie denne stemplingen
-					continue
-				}
-				if innStempling.Retning == "Inn" && innStempling.Type == "B1" && // kan dette ha noe med at dette er første dag med avspasering?
-					utStempling.Retning == "B5" && utStempling.Type == "B5" {
-					// TODO: Denne slår ut på dager man har ferie også!
-					// Bruker har avspasert denne stemplingen
-					continue
-				}
-
-				return nil, fmt.Errorf("did not get expected direction or type, expected 'Inn' and 'B1', got direction=%v, type=%v", innStempling.Retning, innStempling.Type)
+				return nil, fmt.Errorf("did not get expected direction or type, got inn{direction=%v, type=%v} and out{direction=%v, type=%v}", innStempling.Retning, innStempling.Type, utStempling.Retning, utStempling.Type)
 			}
 		}
 
