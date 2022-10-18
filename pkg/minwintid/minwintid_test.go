@@ -10,7 +10,7 @@ import (
 
 func Test_formatTimesheet(t *testing.T) {
 	type args struct {
-		days []models.Dag
+		days []Dag
 	}
 	tests := []struct {
 		name    string
@@ -19,18 +19,16 @@ func Test_formatTimesheet(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "",
+			name: "Hel dag med ikke-jobb",
 			args: args{
-				days: []models.Dag{
+				days: []Dag{
 					{
-						Dato:                 "2022-07-15T00:00:00",
-						SkjemaTid:            7,
-						SkjemaNavn:           "Heltid 0800-1500 (2018)",
-						Godkjent:             3,
-						AnsattDatoGodkjentAv: "a123456",
-						GodkjentDato:         "2022-08-01T13:17:21",
-						Virkedag:             "Virkedag",
-						Stemplinger: []models.Stempling{
+						Dato:       "2022-07-15T00:00:00",
+						SkjemaTid:  7,
+						SkjemaNavn: "Heltid 0800-1500 (2018)",
+						Godkjent:   3,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
 							{
 								StemplingTid: "2022-07-15T15:00:00",
 								Retning:      "B4",
@@ -42,7 +40,7 @@ func Test_formatTimesheet(t *testing.T) {
 								Type:         "B2",
 							},
 						},
-						Stillinger: []models.Stillinger{
+						Stillinger: []Stilling{
 							{
 								Koststed:  "855210",
 								Formal:    "000000",
@@ -71,16 +69,14 @@ func Test_formatTimesheet(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				days: []models.Dag{
+				days: []Dag{
 					{
-						Dato:                 "2022-08-02T00:00:00",
-						SkjemaTid:            7,
-						SkjemaNavn:           "Heltid 0800-1500 (2018)",
-						Godkjent:             3,
-						AnsattDatoGodkjentAv: "a123456",
-						GodkjentDato:         "2022-09-01T10:32:41",
-						Virkedag:             "Virkedag",
-						Stemplinger: []models.Stempling{
+						Dato:       "2022-08-02T00:00:00",
+						SkjemaTid:  7,
+						SkjemaNavn: "Heltid 0800-1500 (2018)",
+						Godkjent:   3,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
 							{
 								StemplingTid: "2022-08-02T14:30:11",
 								Retning:      "Ut",
@@ -112,7 +108,7 @@ func Test_formatTimesheet(t *testing.T) {
 								Type:         "B1",
 							},
 						},
-						Stillinger: []models.Stillinger{
+						Stillinger: []Stilling{
 							{
 								Koststed:  "855210",
 								Formal:    "000000",

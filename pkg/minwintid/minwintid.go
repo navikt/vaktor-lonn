@@ -63,7 +63,7 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 	return r, nil
 }
 
-func isTimesheetApproved(days []models.Dag) bool {
+func isTimesheetApproved(days []Dag) bool {
 	for _, day := range days {
 		if day.Godkjent == 0 {
 			return false
@@ -73,7 +73,7 @@ func isTimesheetApproved(days []models.Dag) bool {
 	return true
 }
 
-func isThereRegisteredVacationAtTheSameTimeAsGuardDuty(days []models.Dag, vaktplan models.Vaktplan) (bool, error) {
+func isThereRegisteredVacationAtTheSameTimeAsGuardDuty(days []Dag, vaktplan models.Vaktplan) (bool, error) {
 	for _, day := range days {
 		for _, stempling := range day.Stemplinger {
 			// TODO: Denne tar ikke høyde for planlagt ferie over lengre tid
@@ -92,7 +92,7 @@ func isThereRegisteredVacationAtTheSameTimeAsGuardDuty(days []models.Dag, vaktpl
 	return false, nil
 }
 
-func formatTimesheet(days []models.Dag) (map[string]models.TimeSheet, error) {
+func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 	timesheet := make(map[string]models.TimeSheet)
 
 	for _, day := range days {
