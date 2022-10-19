@@ -246,12 +246,12 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 			args: args{
 				day: day,
 				dutyPeriod: models.Period{
-					Begin: time.Date(1987, 7, 9, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
+					Begin: time.Date(2022, 10, 3, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 10, 3, 23, 59, 59, 0, time.UTC),
 				},
 				compPeriod: models.Period{
-					Begin: time.Date(1987, 7, 9, 9, 0, 0, 0, time.UTC),
-					End:   time.Date(1987, 7, 9, 14, 30, 0, 0, time.UTC),
+					Begin: time.Date(2022, 10, 3, 9, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 10, 3, 14, 30, 0, 0, time.UTC),
 				},
 				timesheet: []models.Clocking{
 					{
@@ -267,12 +267,12 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 			args: args{
 				day: day,
 				dutyPeriod: models.Period{
-					Begin: time.Date(1987, 7, 9, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
+					Begin: time.Date(2022, 10, 3, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 10, 3, 23, 59, 59, 0, time.UTC),
 				},
 				compPeriod: models.Period{
-					Begin: time.Date(1987, 7, 9, 9, 0, 0, 0, time.UTC),
-					End:   time.Date(1987, 7, 9, 14, 30, 0, 0, time.UTC),
+					Begin: time.Date(2022, 10, 3, 9, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 10, 3, 14, 30, 0, 0, time.UTC),
 				},
 				timesheet: []models.Clocking{
 					{
@@ -288,12 +288,12 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 			args: args{
 				day: day,
 				dutyPeriod: models.Period{
-					Begin: time.Date(1987, 7, 9, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
+					Begin: time.Date(2022, 10, 3, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 10, 3, 23, 59, 59, 0, time.UTC),
 				},
 				compPeriod: models.Period{
-					Begin: time.Date(1987, 7, 9, 9, 0, 0, 0, time.UTC),
-					End:   time.Date(1987, 7, 9, 14, 30, 0, 0, time.UTC),
+					Begin: time.Date(2022, 10, 3, 9, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 10, 3, 14, 30, 0, 0, time.UTC),
 				},
 				timesheet: []models.Clocking{
 					{
@@ -309,12 +309,12 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 			args: args{
 				day: day,
 				dutyPeriod: models.Period{
-					Begin: time.Date(1987, 7, 9, 6, 0, 0, 0, time.UTC),
-					End:   time.Date(1987, 7, 9, 9, 0, 0, 0, time.UTC),
+					Begin: time.Date(2022, 10, 3, 6, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 10, 3, 9, 0, 0, 0, time.UTC),
 				},
 				compPeriod: models.Period{
-					Begin: time.Date(1987, 7, 9, 20, 0, 0, 0, time.UTC),
-					End:   time.Date(1987, 7, 9, 23, 59, 59, 0, time.UTC),
+					Begin: time.Date(2022, 10, 3, 20, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 10, 3, 23, 59, 59, 0, time.UTC),
 				},
 				timesheet: []models.Clocking{
 					{
