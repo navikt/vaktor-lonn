@@ -48,7 +48,12 @@ func onStart(logger *zap.Logger) (endpoints.Handler, error) {
 
 func main() {
 	logger, _ := zap.NewProduction()
-	defer logger.Sync()
+	defer func(logger *zap.Logger) {
+		err := logger.Sync()
+		if err != nil {
+
+		}
+	}(logger)
 
 	logger.Info("Vaktor Lønn starting up...🚀")
 
