@@ -117,6 +117,7 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 			return nil, err
 		}
 		dutyHours.Hvilende0006 += modifier
+		dutyHours.Helgetillegg += modifier
 
 		for _, period := range periods {
 			currentDay := timesheet[day]
@@ -226,7 +227,6 @@ func createKjernetid(date time.Time, formName string) models.Period {
 	}
 }
 
-// TODO: Lag en egen test av at vi stiller klokken
 // calculateDaylightSavingTimeModifier returns either -60 or 60 minutes if $day is when the clock is advanced
 func calculateDaylightSavingTimeModifier(day string) (float64, error) {
 	date, err := time.Parse(VaktorDateFormat, day)
