@@ -607,6 +607,53 @@ func TestCalculateEarnings(t *testing.T) {
 			},
 			want: decimal.NewFromFloat(774.65),
 		},
+
+		{
+			name: "Helgevakt med utrykning",
+			args: args{
+				satser: map[string]decimal.Decimal{
+					"lørsøn":  decimal.NewFromInt(55),
+					"0620":    decimal.NewFromInt(10),
+					"2006":    decimal.NewFromInt(20),
+					"utvidet": decimal.NewFromInt(15),
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2022-09-24": {
+						Date:         time.Date(2022, 9, 24, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Lørdag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 9, 24, 20, 30, 0, 0, time.UTC),
+								Out: time.Date(2022, 9, 24, 22, 30, 0, 0, time.UTC),
+							},
+						},
+					}, "2022-09-25": {
+						Date:         time.Date(2022, 9, 25, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Søndag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
+					},
+				},
+				guardPeriod: map[string][]models.Period{
+					"2022-09-24": {
+						{
+							Begin: time.Date(2022, 9, 24, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 9, 25, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-09-25": {
+						{
+							Begin: time.Date(2022, 9, 25, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 9, 26, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			want: decimal.NewFromFloat(6_118.97),
+		},
 	}
 
 	for _, tt := range tests {
