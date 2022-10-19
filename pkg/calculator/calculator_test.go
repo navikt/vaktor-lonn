@@ -338,34 +338,70 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 
 func Test_calculateDaylightSavingTimeModifier(t *testing.T) {
 	type args struct {
-		day string
+		date    time.Time
+		periods []models.Period
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    float64
-		wantErr bool
+		name string
+		args args
+		want float64
 	}{
 		{
-			name:    "Test når vi stiller klokken tilbake (normaltid)",
-			args:    args{day: "2022-10-30"},
-			want:    60,
-			wantErr: false,
+			name: "Stiller klokken tilbake (normaltid)",
+			args: args{
+				date: time.Date(2022, 10, 30, 10, 0, 0, 0, time.UTC),
+				periods: []models.Period{
+					{
+						Begin: time.Date(2022, 10, 30, 0, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 10, 31, 0, 0, 0, 0, time.UTC),
+					},
+				},
+			},
+			want: 60,
 		},
 		{
-			name:    "Test når vi stiller klokken fremover (sommertid)",
-			args:    args{day: "2022-03-27"},
-			want:    -60,
-			wantErr: false,
+			name: "Har _ikke_ vakt når vi stiller klokken tilbake (normaltid)",
+			args: args{
+				date: time.Date(2022, 10, 30, 10, 0, 0, 0, time.UTC),
+				periods: []models.Period{
+					{
+						Begin: time.Date(2022, 10, 30, 10, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 10, 30, 20, 0, 0, 0, time.UTC),
+					},
+				},
+			},
+			want: 0,
+		},
+		{
+			name: "Stiller klokken fremover (sommertid)",
+			args: args{
+				date: time.Date(2022, 3, 27, 10, 0, 0, 0, time.UTC),
+				periods: []models.Period{
+					{
+						Begin: time.Date(2022, 3, 27, 0, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 3, 28, 0, 0, 0, 0, time.UTC),
+					},
+				},
+			},
+			want: -60,
+		},
+		{
+			name: "Har _ikke_ vakt når vi stiller klokken fremover (sommertid)",
+			args: args{
+				date: time.Date(2022, 3, 27, 10, 0, 0, 0, time.UTC),
+				periods: []models.Period{
+					{
+						Begin: time.Date(2022, 3, 27, 10, 0, 0, 0, time.UTC),
+						End:   time.Date(2022, 3, 27, 20, 0, 0, 0, time.UTC),
+					},
+				},
+			},
+			want: 0,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := calculateDaylightSavingTimeModifier(tt.args.day)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("calculateDaylightSavingTimeModifier() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got := calculateDaylightSavingTimeModifier(tt.args.periods, tt.args.date)
 			if got != tt.want {
 				t.Errorf("calculateDaylightSavingTimeModifier() got = %v, want %v", got, tt.want)
 			}

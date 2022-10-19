@@ -519,7 +519,37 @@ func TestCalculateEarnings(t *testing.T) {
 		},
 
 		{
-			name: "Utvidet beredskap",
+			name: "Vakt når klokka stilles til sommertid",
+			args: args{
+				satser: map[string]decimal.Decimal{
+					"lørsøn":  decimal.NewFromInt(55),
+					"0620":    decimal.NewFromInt(10),
+					"2006":    decimal.NewFromInt(20),
+					"utvidet": decimal.NewFromInt(15),
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2022-03-27": {
+						Date:         time.Date(2022, 3, 27, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Søndag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
+					},
+				},
+				guardPeriod: map[string][]models.Period{
+					"2022-03-27": {
+						{
+							Begin: time.Date(2022, 3, 27, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 28, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			want: decimal.NewFromFloat(3_059.49),
+		},
+
+		{
+			name: "Vakt når klokka stilles til normaltid",
 			args: args{
 				satser: map[string]decimal.Decimal{
 					"lørsøn":  decimal.NewFromInt(55),
@@ -546,6 +576,36 @@ func TestCalculateEarnings(t *testing.T) {
 				},
 			},
 			want: decimal.NewFromFloat(3_337.70),
+		},
+
+		{
+			name: "Utvidet åpningstid dagen klokka stilles til normaltid",
+			args: args{
+				satser: map[string]decimal.Decimal{
+					"lørsøn":  decimal.NewFromInt(55),
+					"0620":    decimal.NewFromInt(10),
+					"2006":    decimal.NewFromInt(20),
+					"utvidet": decimal.NewFromInt(15),
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2022-10-30": {
+						Date:         time.Date(2022, 10, 30, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Søndag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
+					},
+				},
+				guardPeriod: map[string][]models.Period{
+					"2022-10-30": {
+						{
+							Begin: time.Date(2022, 10, 30, 8, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 30, 14, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			want: decimal.NewFromFloat(774.65),
 		},
 	}
 

@@ -110,19 +110,15 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 	guardHours := map[string]models.GuardDuty{}
 
 	for day, periods := range schedule {
+		currentDay := timesheet[day]
+		date := currentDay.Date
 		dutyHours := models.GuardDuty{}
 
-		modifier, err := calculateDaylightSavingTimeModifier(day)
-		if err != nil {
-			return nil, err
-		}
+		modifier := calculateDaylightSavingTimeModifier(periods, date)
 		dutyHours.Hvilende0006 += modifier
 		dutyHours.Helgetillegg += modifier
 
 		for _, period := range periods {
-			currentDay := timesheet[day]
-			date := currentDay.Date
-
 			// sjekk om man har vakt i perioden 00-06
 			minutesWithGuardDuty := calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 				Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
@@ -228,25 +224,33 @@ func createKjernetid(date time.Time, formName string) models.Period {
 }
 
 // calculateDaylightSavingTimeModifier returns either -60 or 60 minutes if $day is when the clock is advanced
-func calculateDaylightSavingTimeModifier(day string) (float64, error) {
-	date, err := time.Parse(VaktorDateFormat, day)
-	if err != nil {
-		return 0, err
+func calculateDaylightSavingTimeModifier(periods []models.Period, date time.Time) float64 {
+	nightShift := models.Period{
+		Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
+		End:   time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
+	}
+
+	var minutes float64
+	for _, period := range periods {
+		minutes += calculateMinutesWithGuardDutyInPeriod(period, nightShift, []models.Clocking{})
+	}
+	if minutes == 0 {
+		return 0
 	}
 
 	summerTime := time.Date(date.Year(), time.March, 31, 0, 0, 0, 0, time.UTC)
 	summerTime = summerTime.AddDate(0, 0, -int(summerTime.Weekday()))
-	if summerTime.Year() == date.Year() && summerTime.YearDay() == date.YearDay() {
-		return -60, nil
+	if summerTime.YearDay() == date.YearDay() {
+		return -60
 	}
 
 	winterTime := time.Date(date.Year(), time.October, 31, 0, 0, 0, 0, time.UTC)
 	winterTime = winterTime.AddDate(0, 0, -int(winterTime.Weekday()))
-	if winterTime.Year() == date.Year() && winterTime.YearDay() == date.YearDay() {
-		return 60, nil
+	if winterTime.YearDay() == date.YearDay() {
+		return 60
 	}
 
-	return 0, nil
+	return 0
 }
 
 // calculateMinutesWithGuardDutyInPeriod return the number of minutes that you have non-working guard duty
