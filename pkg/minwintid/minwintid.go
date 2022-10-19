@@ -11,6 +11,7 @@ import (
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
 	"io"
+	"math"
 	"net/http"
 	"sort"
 	"time"
@@ -117,7 +118,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 
 		stemplinger := day.Stemplinger
 		if len(stemplinger) > 0 {
-			sort.Slice(stemplinger, func(i, j int) bool {
+			sort.SliceStable(stemplinger, func(i, j int) bool {
 				return stemplinger[i].StemplingTid < stemplinger[j].StemplingTid
 			})
 
@@ -132,6 +133,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 				if innStempling.Retning == "Inn" && innStempling.Type == "B1" {
 					// Dette er en vanlig stempling
 					if utStempling.Retning == "Ut" && utStempling.Type == "B2" {
+						// TODO: Lage en funksjon for dette, for denne er lik for alle
 						innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
 						if err != nil {
 							return nil, err
@@ -171,38 +173,58 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 							})
 							continue
 						}
-						return nil, fmt.Errorf("did not get expexted overtime clock-out, got direction=%v and type=%v", utOvertid.Retning, utOvertid.Type)
+						return nil, fmt.Errorf("did not get expected overtime clock-out, got direction=%v and type=%v", utOvertid.Retning, utOvertid.Type)
 					}
 
 					// Dette er en stempling med fravær
 					if utStempling.Retning == "Ut på fravær" && utStempling.Type == "B5" {
-						innFravar := stemplinger[0]
-						stemplinger = stemplinger[1:]
-
-						utFravar := stemplinger[0]
-						stemplinger = stemplinger[1:]
-
-						if innFravar.Retning == "Inn fra fravær" && innFravar.Type == "B4" &&
-							utFravar.Retning == "Ut" && utFravar.Type == "B2" {
-
-							innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
+						if innStempling.FravarKode == 0 && utStempling.FravarKode == models.KursSeminar {
+							date, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
 							if err != nil {
 								return nil, err
 							}
 
-							utStemplingDate, err := time.Parse(DateTimeFormat, utFravar.StemplingTid)
-							if err != nil {
-								return nil, err
-							}
+							workdayLengthRestMinutes := int(math.Mod(ts.WorkingHours, 1) * 60)
 
 							ts.Clockings = append(ts.Clockings, models.Clocking{
-								In:  innStemplingDate,
-								Out: utStemplingDate,
+								In:  date,
+								Out: time.Date(date.Year(), date.Month(), date.Day(), 15, workdayLengthRestMinutes, 0, 0, time.UTC),
 							})
 							continue
+						} else if innStempling.FravarKode == 0 && utStempling.FravarKode == models.AnnetFravarMedLonn {
+							innFravar := stemplinger[0]
+							stemplinger = stemplinger[1:]
+
+							utFravar := stemplinger[0]
+							stemplinger = stemplinger[1:]
+
+							if innFravar.Retning == "Inn fra fravær" && innFravar.Type == "B4" &&
+								utFravar.Retning == "Ut" && utFravar.Type == "B2" {
+
+								innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
+								if err != nil {
+									return nil, err
+								}
+
+								utStemplingDate, err := time.Parse(DateTimeFormat, utFravar.StemplingTid)
+								if err != nil {
+									return nil, err
+								}
+
+								ts.Clockings = append(ts.Clockings, models.Clocking{
+									In:  innStemplingDate,
+									Out: utStemplingDate,
+								})
+								continue
+							}
+
+							return nil, fmt.Errorf("did not get expected absence clock in/out, got in{direction=%v, type=%v} and out{direction=%v, type=%v}", innFravar.Retning, innFravar.Type, utFravar.Retning, utFravar.Type)
 						}
-						return nil, fmt.Errorf("did not get expexted absence clock-out, got direction=%v and type=%v", utFravar.Retning, utFravar.Type)
+
+						return nil, fmt.Errorf("unknown FravarKode(in: %v, out: %v)", innStempling.FravarKode, utStempling.FravarKode)
 					}
+
+					return nil, fmt.Errorf("unknown clocking out(direction=%v, type=%v", utStempling.Retning, utStempling.Type)
 				}
 
 				return nil, fmt.Errorf("did not get expected direction or type, got inn{direction=%v, type=%v} and out{direction=%v, type=%v}", innStempling.Retning, innStempling.Type, utStempling.Retning, utStempling.Type)

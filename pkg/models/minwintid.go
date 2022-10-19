@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+const (
+	KursSeminar        = 740
+	AnnetFravarMedLonn = 940
+)
+
 type Clocking struct {
 	In  time.Time
 	Out time.Time
