@@ -171,7 +171,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 							})
 							continue
 						}
-						// TODO: feilhåndtering
+						return nil, fmt.Errorf("did not get expexted overtime clock-out, got direction=%v and type=%v", utOvertid.Retning, utOvertid.Type)
 					}
 
 					// Dette er en stempling med fravær
@@ -201,7 +201,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 							})
 							continue
 						}
-						// TODO: feilhåndtering
+						return nil, fmt.Errorf("did not get expexted absence clock-out, got direction=%v and type=%v", utFravar.Retning, utFravar.Type)
 					}
 				}
 
