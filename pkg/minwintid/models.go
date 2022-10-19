@@ -1,11 +1,10 @@
 package minwintid
 
 type Stempling struct {
-	StemplingTid   string `json:"Stempling_Tid"`
-	Retning        string `json:"Navn"`
-	Type           string `json:"Type"`
-	FravarKode     int    `json:"Fravar_kode"`
-	FravarKodeNavn string `json:"Fravar_kode_navn"`
+	StemplingTid string `json:"Stempling_Tid"`
+	Retning      string `json:"Navn"`
+	Type         string `json:"Type"`
+	FravarKode   int    `json:"Fravar_kode"`
 }
 
 type Stilling struct {
