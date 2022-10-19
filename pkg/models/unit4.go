@@ -6,10 +6,10 @@ import (
 )
 
 const (
-	ArtskodeMorgen = "2600B"
-	ArtskodeKveld  = "2603B"
-	ArtskodeDag    = "2604B"
-	ArtskodeHelg   = "2606B"
+	ArtskodeMorgen = "2680"
+	ArtskodeKveld  = "2681"
+	ArtskodeDag    = "2682"
+	ArtskodeHelg   = "2683"
 )
 
 type Payroll struct {
