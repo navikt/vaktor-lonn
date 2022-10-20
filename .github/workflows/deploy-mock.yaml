@@ -1,7 +1,7 @@
-name: ci
+name: Deploy MWTmock
 on:
   push:
-    paths-ignore:
+    paths:
       - 'MWTmock/**'
 
 jobs:
@@ -11,15 +11,9 @@ jobs:
       image: ${{ steps.image.outputs.image }}
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
-        with:
-          go-version: '1.19'
-          check-latest: true
-          cache: true
-      - run: go test ./...
       - name: Create Docker image name:tag
         id: image
-        run: echo ::set-output name=image::"ghcr.io/${{ github.repository }}:$(date '+%Y-%m-%d')-$(git --no-pager log -1 --pretty=%h)"
+        run: echo ::set-output name=image::"ghcr.io/navikt/vaktor-mwt-mock:$(date '+%Y-%m-%d')-$(git --no-pager log -1 --pretty=%h)"
 
   docker:
     needs: test
@@ -51,11 +45,4 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: .nais/nais.yaml
-#      - name: prod-gcp
-#        if: github.ref == 'refs/heads/main'
-#        uses: nais/deploy/actions/deploy@master
-#        env:
-#          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-#          CLUSTER: prod-gcp
-#          RESOURCE: .nais/nais.yml
+          RESOURCE: MWTmock/nais.yaml
