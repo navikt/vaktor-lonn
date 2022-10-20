@@ -19,6 +19,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - uses: docker/login-action@v2
         with:
           registry: ghcr.io
@@ -26,6 +27,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v3
         with:
+          context: MWTmock
           push: true
           tags: ${{ needs.test.outputs.image }}
       - run: |
