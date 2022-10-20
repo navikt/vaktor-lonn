@@ -178,7 +178,18 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 
 					// Dette er en stempling med fravær
 					if utStempling.Retning == "Ut på fravær" && utStempling.Type == "B5" {
-						if innStempling.FravarKode == 0 && utStempling.FravarKode == models.KursSeminar {
+						innDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
+						if err != nil {
+							return nil, err
+						}
+						utDate, err := time.Parse(DateTimeFormat, utStempling.StemplingTid)
+						if err != nil {
+							return nil, err
+						}
+
+						// Dette er en heldagsstempling
+						if (innDate.Hour() == 8 && innDate.Minute() == 0 && innDate.Second() == 0) &&
+							(utDate.Hour() == 8 && utDate.Minute() == 0 && utDate.Second() == 1) {
 							date, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
 							if err != nil {
 								return nil, err
@@ -191,40 +202,40 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 								Out: time.Date(date.Year(), date.Month(), date.Day(), 15, workdayLengthRestMinutes, 0, 0, time.UTC),
 							})
 							continue
-						} else if innStempling.FravarKode == 0 && utStempling.FravarKode == models.AnnetFravarMedLonn {
-							innFravar := stemplinger[0]
-							stemplinger = stemplinger[1:]
-
-							utFravar := stemplinger[0]
-							stemplinger = stemplinger[1:]
-
-							if innFravar.Retning == "Inn fra fravær" && innFravar.Type == "B4" &&
-								utFravar.Retning == "Ut" && utFravar.Type == "B2" {
-
-								innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
-								if err != nil {
-									return nil, err
-								}
-
-								utStemplingDate, err := time.Parse(DateTimeFormat, utFravar.StemplingTid)
-								if err != nil {
-									return nil, err
-								}
-
-								ts.Clockings = append(ts.Clockings, models.Clocking{
-									In:  innStemplingDate,
-									Out: utStemplingDate,
-								})
-								continue
-							}
-
-							return nil, fmt.Errorf("did not get expected absence clock in/out, got in{direction=%v, type=%v} and out{direction=%v, type=%v}", innFravar.Retning, innFravar.Type, utFravar.Retning, utFravar.Type)
 						}
 
-						return nil, fmt.Errorf("unknown FravarKode(in: %v, out: %v)", innStempling.FravarKode, utStempling.FravarKode)
+						innFravar := stemplinger[0]
+						stemplinger = stemplinger[1:]
+
+						utFravar := stemplinger[0]
+						stemplinger = stemplinger[1:]
+
+						// Fravær i arbeidstid
+						if innFravar.Retning == "Inn fra fravær" && innFravar.Type == "B4" &&
+							utFravar.Retning == "Ut" && utFravar.Type == "B2" {
+
+							innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
+							if err != nil {
+								return nil, err
+							}
+
+							utStemplingDate, err := time.Parse(DateTimeFormat, utFravar.StemplingTid)
+							if err != nil {
+								return nil, err
+							}
+
+							ts.Clockings = append(ts.Clockings, models.Clocking{
+								In:  innStemplingDate,
+								Out: utStemplingDate,
+							})
+							continue
+
+						}
+
+						return nil, fmt.Errorf("unknown clockings(%v)", day.Stemplinger)
 					}
 
-					return nil, fmt.Errorf("unknown clocking out(direction=%v, type=%v", utStempling.Retning, utStempling.Type)
+					return nil, fmt.Errorf("unknown clocking out(direction=%v, type=%v)", utStempling.Retning, utStempling.Type)
 				}
 
 				return nil, fmt.Errorf("did not get expected direction or type, got inn{direction=%v, type=%v} and out{direction=%v, type=%v}", innStempling.Retning, innStempling.Type, utStempling.Retning, utStempling.Type)
