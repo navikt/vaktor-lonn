@@ -28,6 +28,7 @@ type TiddataResult struct {
 	VaktorNavId      string `json:"Vaktor.nav_id"`
 	VaktorResourceId string `json:"Vaktor.resource_id"`
 	VaktorLederNavId string `json:"Vaktor.leder_nav_id"`
+	VaktorLederNavn  string `json:"Vaktor.leder_navn"`
 	VaktorDager      string `json:"Vaktor.dager"`
 	Dager            []Dag
 }

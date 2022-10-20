@@ -714,8 +714,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 			var payroll *models.Payroll
 			payroll = &models.Payroll{
 				ID:         uuid.UUID{},
-				ResourceID: "123456",
-				Approver:   "Scathan",
+				ApproverID: "Scathan",
 				TypeCodes: map[string]decimal.Decimal{
 					models.ArtskodeMorgen: {},
 					models.ArtskodeDag:    {},

@@ -28,9 +28,10 @@ type TimeSheet struct {
 }
 
 type MinWinTid struct {
-	Ident      string
-	ResourceID string
-	Approver   string
-	Timesheet  map[string]TimeSheet
-	Satser     map[string]decimal.Decimal
+	Ident        string
+	ResourceID   string
+	ApproverID   string
+	ApproverName string
+	Timesheet    map[string]TimeSheet
+	Satser       map[string]decimal.Decimal
 }

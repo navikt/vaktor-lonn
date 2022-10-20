@@ -13,9 +13,9 @@ const (
 )
 
 type Payroll struct {
-	ID         uuid.UUID
-	ResourceID string
-	Approver   string
-	TypeCodes  map[string]decimal.Decimal
-	CommitSHA  string
+	ID           uuid.UUID
+	ApproverID   string                     `json:"approver_id"`
+	ApproverName string                     `json:"approver_name"`
+	TypeCodes    map[string]decimal.Decimal `json:"artskoder"`
+	CommitSHA    string                     `json:"commit_sha"`
 }
