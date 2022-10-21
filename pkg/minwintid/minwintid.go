@@ -257,7 +257,9 @@ func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll) error {
 	if err != nil {
 		return err
 	}
-	req, err := http.NewRequest(http.MethodPost, handler.VaktorPlanEndpoint, bytes.NewBuffer(body))
+
+	url := fmt.Sprintf("%v/%v", handler.VaktorPlanEndpoint, payroll.ID)
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
 	if err != nil {
 		return err
 	}
