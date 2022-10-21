@@ -25,7 +25,7 @@ func onStart(logger *zap.Logger) (endpoints.Handler, error) {
 	minWinTidEndpoint := os.Getenv("MINWINTID_ENDPOINT")
 	minWinTidUsername := os.Getenv("MINWINTID_USERNAME")
 	minWinTidPassword := os.Getenv("MINWINTID_PASSWORD")
-	minWinTidInterval := getEnv("MINWINTID_INTERVAL", "60")
+	minWinTidInterval := getEnv("MINWINTID_INTERVAL", "60m")
 	vaktorPlanEndpoint := os.Getenv("VAKTOR_PLAN_ENDPOINT")
 
 	handler, err := endpoints.NewHandler(logger, dbString, vaktorPlanEndpoint,

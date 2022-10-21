@@ -2,4 +2,4 @@ ingresses:
   - https://vaktor-lonn.dev.intern.nav.no
 env:
   - name: MINWINTID_INTERVAL
-    value: 5
+    value: 5m
