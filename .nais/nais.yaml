@@ -21,7 +21,7 @@ spec:
       value: "{{this.value}}"
   {{/each}}
   ingresses:
-  {{ #each ingresses as |url|}}
+  {{#each ingresses as |url|}}
     - {{url}}
   {{/each}}
   gcp:
