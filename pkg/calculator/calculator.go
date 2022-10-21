@@ -61,13 +61,20 @@ func calculateMinutesOverlappingInPeriods(a, b Range) float64 {
 }
 
 // timeToMinutes takes time in the format of 15:04 and converts it to minutes
-func timeToMinutes(clock time.Time) int {
-	return clock.Hour()*60 + clock.Minute()
+func timeToMinutes(hours, minutes int) int {
+	return hours*60 + minutes
 }
 
 // timeToRange takes time in the format of 15:04-15:04 and converts it to a range of minutes
-func timeToRange(workHours models.Clocking) Range {
-	return Range{timeToMinutes(workHours.In), timeToMinutes(workHours.Out)}
+func timeToRange(in, out time.Time) Range {
+	outHour := out.Hour()
+	if in.YearDay() < out.YearDay() {
+		outHour = 24
+	}
+	return Range{
+		timeToMinutes(in.Hour(), in.Minute()),
+		timeToMinutes(outHour, out.Minute()),
+	}
 }
 
 // createRangeForPeriod creates a range of minutes based on two dates. This will fit the threshold used.
@@ -84,7 +91,7 @@ func createRangeForPeriod(period, threshold models.Period) *Range {
 		Begin: threshold.Begin.Hour()*60 + threshold.Begin.Minute(),
 		End:   threshold.End.Hour()*60 + threshold.End.Minute(),
 	}
-	if threshold.End.Day() > threshold.Begin.Day() {
+	if threshold.End.YearDay() > threshold.Begin.YearDay() {
 		periodeRange.End = 24*60 + threshold.End.Minute()
 	}
 
@@ -94,7 +101,7 @@ func createRangeForPeriod(period, threshold models.Period) *Range {
 	}
 	// sjekk om vakt slutter før "normalen"
 	if period.End.Before(threshold.End) {
-		if period.End.Day() > period.Begin.Day() {
+		if period.End.YearDay() > period.Begin.YearDay() {
 			periodeRange.End = 24*60 + period.End.Minute()
 		} else {
 			periodeRange.End = period.End.Hour()*60 + period.End.Minute()
@@ -260,7 +267,7 @@ func calculateMinutesWithGuardDutyInPeriod(vaktPeriod models.Period, compPeriod 
 
 	if dutyRange != nil {
 		for _, workHours := range timesheet {
-			workRange := timeToRange(workHours)
+			workRange := timeToRange(workHours.In, workHours.Out)
 			minutesWithGuardDuty += calculateMinutesOverlappingInPeriods(workRange, *dutyRange)
 		}
 

@@ -33,7 +33,7 @@ func Test_timeToMinutes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := timeToMinutes(tt.args.clock)
+			got := timeToMinutes(tt.args.clock.Hour(), tt.args.clock.Minute())
 			if got != tt.want {
 				t.Errorf("timeToMinutes() got = %v, want %v", got, tt.want)
 			}
@@ -46,10 +46,6 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 		work   Range
 		period Range
 	}
-	periodRange := Range{
-		Begin: 06 * 60,
-		End:   20 * 60,
-	}
 	tests := []struct {
 		name string
 		args args
@@ -59,6 +55,10 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 			name: "no work done",
 			args: args{
 				work: Range{0, 0},
+				period: Range{
+					Begin: 06 * 60,
+					End:   20 * 60,
+				},
 			},
 			want: 0,
 		},
@@ -66,6 +66,10 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 			name: "worked all day long",
 			args: args{
 				work: Range{6 * 60, 20 * 60},
+				period: Range{
+					Begin: 06 * 60,
+					End:   20 * 60,
+				},
 			},
 			want: 840,
 		},
@@ -73,6 +77,10 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 			name: "some work done",
 			args: args{
 				work: Range{8 * 60, 15 * 60},
+				period: Range{
+					Begin: 06 * 60,
+					End:   20 * 60,
+				},
 			},
 			want: 420,
 		},
@@ -80,6 +88,10 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 			name: "work done late",
 			args: args{
 				work: Range{19 * 60, 21 * 60},
+				period: Range{
+					Begin: 06 * 60,
+					End:   20 * 60,
+				},
 			},
 			want: 60,
 		},
@@ -87,6 +99,10 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 			name: "work done before day",
 			args: args{
 				work: Range{3 * 60, 6 * 60},
+				period: Range{
+					Begin: 06 * 60,
+					End:   20 * 60,
+				},
 			},
 			want: 0,
 		},
@@ -94,13 +110,39 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 			name: "work done after day",
 			args: args{
 				work: Range{20 * 60, 22 * 60},
+				period: Range{
+					Begin: 06 * 60,
+					End:   20 * 60,
+				},
 			},
 			want: 0,
+		},
+		{
+			name: "work late nights",
+			args: args{
+				work: Range{23 * 60, 24 * 60},
+				period: Range{
+					Begin: 0,
+					End:   24 * 60,
+				},
+			},
+			want: 60,
+		},
+		{
+			name: "work late nights part 2",
+			args: args{
+				work: Range{0, 2 * 60},
+				period: Range{
+					Begin: 0,
+					End:   24 * 60,
+				},
+			},
+			want: 120,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := calculateMinutesOverlappingInPeriods(tt.args.work, periodRange); got != tt.want {
+			if got := calculateMinutesOverlappingInPeriods(tt.args.work, tt.args.period); got != tt.want {
 				t.Errorf("calculateMinutesOverlappingInPeriods() = %v, want %v", got, tt.want)
 			}
 		})
@@ -215,6 +257,20 @@ func Test_createRangeForPeriod(t *testing.T) {
 			},
 			want: nil,
 		},
+		{
+			name: "work at end of month",
+			args: args{
+				period: models.Period{
+					Begin: time.Date(1987, 9, 30, 20, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 10, 1, 0, 0, 0, 0, time.UTC),
+				},
+				threshold: models.Period{
+					Begin: time.Date(1987, 9, 30, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(1987, 10, 1, 0, 0, 0, 0, time.UTC),
+				},
+			},
+			want: &Range{Begin: 1200, End: 1440},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -228,13 +284,10 @@ func Test_createRangeForPeriod(t *testing.T) {
 
 func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 	type args struct {
-		day        string
 		dutyPeriod models.Period
 		compPeriod models.Period
 		timesheet  []models.Clocking
 	}
-
-	day := "2022-08-08"
 
 	tests := []struct {
 		name string
@@ -244,10 +297,9 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Vanlig arbeidsdag",
 			args: args{
-				day: day,
 				dutyPeriod: models.Period{
 					Begin: time.Date(2022, 10, 3, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 10, 3, 23, 59, 59, 0, time.UTC),
+					End:   time.Date(2022, 10, 4, 0, 0, 0, 0, time.UTC),
 				},
 				compPeriod: models.Period{
 					Begin: time.Date(2022, 10, 3, 9, 0, 0, 0, time.UTC),
@@ -265,10 +317,9 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Uvanlig kort arbeidsdag",
 			args: args{
-				day: day,
 				dutyPeriod: models.Period{
 					Begin: time.Date(2022, 10, 3, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 10, 3, 23, 59, 59, 0, time.UTC),
+					End:   time.Date(2022, 10, 4, 0, 0, 0, 0, time.UTC),
 				},
 				compPeriod: models.Period{
 					Begin: time.Date(2022, 10, 3, 9, 0, 0, 0, time.UTC),
@@ -286,10 +337,9 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Forskjøvet arbeidsdag",
 			args: args{
-				day: day,
 				dutyPeriod: models.Period{
 					Begin: time.Date(2022, 10, 3, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 10, 3, 23, 59, 59, 0, time.UTC),
+					End:   time.Date(2022, 10, 4, 0, 0, 0, 0, time.UTC),
 				},
 				compPeriod: models.Period{
 					Begin: time.Date(2022, 10, 3, 9, 0, 0, 0, time.UTC),
@@ -307,14 +357,13 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Morgenvakt",
 			args: args{
-				day: day,
 				dutyPeriod: models.Period{
 					Begin: time.Date(2022, 10, 3, 6, 0, 0, 0, time.UTC),
 					End:   time.Date(2022, 10, 3, 9, 0, 0, 0, time.UTC),
 				},
 				compPeriod: models.Period{
 					Begin: time.Date(2022, 10, 3, 20, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 10, 3, 23, 59, 59, 0, time.UTC),
+					End:   time.Date(2022, 10, 4, 0, 0, 0, 0, time.UTC),
 				},
 				timesheet: []models.Clocking{
 					{
@@ -324,6 +373,46 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 				},
 			},
 			want: 0,
+		},
+		{
+			name: "Døgnvakt med kveldsarbeid",
+			args: args{
+				dutyPeriod: models.Period{
+					Begin: time.Date(2022, 10, 3, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 10, 4, 0, 0, 0, 0, time.UTC),
+				},
+				compPeriod: models.Period{
+					Begin: time.Date(2022, 10, 3, 20, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 10, 4, 0, 0, 0, 0, time.UTC),
+				},
+				timesheet: []models.Clocking{
+					{
+						In:  time.Date(2022, 10, 3, 23, 10, 0, 0, time.UTC),
+						Out: time.Date(2022, 10, 4, 0, 0, 0, 0, time.UTC),
+					},
+				},
+			},
+			want: 190,
+		},
+		{
+			name: "Døgnvakt med kveldsarbeid ved månedskifte",
+			args: args{
+				dutyPeriod: models.Period{
+					Begin: time.Date(2022, 10, 31, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 11, 1, 0, 0, 0, 0, time.UTC),
+				},
+				compPeriod: models.Period{
+					Begin: time.Date(2022, 10, 31, 20, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 11, 1, 0, 0, 0, 0, time.UTC),
+				},
+				timesheet: []models.Clocking{
+					{
+						In:  time.Date(2022, 10, 31, 23, 10, 0, 0, time.UTC),
+						Out: time.Date(2022, 11, 1, 0, 0, 0, 0, time.UTC),
+					},
+				},
+			},
+			want: 190,
 		},
 	}
 	for _, tt := range tests {
