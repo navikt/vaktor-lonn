@@ -25,11 +25,12 @@ func onStart(logger *zap.Logger) (endpoints.Handler, error) {
 	minWinTidEndpoint := os.Getenv("MINWINTID_ENDPOINT")
 	minWinTidUsername := os.Getenv("MINWINTID_USERNAME")
 	minWinTidPassword := os.Getenv("MINWINTID_PASSWORD")
+	minWinTidInterval := getEnv("MINWINTID_INTERVAL", "60")
 	vaktorPlanEndpoint := os.Getenv("VAKTOR_PLAN_ENDPOINT")
 
 	handler, err := endpoints.NewHandler(logger, dbString, vaktorPlanEndpoint,
 		azureClientId, azureClientSecret, azureOpenIdTokenEndpoint,
-		minWinTidUsername, minWinTidPassword, minWinTidEndpoint)
+		minWinTidUsername, minWinTidPassword, minWinTidEndpoint, minWinTidInterval)
 	if err != nil {
 		return endpoints.Handler{}, err
 	}

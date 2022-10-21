@@ -15,8 +15,15 @@ spec:
       enabled: true
       allowAllUsers: false
       tenant: nav.no
+  env:
+  {{#each envs}}
+    - name: {{this.name}}
+      value: "{{this.value}}"
+  {{/each}}
   ingresses:
-    - https://vaktor-lonn.dev.intern.nav.no
+  {{ #each ingresses as |url|}}
+    - {{url}}
+  {{/each}}
   gcp:
     sqlInstances:
       - databases:

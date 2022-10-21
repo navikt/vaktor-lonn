@@ -394,7 +394,7 @@ func handleTransactions(handler endpoints.Handler) error {
 }
 
 func Run(ctx context.Context, handler endpoints.Handler) {
-	ticker := time.NewTicker(1 * time.Hour)
+	ticker := time.NewTicker(handler.MinWinTidConfig.TickerInterval)
 	defer ticker.Stop()
 
 	for {

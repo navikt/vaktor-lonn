@@ -12,9 +12,10 @@ import (
 )
 
 type minWinTidConfig struct {
-	Username string
-	Password string
-	Endpoint string
+	Username       string
+	Password       string
+	Endpoint       string
+	TickerInterval time.Duration
 }
 
 type Handler struct {
@@ -29,13 +30,18 @@ type Handler struct {
 
 func NewHandler(logger *zap.Logger, dbString, vaktorPlanEndpoint,
 	azureClientId, azureClientSecret, azureOpenIdTokenEndpoint,
-	minWinTidUsername, minWinTidPassword, minWinTidEndpoint string) (Handler, error) {
+	minWinTidUsername, minWinTidPassword, minWinTidEndpoint, minWinTidInterval string) (Handler, error) {
 	db, err := sql.Open("pgx", dbString)
 	if err != nil {
 		return Handler{}, err
 	}
 
 	bearerClient, err := auth.New(azureClientId, azureClientSecret, azureOpenIdTokenEndpoint)
+	if err != nil {
+		return Handler{}, err
+	}
+
+	minWinTidTicketInterval, err := time.ParseDuration(minWinTidInterval)
 	if err != nil {
 		return Handler{}, err
 	}
@@ -47,9 +53,10 @@ func NewHandler(logger *zap.Logger, dbString, vaktorPlanEndpoint,
 			Timeout: 10 * time.Second,
 		},
 		MinWinTidConfig: minWinTidConfig{
-			Username: minWinTidUsername,
-			Password: minWinTidPassword,
-			Endpoint: minWinTidEndpoint,
+			Username:       minWinTidUsername,
+			Password:       minWinTidPassword,
+			Endpoint:       minWinTidEndpoint,
+			TickerInterval: minWinTidTicketInterval * time.Minute,
 		},
 		Queries:            gensql.New(db),
 		Log:                logger,
