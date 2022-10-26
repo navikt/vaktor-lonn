@@ -15,6 +15,7 @@ def read_root():
 def generate_dager(fra_dato, til_dato):
     fra = datetime.strptime(fra_dato, '%Y-%m-%d')
     til = datetime.strptime(til_dato, '%Y-%m-%d')
+    salary = random.randint(400_000, 800_000)
 
     timesheet = []
     for date in (fra + timedelta(n) for n in range((til - fra).days + 1)):
@@ -55,12 +56,11 @@ def generate_dager(fra_dato, til_dato):
                     "koststed": "855210",
                     "formal": "000000",
                     "aktivitet": "000000",
-                    "RATE_K001": random.randint(400_000, 800_000),
-                    "RATE_K170": 35,
-                    "RATE_K171": 10,
-                    "RATE_K172": 20,
-                    "RATE_K160": 15,
-                    "RATE_K161": 55,
+                    "RATE_K001": salary,
+                    "RATE_K171": 15,
+                    "RATE_K172": 25,
+                    "RATE_K160": 25,
+                    "RATE_K161": 65,
                 }
             ]
         }
