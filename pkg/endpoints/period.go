@@ -33,7 +33,7 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: Hvordan kan vi validere input?
 	var plan models.Vaktplan
-	err = json.NewDecoder(r.Body).Decode(&plan)
+	err = json.Unmarshal(body, &plan)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
 		h.Log.Error("Error when decoding body from request", zap.Error(err))
