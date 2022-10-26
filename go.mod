@@ -8,7 +8,6 @@ require (
 	github.com/pressly/goose/v3 v3.7.0
 	github.com/prometheus/client_golang v1.13.0
 	github.com/shopspring/decimal v1.3.1
-	github.com/vjeantet/eastertime v1.0.0
 	go.uber.org/zap v1.23.0
 )
 
