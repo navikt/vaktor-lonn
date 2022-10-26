@@ -34,6 +34,7 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 	values.Add("ident", ident)
 	values.Add("fra_dato", periodBegin.Format(calculator.VaktorDateFormat))
 	values.Add("til_dato", periodEnd.Format(calculator.VaktorDateFormat))
+	req.URL.RawQuery = values.Encode()
 
 	backoffSchedule := []time.Duration{
 		1 * time.Second,
