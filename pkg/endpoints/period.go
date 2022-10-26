@@ -12,6 +12,13 @@ import (
 )
 
 func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			h.Log.Error("Error while closing body", zap.Error(err))
+		}
+	}(r.Body)
+
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
