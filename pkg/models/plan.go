@@ -12,10 +12,10 @@ type Period struct {
 
 type Vaktplan struct {
 	ID       uuid.UUID           `json:"id"`
-	Ident    string              `json:"ident"`
+	Ident    string              `json:"user_id"`
 	Schedule map[string][]Period `json:"schedule"`
-	Begin    time.Time
-	End      time.Time
+	Begin    time.Time           `json:"start_timestamp"`
+	End      time.Time           `json:"end_timestamp"`
 }
 
 // GuardDuty keeps track of minutes not worked in a given guard duty
