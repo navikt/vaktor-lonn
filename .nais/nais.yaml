@@ -7,6 +7,9 @@ metadata:
   namespace: navdig
 spec:
   image: {{image}}
+  replicas:
+    min: {{replicas.min}}
+    max: {{replicas.max}}
   prometheus:
     enabled: true
     path: /metrics

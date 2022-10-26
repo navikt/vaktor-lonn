@@ -3,3 +3,6 @@ ingresses:
 env:
   - name: MINWINTID_INTERVAL
     value: 5m
+replicas:
+  min: 1
+  max: 1
