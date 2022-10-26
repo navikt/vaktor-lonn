@@ -53,7 +53,7 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = fmt.Fprint(w, "Period save")
+	_, err = fmt.Fprint(w, "{\"message\":\"Period saved\"}\n")
 	if err != nil {
 		h.Log.Error("Error when returning success", zap.Error(err))
 		return
