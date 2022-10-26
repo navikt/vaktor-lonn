@@ -680,19 +680,17 @@ func Test_decodeMinWinTid(t *testing.T) {
 			name: "Heldags Kurs/Seminar",
 			args: args{
 				body: `{
-  "Vaktor.Vaktor_TiddataResponse": {
-    "Vaktor.Vaktor_TiddataResult": [
-      {
-        "Vaktor.nav_id": "123456",
-        "Vaktor.resource_id": "E123456",
-        "Vaktor.leder_resource_id": "654321",
-        "Vaktor.leder_nav_id": "M654321",
+	"Vaktor.Vaktor_TiddataResponse": {
+		"Vaktor.Vaktor_TiddataResult": [{
+			"Vaktor.nav_id": "123456",
+			"Vaktor.resource_id": "E123456",
+			"Vaktor.leder_resource_id": "654321",
+			"Vaktor.leder_nav_id": "M654321",
 			"Vaktor.leder_navn": "Kalpana, Bran",
 			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
-        "Vaktor.dager": "[{\"dato\":\"2022-05-03T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"Heltid 0800-1545 (2018)\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"m158267\",\"godkjent_dato\":\"2022-06-01T09:49:19\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-05-03T08:00:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-05-03T08:00:01\",\"Navn\":\"Ut på fravær\",\"Type\":\"B5\",\"Fravar_kode\":740,\"Fravar_kode_navn\":\"02 Kurs\/Seminar\"}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855210\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"500000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":500000,\"RATE_I143\":0,\"RATE_B100\":500000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"BDM855210\",\"user_id\":\"117355\",\"domain_info\":\"ADEO\\\\E117355\"},{\"role_id\":\"BDM855210\",\"user_id\":\"159373\",\"domain_info\":\"ADEO\\\\S159373\"},{\"role_id\":\"BDM855210\",\"user_id\":\"153469\",\"domain_info\":\"ADEO\\\\J153469\"},{\"role_id\":\"BDM855210\",\"user_id\":\"153411\",\"domain_info\":\"ADEO\\\\B153411\"},{\"role_id\":\"BDM855210\",\"user_id\":\"158267\",\"domain_info\":\"ADEO\\\\M158267\"},{\"role_id\":\"BDM855210\",\"user_id\":\"158266\",\"domain_info\":\"ADEO\\\\B158266\"},{\"role_id\":\"BDM855210\",\"user_id\":\"142793\",\"domain_info\":\"ADEO\\\\M142793\"},{\"role_id\":\"BDM855210\",\"user_id\":\"166502\",\"domain_info\":\"ADEO\\\\L166502\"},{\"role_id\":\"BDM855210\",\"user_id\":\"166501\",\"domain_info\":\"ADEO\\\\H166501\"},{\"role_id\":\"BDM855210\",\"user_id\":\"166743\",\"domain_info\":\"ADEO\\\\H166743\"},{\"role_id\":\"BDM855210\",\"user_id\":\"116514\",\"domain_info\":\"ADEO\\\\A116514\"}],\"BDM_FORMAL\":null}]}]"
-      }
-    ]
-  }
+			"Vaktor.dager": "[{\"dato\":\"2022-05-03T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"Heltid 0800-1545 (2018)\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"m158267\",\"godkjent_dato\":\"2022-06-01T09:49:19\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-05-03T08:00:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-05-03T08:00:01\",\"Navn\":\"Ut på fravær\",\"Type\":\"B5\",\"Fravar_kode\":740,\"Fravar_kode_navn\":\"02 Kurs\/Seminar\"}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855210\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"500000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":500000,\"RATE_I143\":0,\"RATE_B100\":500000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"BDM855210\",\"user_id\":\"117355\",\"domain_info\":\"ADEO\\\\E117355\"},{\"role_id\":\"BDM855210\",\"user_id\":\"159373\",\"domain_info\":\"ADEO\\\\S159373\"},{\"role_id\":\"BDM855210\",\"user_id\":\"153469\",\"domain_info\":\"ADEO\\\\J153469\"},{\"role_id\":\"BDM855210\",\"user_id\":\"153411\",\"domain_info\":\"ADEO\\\\B153411\"},{\"role_id\":\"BDM855210\",\"user_id\":\"158267\",\"domain_info\":\"ADEO\\\\M158267\"},{\"role_id\":\"BDM855210\",\"user_id\":\"158266\",\"domain_info\":\"ADEO\\\\B158266\"},{\"role_id\":\"BDM855210\",\"user_id\":\"142793\",\"domain_info\":\"ADEO\\\\M142793\"},{\"role_id\":\"BDM855210\",\"user_id\":\"166502\",\"domain_info\":\"ADEO\\\\L166502\"},{\"role_id\":\"BDM855210\",\"user_id\":\"166501\",\"domain_info\":\"ADEO\\\\H166501\"},{\"role_id\":\"BDM855210\",\"user_id\":\"166743\",\"domain_info\":\"ADEO\\\\H166743\"},{\"role_id\":\"BDM855210\",\"user_id\":\"116514\",\"domain_info\":\"ADEO\\\\A116514\"}],\"BDM_FORMAL\":null}]}]"
+		}]
+	}
 }`,
 			},
 			want: TiddataResult{
