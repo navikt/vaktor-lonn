@@ -220,6 +220,209 @@ func Test_formatTimesheet(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "Overtid over midnatt, ikke vakt dagen etterpå",
+			args: args{
+				days: []Dag{
+					{
+						Dato:       "2022-09-15T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   3,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid: "2022-09-15T08:04:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-09-15T16:26:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-09-15T23:10:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-09-15T23:31:00",
+								Retning:      "Overtid                 ",
+								Type:         "B6",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-09-16T00:32:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855210",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
+					},
+				},
+			},
+			want: map[string]models.TimeSheet{
+				"2022-09-15": {
+					Date:         time.Date(2022, 9, 15, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Salary:       decimal.NewFromInt(500_000),
+					Formal:       "000000",
+					Koststed:     "855210",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 9, 15, 8, 4, 0, 0, time.UTC),
+							Out: time.Date(2022, 9, 15, 16, 26, 0, 0, time.UTC),
+						},
+						{
+							In:  time.Date(2022, 9, 15, 23, 10, 0, 0, time.UTC),
+							Out: time.Date(2022, 9, 16, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Overtid over midnatt, med vakt påfølgende dag",
+			args: args{
+				days: []Dag{
+					{
+						Dato:       "2022-09-15T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   3,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid: "2022-09-15T08:04:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-09-15T16:26:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-09-15T23:10:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-09-15T23:31:00",
+								Retning:      "Overtid                 ",
+								Type:         "B6",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-09-16T00:32:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855210",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
+					},
+					{
+						Dato:       "2022-09-16T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   3,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid: "2022-09-16T08:04:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-09-16T15:41:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855210",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
+					},
+				},
+			},
+			want: map[string]models.TimeSheet{
+				"2022-09-15": {
+					Date:         time.Date(2022, 9, 15, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Salary:       decimal.NewFromInt(500_000),
+					Formal:       "000000",
+					Koststed:     "855210",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 9, 15, 8, 4, 0, 0, time.UTC),
+							Out: time.Date(2022, 9, 15, 16, 26, 0, 0, time.UTC),
+						},
+						{
+							In:  time.Date(2022, 9, 15, 23, 10, 0, 0, time.UTC),
+							Out: time.Date(2022, 9, 16, 0, 00, 0, 0, time.UTC),
+						},
+					},
+				},
+				"2022-09-16": {
+					Date:         time.Date(2022, 9, 16, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Salary:       decimal.NewFromInt(500_000),
+					Formal:       "000000",
+					Koststed:     "855210",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 9, 16, 0, 0, 0, 0, time.UTC),
+							Out: time.Date(2022, 9, 16, 0, 32, 0, 0, time.UTC),
+						},
+						{
+							In:  time.Date(2022, 9, 16, 8, 4, 0, 0, time.UTC),
+							Out: time.Date(2022, 9, 16, 15, 41, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

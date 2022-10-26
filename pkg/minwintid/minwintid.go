@@ -95,6 +95,7 @@ func isThereRegisteredVacationAtTheSameTimeAsGuardDuty(days []Dag, vaktplan mode
 
 func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 	timesheet := make(map[string]models.TimeSheet)
+	var nextDay []models.Clocking
 
 	for _, day := range days {
 		stemplingDate, err := time.Parse(DateTimeFormat, day.Dato)
@@ -114,6 +115,11 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 			Formal:       stillig.Formal,
 			Aktivitet:    stillig.Aktivitet,
 			Clockings:    []models.Clocking{},
+		}
+
+		if len(nextDay) != 0 {
+			ts.Clockings = append(ts.Clockings, nextDay...)
+			nextDay = []models.Clocking{}
 		}
 
 		stemplinger := day.Stemplinger
@@ -165,6 +171,17 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 							utStemplingDate, err := time.Parse(DateTimeFormat, utOvertid.StemplingTid)
 							if err != nil {
 								return nil, err
+							}
+
+							if utStemplingDate.YearDay() > innStemplingDate.YearDay() &&
+								!(utStemplingDate.Hour() == 0 && utStemplingDate.Minute() == 00) {
+								// Overtid over midnatt, flytter resten av tiden til neste dag
+								truncateOut := utStemplingDate.Truncate(24 * time.Hour)
+								nextDay = append(nextDay, models.Clocking{
+									In:  truncateOut,
+									Out: utStemplingDate,
+								})
+								utStemplingDate = truncateOut
 							}
 
 							ts.Clockings = append(ts.Clockings, models.Clocking{
