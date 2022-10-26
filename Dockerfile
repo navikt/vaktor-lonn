@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine
+FROM golang:1.19-alpine as builder
 
 WORKDIR /usr/src/app
 
@@ -8,6 +8,12 @@ RUN go mod download && go mod verify
 COPY main.go .
 COPY pkg pkg/
 
-RUN go build -v -o /usr/local/bin/app
+RUN go build -v -o /usr/src/app
+
+FROM alpine:3.16
+
+RUN apk add --no-cache ca-certificates
+
+COPY --from=builder /usr/src/app /usr/local/bin/app
 
 CMD ["app"]
