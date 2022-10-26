@@ -24,7 +24,7 @@ spec:
       value: "{{this.value}}"
   {{/each}}
   envFrom:
-    secret: vaktor-lonn
+    - secret: vaktor-lonn
   ingresses:
   {{#each ingresses as |url|}}
     - {{url}}
