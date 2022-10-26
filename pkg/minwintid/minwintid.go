@@ -93,6 +93,20 @@ func isThereRegisteredVacationAtTheSameTimeAsGuardDuty(days []Dag, vaktplan mode
 	return false, nil
 }
 
+func createClocking(innTid, utTid string) (models.Clocking, error) {
+	innStemplingDate, err := time.Parse(DateTimeFormat, innTid)
+	if err != nil {
+		return models.Clocking{}, err
+	}
+
+	utStemplingDate, err := time.Parse(DateTimeFormat, utTid)
+	if err != nil {
+		return models.Clocking{}, err
+	}
+
+	return models.Clocking{In: innStemplingDate, Out: utStemplingDate}, nil
+}
+
 func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 	timesheet := make(map[string]models.TimeSheet)
 	var nextDay []models.Clocking
@@ -129,7 +143,6 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 			})
 
 			for len(stemplinger) != 0 {
-				// TODO: Hva betyr B1 og B2?
 				innStempling := stemplinger[0]
 				stemplinger = stemplinger[1:]
 
@@ -139,21 +152,12 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 				if innStempling.Retning == "Inn" && innStempling.Type == "B1" {
 					// Dette er en vanlig stempling
 					if utStempling.Retning == "Ut" && utStempling.Type == "B2" {
-						// TODO: Lage en funksjon for dette, for denne er lik for alle
-						innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
+						clocking, err := createClocking(innStempling.StemplingTid, utStempling.StemplingTid)
 						if err != nil {
 							return nil, err
 						}
 
-						utStemplingDate, err := time.Parse(DateTimeFormat, utStempling.StemplingTid)
-						if err != nil {
-							return nil, err
-						}
-
-						ts.Clockings = append(ts.Clockings, models.Clocking{
-							In:  innStemplingDate,
-							Out: utStemplingDate,
-						})
+						ts.Clockings = append(ts.Clockings, clocking)
 						continue
 					}
 
@@ -231,20 +235,12 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 						if innFravar.Retning == "Inn fra fravær" && innFravar.Type == "B4" &&
 							utFravar.Retning == "Ut" && utFravar.Type == "B2" {
 
-							innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
+							clocking, err := createClocking(innStempling.StemplingTid, utFravar.StemplingTid)
 							if err != nil {
 								return nil, err
 							}
 
-							utStemplingDate, err := time.Parse(DateTimeFormat, utFravar.StemplingTid)
-							if err != nil {
-								return nil, err
-							}
-
-							ts.Clockings = append(ts.Clockings, models.Clocking{
-								In:  innStemplingDate,
-								Out: utStemplingDate,
-							})
+							ts.Clockings = append(ts.Clockings, clocking)
 							continue
 
 						}
