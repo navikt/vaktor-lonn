@@ -328,18 +328,6 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 		return models.Payroll{}, err
 	}
 
-	var payroll *models.Payroll
-	payroll.ID = plan.ID
-	payroll.ApproverID = minWinTid.ApproverID
-	payroll.ApproverName = minWinTid.ApproverName
-	payroll.TypeCodes = map[string]decimal.Decimal{
-		models.ArtskodeMorgen: {},
-		models.ArtskodeDag:    {},
-		models.ArtskodeKveld:  {},
-		models.ArtskodeHelg:   {},
-	}
-	payroll.CommitSHA = os.Getenv("NAIS_APP_IMAGE")
-
 	formal, err := getFormal(minWinTid.Timesheet)
 	if err != nil {
 		return models.Payroll{}, err
@@ -355,9 +343,22 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 		return models.Payroll{}, err
 	}
 
-	payroll.Formal = formal
-	payroll.Aktivitet = aktivitet
-	payroll.Koststed = koststed
+	var payroll *models.Payroll
+	payroll = &models.Payroll{
+		ID:           plan.ID,
+		ApproverID:   minWinTid.ApproverID,
+		ApproverName: minWinTid.ApproverName,
+		TypeCodes: map[string]decimal.Decimal{
+			models.ArtskodeMorgen: {},
+			models.ArtskodeDag:    {},
+			models.ArtskodeKveld:  {},
+			models.ArtskodeHelg:   {},
+		},
+		CommitSHA: os.Getenv("NAIS_APP_IMAGE"),
+		Formal:    formal,
+		Koststed:  koststed,
+		Aktivitet: aktivitet,
+	}
 
 	compensation.Calculate(minutes, minWinTid.Satser, payroll)
 	err = overtime.Calculate(minutes, minWinTid.Timesheet, payroll)
