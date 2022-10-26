@@ -8,29 +8,39 @@ package gensql
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 const createPlan = `-- name: CreatePlan :exec
 INSERT INTO beredskapsvakt
-    ("id", "ident", "plan")
-VALUES ($1, $2, $3)
+    ("id", "ident", "plan", "period_begin", "period_end")
+VALUES ($1, $2, $3, $4, $5)
 `
 
 type CreatePlanParams struct {
-	ID    uuid.UUID
-	Ident string
-	Plan  json.RawMessage
+	ID          uuid.UUID
+	Ident       string
+	Plan        json.RawMessage
+	PeriodBegin time.Time
+	PeriodEnd   time.Time
 }
 
 func (q *Queries) CreatePlan(ctx context.Context, arg CreatePlanParams) error {
-	_, err := q.db.ExecContext(ctx, createPlan, arg.ID, arg.Ident, arg.Plan)
+	_, err := q.db.ExecContext(ctx, createPlan,
+		arg.ID,
+		arg.Ident,
+		arg.Plan,
+		arg.PeriodBegin,
+		arg.PeriodEnd,
+	)
 	return err
 }
 
 const deletePlan = `-- name: DeletePlan :exec
-DELETE FROM beredskapsvakt
+DELETE
+FROM beredskapsvakt
 WHERE id = $1
 `
 

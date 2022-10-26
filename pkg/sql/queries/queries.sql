@@ -5,8 +5,8 @@ ORDER BY ident;
 
 -- name: CreatePlan :exec
 INSERT INTO beredskapsvakt
-    ("id", "ident", "plan")
-VALUES ($1, $2, $3);
+    ("id", "ident", "plan", "period_begin", "period_end")
+VALUES ($1, $2, $3, $4, $5);
 
 -- name: DeletePlan :exec
 DELETE

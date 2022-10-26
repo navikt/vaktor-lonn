@@ -41,9 +41,11 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Queries.CreatePlan(context.TODO(), gensql.CreatePlanParams{
-		ID:    plan.ID,
-		Ident: plan.Ident,
-		Plan:  body,
+		ID:          plan.ID,
+		Ident:       plan.Ident,
+		Plan:        body,
+		PeriodBegin: plan.Begin,
+		PeriodEnd:   plan.End,
 	})
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusInternalServerError)
