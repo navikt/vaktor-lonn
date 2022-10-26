@@ -5,7 +5,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func Calculate(minutes map[string]models.GuardDuty, satser map[string]decimal.Decimal, payroll models.Payroll) {
+func Calculate(minutes map[string]models.GuardDuty, satser map[string]decimal.Decimal, payroll *models.Payroll) {
 	var compensationDuty models.GuardDuty
 
 	for _, duty := range minutes {

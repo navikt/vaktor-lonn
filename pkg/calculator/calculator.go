@@ -2,13 +2,13 @@ package calculator
 
 import (
 	"fmt"
-	"github.com/navikt/vaktor-lonn/pkg/overtime"
-	"github.com/shopspring/decimal"
 	"os"
 	"time"
 
 	"github.com/navikt/vaktor-lonn/pkg/compensation"
 	"github.com/navikt/vaktor-lonn/pkg/models"
+	"github.com/navikt/vaktor-lonn/pkg/overtime"
+	"github.com/shopspring/decimal"
 )
 
 const (
@@ -277,6 +277,51 @@ func calculateMinutesWithGuardDutyInPeriod(vaktPeriod models.Period, compPeriod 
 	return minutesWithGuardDuty
 }
 
+func getFormal(timesheet map[string]models.TimeSheet) (string, error) {
+	var formal string
+	for _, period := range timesheet {
+		if formal == "" {
+			formal = period.Formal
+			continue
+		}
+		if formal != period.Formal {
+			return "", fmt.Errorf("formål has changed")
+		}
+	}
+
+	return formal, nil
+}
+
+func getAktivitet(timesheet map[string]models.TimeSheet) (string, error) {
+	var aktivitet string
+	for _, period := range timesheet {
+		if aktivitet == "" {
+			aktivitet = period.Aktivitet
+			continue
+		}
+		if aktivitet != period.Aktivitet {
+			return "", fmt.Errorf("aktivitet has changed")
+		}
+	}
+
+	return aktivitet, nil
+}
+
+func getKoststed(timesheet map[string]models.TimeSheet) (string, error) {
+	var koststed string
+	for _, period := range timesheet {
+		if koststed == "" {
+			koststed = period.Koststed
+			continue
+		}
+		if koststed != period.Koststed {
+			return "", fmt.Errorf("koststed has changed")
+		}
+	}
+
+	return koststed, nil
+}
+
 func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.Payroll, error) {
 	minutes, err := calculateMinutesToBeCompensated(plan.Schedule, minWinTid.Timesheet)
 	if err != nil {
@@ -293,13 +338,28 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 		models.ArtskodeKveld:  {},
 		models.ArtskodeHelg:   {},
 	}
+	payroll.CommitSHA = os.Getenv("NAIS_APP_IMAGE")
 
-	naisAppImage := os.Getenv("NAIS_APP_IMAGE")
-	if naisAppImage != "" {
-		payroll.CommitSHA = naisAppImage
+	formal, err := getFormal(minWinTid.Timesheet)
+	if err != nil {
+		return models.Payroll{}, err
 	}
 
-	compensation.Calculate(minutes, minWinTid.Satser, *payroll)
+	aktivitet, err := getAktivitet(minWinTid.Timesheet)
+	if err != nil {
+		return models.Payroll{}, err
+	}
+
+	koststed, err := getKoststed(minWinTid.Timesheet)
+	if err != nil {
+		return models.Payroll{}, err
+	}
+
+	payroll.Formal = formal
+	payroll.Aktivitet = aktivitet
+	payroll.Koststed = koststed
+
+	compensation.Calculate(minutes, minWinTid.Satser, payroll)
 	err = overtime.Calculate(minutes, minWinTid.Timesheet, payroll)
 	if err != nil {
 		return models.Payroll{}, err

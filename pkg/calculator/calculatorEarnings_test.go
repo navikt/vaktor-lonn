@@ -723,7 +723,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 				},
 			}
 
-			compensation.Calculate(minutes, tt.args.satser, *payroll)
+			compensation.Calculate(minutes, tt.args.satser, payroll)
 			err = overtime.Calculate(minutes, tt.args.timesheet, payroll)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("calculateEarnings() error = %v, wantErr %v", err, tt.wantErr)
