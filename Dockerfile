@@ -14,6 +14,6 @@ FROM alpine:3.16
 
 RUN apk add --no-cache ca-certificates
 
-COPY --from=builder /usr/src/lonn /app/lonn
+COPY --from=builder /usr/src/app/lonn /app/lonn
 
 CMD ["/app/lonn"]
