@@ -733,6 +733,81 @@ func Test_decodeMinWinTid(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "Heldags Kurs/Seminar",
+			args: args{
+				body: `{
+	"Vaktor.Vaktor_TiddataResponse": {
+		"Vaktor.Vaktor_TiddataResult": [{
+			"Vaktor.nav_id": "123456",
+			"Vaktor.resource_id": "E123456",
+			"Vaktor.leder_resource_id": "654321",
+			"Vaktor.leder_nav_id": "M654321",
+			"Vaktor.leder_navn": "Kalpana, Bran",
+			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
+			"Vaktor.dager": "[{\"dato\":\"2022-09-15T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"n155953\",\"godkjent_dato\":\"2022-10-03T12:28:15\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-09-15T08:04:08\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-15T16:26:15\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-15T23:10:27\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-15T23:31:51\",\"Navn\":\"Overtid                 \",\"Type\":\"B6\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-16T00:32:24\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"koststed\":\"855210\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"80\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"LO_YS\",\"TILL_LONN\":\"0\",\"RATE_K001\":500000,\"RATE_I143\":0,\"RATE_B100\":500000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"BDM855120\",\"user_id\":\"140650\",\"domain_info\":\"ADEO\\\\B140650\"},{\"role_id\":\"BDM855120\",\"user_id\":\"155953\",\"domain_info\":\"ADEO\\\\N155953\"}],\"BDM_FORMAL\":null}]}]"
+		}]
+	}
+}`,
+			},
+			want: TiddataResult{
+				VaktorNavId:      "123456",
+				VaktorResourceId: "E123456",
+				VaktorLederNavId: "M654321",
+				VaktorLederNavn:  "Kalpana, Bran",
+				VaktorDager:      "",
+				Dager: []Dag{
+					{
+						Dato:       "2022-09-15T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   3,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid: "2022-09-15T08:04:08",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-09-15T16:26:15",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-09-15T23:10:27",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-09-15T23:31:51",
+								Retning:      "Overtid                 ",
+								Type:         "B6",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-09-16T00:32:24",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855210",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {
