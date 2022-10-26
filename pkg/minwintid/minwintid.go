@@ -384,8 +384,6 @@ func handleTransactions(handler endpoints.Handler) error {
 		err = handler.Queries.DeletePlan(context.TODO(), beredskapsvakt.ID)
 		if err != nil {
 			handler.Log.Error("Failed while deleting beredskapsvakt", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
-			// TODO: Dette er litt krise, for det betyr at kjøringen fortsatt gjøres :thinking:
-			// Hvis vi kan sende den samme utregningen til Vaktor Plan så er ikke dette et like stort problem.
 			continue
 		}
 	}
