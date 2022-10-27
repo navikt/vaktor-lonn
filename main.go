@@ -4,16 +4,16 @@ import (
 	"context"
 	"database/sql"
 	"embed"
-	"github.com/navikt/vaktor-lonn/pkg/endpoints"
-	"github.com/navikt/vaktor-lonn/pkg/minwintid"
-	"go.uber.org/zap/zapcore"
 	"net/http"
 	"os"
 	"time"
 
+	"github.com/navikt/vaktor-lonn/pkg/endpoints"
+	"github.com/navikt/vaktor-lonn/pkg/minwintid"
 	"github.com/pressly/goose/v3"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 //go:embed pkg/sql/migrations/*.sql
