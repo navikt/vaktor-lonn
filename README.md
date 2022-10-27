@@ -21,6 +21,35 @@ arbeidet tid.
   arbeidsstedet_).
 - Tilleggene i §15.3 og .4 utbetales i forholdet 1/5 (se §17.1 i _Hovedtariffavtalen_).
 
+## Flyten i Vaktor
+
+```mermaid
+sequenceDiagram
+actor Vakthaver
+actor Vaktsjef
+actor Personalleder
+participant Plan as Vaktor Plan
+participant Lønn as Vaktor Lønn
+Plan-->>Plan: Endt vaktperiode
+Plan->>Vakthaver: Ber om godkjenning av periode
+Vakthaver-->>Plan: Godkjenner vaktperiode
+Plan->>Vaktsjef: Ber om godkjenning av vaktperiode
+Vaktsjef-->>Plan: Godkjenner vaktperiode
+Plan->>Lønn: Godkjent vaktperiode
+Lønn-->>Plan: Periode mottatt
+loop Every hour
+  Lønn->>MinWinTid: Ber om arbeidstid i vaktperiode
+  MinWinTid-->>Lønn: Arbeidstid
+  Lønn-->>Lønn: Sjekk om arbeidstid er godkjent av personalleder
+  Lønn-->>Lønn: Sjekk at det ikke er ferie i vaktperioden
+  Lønn-->>Lønn: Beregner utbetaling av kronetillegg og<br/>overtidstillegg for vaktperioden
+  Lønn->>Plan: Utbetaling for vaktperiode
+end
+Plan->>Personalleder: Be om godkjenning av utbetaling
+Personalleder-->>Plan: Godkjenner utbetaling av vaktperiode
+Plan->>Økonomi: Transaksjonsfil overføres via sftp
+```
+
 ## Utvikling
 
 Det er satt opp CI/CD for automatisk utrulling av kodebasen. I `dev` har vi lagd en mock av MinWinTid som automatisk
