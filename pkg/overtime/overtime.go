@@ -28,26 +28,40 @@ func Calculate(minutes map[string]models.GuardDuty, timesheet map[string]models.
 	}
 
 	overtimeWeekendOrHolidayMinutes := 0.0
-	overtimeWorkDayMinutes := 0.0
-	overtimeWorkEveningMinutes := 0.0
-	overtimeWorkMorningMinutes := 0.0
+	overtimeDayMinutes := 0.0
+	overtimeEveningMinutes := 0.0
+	overtimeMorningMinutes := 0.0
 
 	for _, duty := range minutes {
 		if duty.WeekendOrHolidayCompensation {
 			overtimeWeekendOrHolidayMinutes += duty.Hvilende0620 + duty.Hvilende2000 + duty.Hvilende0006
 		} else {
-			overtimeWorkDayMinutes += duty.Hvilende0620
-			overtimeWorkEveningMinutes += duty.Hvilende2000
-			overtimeWorkMorningMinutes += duty.Hvilende0006
+			overtimeDayMinutes += duty.Hvilende0620
+			overtimeEveningMinutes += duty.Hvilende2000
+			overtimeMorningMinutes += duty.Hvilende0006
 		}
 	}
 
 	ots50 := salary.Div(decimal.NewFromInt(1850)).Mul(decimal.NewFromFloat(1.5))
 	ots100 := salary.Div(decimal.NewFromInt(1850)).Mul(decimal.NewFromInt(2))
 
-	payroll.TypeCodes[models.ArtskodeDag] = payroll.TypeCodes[models.ArtskodeDag].Add(decimal.NewFromFloat(overtimeWorkDayMinutes).Div(decimal.NewFromInt(60)).Mul(ots50).Div(decimal.NewFromInt(5)).Round(2))
-	payroll.TypeCodes[models.ArtskodeMorgen] = payroll.TypeCodes[models.ArtskodeMorgen].Add(decimal.NewFromFloat(overtimeWorkMorningMinutes).Div(decimal.NewFromInt(60)).Mul(ots100).Div(decimal.NewFromInt(5)).Round(2))
-	payroll.TypeCodes[models.ArtskodeKveld] = payroll.TypeCodes[models.ArtskodeKveld].Add(decimal.NewFromFloat(overtimeWorkEveningMinutes).Div(decimal.NewFromInt(60)).Mul(ots100).Div(decimal.NewFromInt(5)).Round(2))
-	payroll.TypeCodes[models.ArtskodeHelg] = payroll.TypeCodes[models.ArtskodeHelg].Add(decimal.NewFromFloat(overtimeWeekendOrHolidayMinutes).Div(decimal.NewFromInt(60)).Mul(ots100).Div(decimal.NewFromInt(5)).Round(2))
+	minutesInHour := decimal.NewFromInt(60)
+	fifthOfAnHour := decimal.NewFromInt(5)
+
+	overtimeDayHours := decimal.NewFromFloat(overtimeDayMinutes).DivRound(minutesInHour, 0)
+	overtimeDay := overtimeDayHours.Mul(ots50).Div(fifthOfAnHour).Round(2)
+	payroll.TypeCodes[models.ArtskodeDag] = payroll.TypeCodes[models.ArtskodeDag].Add(overtimeDay)
+
+	overtimeMorningHours := decimal.NewFromFloat(overtimeMorningMinutes).DivRound(minutesInHour, 0)
+	overtimeMorning := overtimeMorningHours.Mul(ots100).Div(fifthOfAnHour).Round(2)
+	payroll.TypeCodes[models.ArtskodeMorgen] = payroll.TypeCodes[models.ArtskodeMorgen].Add(overtimeMorning)
+
+	overtimeEveningHours := decimal.NewFromFloat(overtimeEveningMinutes).DivRound(minutesInHour, 0)
+	overtimeEvening := overtimeEveningHours.Mul(ots100).Div(fifthOfAnHour).Round(2)
+	payroll.TypeCodes[models.ArtskodeKveld] = payroll.TypeCodes[models.ArtskodeKveld].Add(overtimeEvening)
+
+	overtimeWeekendOrHolidayHours := decimal.NewFromFloat(overtimeWeekendOrHolidayMinutes).DivRound(minutesInHour, 0)
+	overtimeWeekendOrHoliday := overtimeWeekendOrHolidayHours.Mul(ots100).Div(fifthOfAnHour).Round(2)
+	payroll.TypeCodes[models.ArtskodeHelg] = payroll.TypeCodes[models.ArtskodeHelg].Add(overtimeWeekendOrHoliday)
 	return nil
 }
