@@ -6,8 +6,10 @@ import (
 	"embed"
 	"github.com/navikt/vaktor-lonn/pkg/endpoints"
 	"github.com/navikt/vaktor-lonn/pkg/minwintid"
+	"go.uber.org/zap/zapcore"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/pressly/goose/v3"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -48,7 +50,14 @@ func onStart(logger *zap.Logger) (endpoints.Handler, error) {
 }
 
 func main() {
-	logger, _ := zap.NewProduction()
+	config := zap.NewProductionConfig()
+	config.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout(time.RFC3339)
+	logger, err := config.Build()
+	if err != nil {
+		logger.Error("Problem building logger", zap.Error(err))
+		return
+	}
+
 	defer func(logger *zap.Logger) {
 		err := logger.Sync()
 		if err != nil {
