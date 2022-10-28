@@ -260,12 +260,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 	return timesheet, nil
 }
 
-func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll) error {
-	bearer, err := handler.BearerClient.GenerateBearerToken()
-	if err != nil {
-		return err
-	}
-
+func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll, bearerToken string) error {
 	body, err := json.Marshal(payroll)
 	if err != nil {
 		return err
@@ -278,7 +273,7 @@ func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll) error {
 	}
 
 	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
-	req.Header.Set("Authorization", fmt.Sprintf("bearer %v", bearer))
+	req.Header.Set("Authorization", fmt.Sprintf("bearer %v", bearerToken))
 
 	response, err := handler.Client.Do(req)
 	if err != nil {
@@ -324,6 +319,11 @@ func decodeMinWinTid(httpResponse *http.Response) (TiddataResult, error) {
 }
 
 func handleTransactions(handler endpoints.Handler) error {
+	bearerToken, err := handler.BearerClient.GenerateBearerToken()
+	if err != nil {
+		return err
+	}
+
 	beredskapsvakter, err := handler.Queries.ListBeredskapsvakter(handler.Context)
 	if err != nil {
 		handler.Log.Error("Failed while listing beredskapsvakter", zap.Error(err))
@@ -388,7 +388,7 @@ func handleTransactions(handler endpoints.Handler) error {
 			continue
 		}
 
-		err = postToVaktorPlan(handler, payroll)
+		err = postToVaktorPlan(handler, payroll, bearerToken)
 		if err != nil {
 			handler.Log.Error("Failed while posting to Vaktor Plan", zap.Error(err))
 			continue
