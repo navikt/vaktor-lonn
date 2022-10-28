@@ -55,7 +55,6 @@ func NewHandler(logger *zap.Logger, dbString, vaktorPlanEndpoint,
 		Client: http.Client{
 			Timeout: 10 * time.Second,
 		},
-		Context: context.Background(),
 		MinWinTidConfig: minWinTidConfig{
 			Username:       minWinTidUsername,
 			Password:       minWinTidPassword,

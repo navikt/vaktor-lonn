@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"embed"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/navikt/vaktor-lonn/pkg/endpoints"
@@ -71,6 +74,10 @@ func main() {
 		logger.Error("Problem with onStart", zap.Error(err))
 		return
 	}
+
+	context, cancel := signal.NotifyContext(context.Background(), syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	defer cancel()
+	handler.Context = context
 
 	go minwintid.Run(handler)
 
