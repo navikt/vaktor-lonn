@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"database/sql"
 	"embed"
 	"net/http"
@@ -73,7 +72,7 @@ func main() {
 		return
 	}
 
-	go minwintid.Run(context.TODO(), handler)
+	go minwintid.Run(handler)
 
 	defer func(DB *sql.DB) {
 		err := DB.Close()

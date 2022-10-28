@@ -1,6 +1,7 @@
 package endpoints
 
 import (
+	"context"
 	"database/sql"
 	"github.com/navikt/vaktor-lonn/pkg/auth"
 	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
@@ -22,6 +23,7 @@ type Handler struct {
 	BearerClient       auth.BearerClient
 	DB                 *sql.DB
 	Client             http.Client
+	Context            context.Context
 	MinWinTidConfig    minWinTidConfig
 	Queries            *gensql.Queries
 	Log                *zap.Logger
@@ -31,6 +33,7 @@ type Handler struct {
 func NewHandler(logger *zap.Logger, dbString, vaktorPlanEndpoint,
 	azureClientId, azureClientSecret, azureOpenIdTokenEndpoint,
 	minWinTidUsername, minWinTidPassword, minWinTidEndpoint, minWinTidInterval string) (Handler, error) {
+
 	db, err := sql.Open("pgx", dbString)
 	if err != nil {
 		return Handler{}, err
@@ -52,6 +55,7 @@ func NewHandler(logger *zap.Logger, dbString, vaktorPlanEndpoint,
 		Client: http.Client{
 			Timeout: 10 * time.Second,
 		},
+		Context: context.Background(),
 		MinWinTidConfig: minWinTidConfig{
 			Username:       minWinTidUsername,
 			Password:       minWinTidPassword,

@@ -2,7 +2,6 @@ package minwintid
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/navikt/vaktor-lonn/pkg/calculator"
@@ -325,7 +324,7 @@ func decodeMinWinTid(httpResponse *http.Response) (TiddataResult, error) {
 }
 
 func handleTransactions(handler endpoints.Handler) error {
-	beredskapsvakter, err := handler.Queries.ListBeredskapsvakter(context.TODO())
+	beredskapsvakter, err := handler.Queries.ListBeredskapsvakter(handler.Context)
 	if err != nil {
 		handler.Log.Error("Failed while listing beredskapsvakter", zap.Error(err))
 		return err
@@ -395,7 +394,7 @@ func handleTransactions(handler endpoints.Handler) error {
 			continue
 		}
 
-		err = handler.Queries.DeletePlan(context.TODO(), beredskapsvakt.ID)
+		err = handler.Queries.DeletePlan(handler.Context, beredskapsvakt.ID)
 		if err != nil {
 			handler.Log.Error("Failed while deleting beredskapsvakt", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
 			continue
@@ -405,13 +404,13 @@ func handleTransactions(handler endpoints.Handler) error {
 	return nil
 }
 
-func Run(ctx context.Context, handler endpoints.Handler) {
+func Run(handler endpoints.Handler) {
 	ticker := time.NewTicker(handler.MinWinTidConfig.TickerInterval)
 	defer ticker.Stop()
 
 	for {
 		select {
-		case <-ctx.Done():
+		case <-handler.Context.Done():
 			return
 		case <-ticker.C:
 			err := handleTransactions(handler)
