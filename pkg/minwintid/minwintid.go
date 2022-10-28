@@ -321,7 +321,7 @@ func decodeMinWinTid(httpResponse *http.Response) (TiddataResult, error) {
 func handleTransactions(handler endpoints.Handler) error {
 	bearerToken, err := handler.BearerClient.GenerateBearerToken()
 	if err != nil {
-		return err
+		handler.Log.Error("Problem generating bearer token", zap.Error(err))
 	}
 
 	beredskapsvakter, err := handler.Queries.ListBeredskapsvakter(handler.Context)
