@@ -264,7 +264,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll) error {
 	bearer, err := handler.BearerClient.GenerateBearerToken()
 	if err != nil {
-		handler.Log.Error("Failed while generateing bearer token, but skipping for now", zap.Error(err))
+		return err
 	}
 
 	body, err := json.Marshal(payroll)
