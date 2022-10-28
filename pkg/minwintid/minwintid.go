@@ -409,14 +409,15 @@ func Run(handler endpoints.Handler) {
 	defer ticker.Stop()
 
 	for {
+		err := handleTransactions(handler)
+		if err != nil {
+			handler.Log.Error("Failed while handling transactions", zap.Error(err))
+		}
+
 		select {
 		case <-handler.Context.Done():
 			return
 		case <-ticker.C:
-			err := handleTransactions(handler)
-			if err != nil {
-				handler.Log.Error("Failed while handling transactions", zap.Error(err))
-			}
 		}
 	}
 }
