@@ -1,6 +1,6 @@
 ingresses:
   - https://vaktor-lonn.dev.intern.nav.no
-env:
+envs:
   - name: MINWINTID_INTERVAL
     value: 5m
 replicas:
