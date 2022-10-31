@@ -105,9 +105,45 @@ func Test_formatTimesheet(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "helg med utrykning",
+			name: "helg med utrykning (liten og stor BV begrunnelse)",
 			args: args{
 				days: []Dag{
+					{
+						Dato:       "2022-09-17T00:00:00",
+						SkjemaTid:  0,
+						SkjemaNavn: "BV Lørdag IKT",
+						Godkjent:   5,
+						Virkedag:   "Lørdag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid: "2022-09-17T20:30:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid:       "2022-09-17T22:29:59",
+								Retning:            "Overtid                 ",
+								Type:               "B6",
+								FravarKode:         0,
+								OvertidBegrunnelse: "BV",
+							},
+							{
+								StemplingTid: "2022-09-17T22:30:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855210",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
+					},
 					{
 						Dato:       "2022-09-24T00:00:00",
 						SkjemaTid:  0,
@@ -122,10 +158,11 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 							{
-								StemplingTid: "2022-09-24T22:29:59",
-								Retning:      "Overtid                 ",
-								Type:         "B6",
-								FravarKode:   0,
+								StemplingTid:       "2022-09-24T22:29:59",
+								Retning:            "Overtid                 ",
+								Type:               "B6",
+								FravarKode:         0,
+								OvertidBegrunnelse: "bv",
 							},
 							{
 								StemplingTid: "2022-09-24T22:30:00",
@@ -146,6 +183,23 @@ func Test_formatTimesheet(t *testing.T) {
 				},
 			},
 			want: map[string]models.TimeSheet{
+				"2022-09-17": {
+					Date:         time.Date(2022, 9, 17, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 0,
+					WorkingDay:   "Lørdag",
+					FormName:     "BV Lørdag IKT",
+					Salary:       decimal.NewFromInt(500_000),
+					Formal:       "000000",
+					Koststed:     "855210",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 9, 17, 20, 30, 0, 0, time.UTC),
+							Out: time.Date(2022, 9, 17, 22, 30, 0, 0, time.UTC),
+							OtG: true,
+						},
+					},
+				},
 				"2022-09-24": {
 					Date:         time.Date(2022, 9, 24, 0, 0, 0, 0, time.UTC),
 					WorkingHours: 0,
@@ -159,6 +213,7 @@ func Test_formatTimesheet(t *testing.T) {
 						{
 							In:  time.Date(2022, 9, 24, 20, 30, 0, 0, time.UTC),
 							Out: time.Date(2022, 9, 24, 22, 30, 0, 0, time.UTC),
+							OtG: true,
 						},
 					},
 				},
@@ -250,10 +305,11 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 							{
-								StemplingTid: "2022-09-15T23:31:00",
-								Retning:      "Overtid                 ",
-								Type:         "B6",
-								FravarKode:   0,
+								StemplingTid:       "2022-09-15T23:31:00",
+								Retning:            "Overtid                 ",
+								Type:               "B6",
+								FravarKode:         0,
+								OvertidBegrunnelse: "BV",
 							},
 							{
 								StemplingTid: "2022-09-16T00:32:00",
@@ -291,6 +347,7 @@ func Test_formatTimesheet(t *testing.T) {
 						{
 							In:  time.Date(2022, 9, 15, 23, 10, 0, 0, time.UTC),
 							Out: time.Date(2022, 9, 16, 0, 0, 0, 0, time.UTC),
+							OtG: true,
 						},
 					},
 				},
@@ -327,10 +384,11 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 							{
-								StemplingTid: "2022-09-15T23:31:00",
-								Retning:      "Overtid                 ",
-								Type:         "B6",
-								FravarKode:   0,
+								StemplingTid:       "2022-09-15T23:31:00",
+								Retning:            "Overtid                 ",
+								Type:               "B6",
+								FravarKode:         0,
+								OvertidBegrunnelse: "BV",
 							},
 							{
 								StemplingTid: "2022-09-16T00:32:00",
@@ -397,6 +455,7 @@ func Test_formatTimesheet(t *testing.T) {
 						{
 							In:  time.Date(2022, 9, 15, 23, 10, 0, 0, time.UTC),
 							Out: time.Date(2022, 9, 16, 0, 00, 0, 0, time.UTC),
+							OtG: true,
 						},
 					},
 				},
@@ -413,6 +472,7 @@ func Test_formatTimesheet(t *testing.T) {
 						{
 							In:  time.Date(2022, 9, 16, 0, 0, 0, 0, time.UTC),
 							Out: time.Date(2022, 9, 16, 0, 32, 0, 0, time.UTC),
+							OtG: true,
 						},
 						{
 							In:  time.Date(2022, 9, 16, 8, 4, 0, 0, time.UTC),

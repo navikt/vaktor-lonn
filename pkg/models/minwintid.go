@@ -8,6 +8,7 @@ import (
 type Clocking struct {
 	In  time.Time
 	Out time.Time
+	OtG bool
 }
 
 type TimeSheet struct {

@@ -13,6 +13,7 @@ import (
 	"math"
 	"net/http"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -161,6 +162,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 						continue
 					}
 
+					// TODO: Det vil være en sjekk i Vaktor som sjekker om de gamle kodene er brukt
 					// Dette er en stempling med overtid
 					if utStempling.Retning == "Overtid                 " && utStempling.Type == "B6" {
 						utOvertid := stemplinger[0]
@@ -177,6 +179,8 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 								return nil, err
 							}
 
+							overtimeBecauseOfGuardDuty := strings.EqualFold(utStempling.OvertidBegrunnelse, "BV")
+
 							if utStemplingDate.YearDay() > innStemplingDate.YearDay() &&
 								!(utStemplingDate.Hour() == 0 && utStemplingDate.Minute() == 00) {
 								// Overtid over midnatt, flytter resten av tiden til neste dag
@@ -184,6 +188,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 								nextDay = append(nextDay, models.Clocking{
 									In:  truncateOut,
 									Out: utStemplingDate,
+									OtG: overtimeBecauseOfGuardDuty,
 								})
 								utStemplingDate = truncateOut
 							}
@@ -191,6 +196,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 							ts.Clockings = append(ts.Clockings, models.Clocking{
 								In:  innStemplingDate,
 								Out: utStemplingDate,
+								OtG: overtimeBecauseOfGuardDuty,
 							})
 							continue
 						}

@@ -20,6 +20,8 @@ arbeidet tid.
 - Man kan ikke ha vakt samtidig som man har ferie (se kommentar til §5 i avtalen om _Beredskapsvakt utenfor
   arbeidsstedet_).
 - Tilleggene i §15.3 og .4 utbetales i forholdet 1/5 (se §17.1 i _Hovedtariffavtalen_).
+- Ved overtid på grunn av vakt så vil MinWinTid betale prosent-overtidstillegget, mens Vaktor Lønn vil regne ut
+  kronetillegget. Man vil da ikke få betalt 1/5 av tillegget, men 1/1 per time.
 
 ## Flyten i Vaktor
 

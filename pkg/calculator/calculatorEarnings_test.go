@@ -627,6 +627,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 							{
 								In:  time.Date(2022, 9, 24, 20, 30, 0, 0, time.UTC),
 								Out: time.Date(2022, 9, 24, 22, 30, 0, 0, time.UTC),
+								OtG: true,
 							},
 						},
 					}, "2022-09-25": {
@@ -652,11 +653,11 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(6_118.97),
+			want: decimal.NewFromFloat(6_268.97),
 		},
 
 		{
-			name: "Helgevakt med utrykning",
+			name: "vakt en dag med utrykning",
 			args: args{
 				satser: map[string]decimal.Decimal{
 					"lørsøn":  decimal.NewFromInt(55),
@@ -665,41 +666,34 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 					"utvidet": decimal.NewFromInt(15),
 				},
 				timesheet: map[string]models.TimeSheet{
-					"2022-09-24": {
-						Date:         time.Date(2022, 9, 24, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Lørdag",
+					"2022-03-14": {
+						Date:         time.Date(2022, 3, 14, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
 						Salary:       decimal.NewFromInt(500_000),
 						Clockings: []models.Clocking{
 							{
-								In:  time.Date(2022, 9, 24, 20, 30, 0, 0, time.UTC),
-								Out: time.Date(2022, 9, 24, 22, 30, 0, 0, time.UTC),
+								In:  time.Date(2022, 3, 14, 7, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 3, 14, 15, 0, 0, 0, time.UTC),
+							},
+							{
+								In:  time.Date(2022, 3, 14, 20, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 3, 14, 22, 0, 0, 0, time.UTC),
+								OtG: true,
 							},
 						},
-					}, "2022-09-25": {
-						Date:         time.Date(2022, 9, 25, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Søndag",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings:    []models.Clocking{},
 					},
 				},
 				guardPeriod: map[string][]models.Period{
-					"2022-09-24": {
+					"2022-03-14": {
 						{
-							Begin: time.Date(2022, 9, 24, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 9, 25, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-09-25": {
-						{
-							Begin: time.Date(2022, 9, 25, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 9, 26, 0, 0, 0, 0, time.UTC),
+							Begin: time.Date(2022, 3, 14, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 15, 0, 0, 0, 0, time.UTC),
 						},
 					},
 				},
 			},
-			want: decimal.NewFromFloat(6_118.97),
+			want: decimal.NewFromFloat(1_623.36),
 		},
 	}
 
@@ -723,6 +717,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 				},
 			}
 
+			compensation.CalculateCallOut(tt.args.timesheet, tt.args.satser, payroll)
 			compensation.Calculate(minutes, tt.args.satser, payroll)
 			err = overtime.Calculate(minutes, tt.args.timesheet, payroll)
 			if (err != nil) != tt.wantErr {
