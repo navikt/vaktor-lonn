@@ -3,6 +3,8 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
+	"go.uber.org/zap"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,39 +19,46 @@ type TokenResponse struct {
 }
 
 type BearerClient struct {
-	client  *http.Client
-	request *http.Request
+	Client   *http.Client
+	Endpoint string
+	Body     string
+	Log      *zap.Logger
 }
 
-func New(clientId, clientSecret, authEndpoint string) (bc BearerClient, err error) {
-	bc.client = &http.Client{
-		Timeout: 10 * time.Second,
+func New(logger *zap.Logger, clientId, clientSecret, authEndpoint string) BearerClient {
+	values := url.Values{}
+	values.Add("client_id", clientId)
+	values.Add("client_secret", clientSecret)
+	values.Add("grant_type", "client_credentials")
+	values.Add("scope", "https://graph.microsoft.com/.default")
+
+	return BearerClient{
+		Client: &http.Client{
+			Timeout: 10 * time.Second,
+		},
+		Endpoint: authEndpoint,
+		Body:     values.Encode(),
+		Log:      logger,
 	}
-
-	body := url.Values(map[string][]string{
-		"client_id":     {clientId},
-		"client_secret": {clientSecret},
-		"grant_type":    {"client_credentials"},
-		"scope":         {"https://graph.microsoft.com/.default"}})
-
-	bc.request, err = http.NewRequest(
-		http.MethodPost,
-		authEndpoint,
-		strings.NewReader(body.Encode()))
-	if err != nil {
-		return
-	}
-
-	bc.request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	return
 }
 
 func (bc BearerClient) GenerateBearerToken() (string, error) {
-	resp, err := bc.client.Do(bc.request)
+	request, err := http.NewRequest(
+		http.MethodPost,
+		bc.Endpoint,
+		strings.NewReader(bc.Body))
+
+	resp, err := bc.Client.Do(request)
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			bc.Log.Error("Failed while closing body", zap.Error(err))
+		}
+	}(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("httpStatus: %v", resp.StatusCode)

@@ -39,18 +39,13 @@ func NewHandler(logger *zap.Logger, dbString, vaktorPlanEndpoint,
 		return Handler{}, err
 	}
 
-	bearerClient, err := auth.New(azureClientId, azureClientSecret, azureOpenIdTokenEndpoint)
-	if err != nil {
-		return Handler{}, err
-	}
-
 	minWinTidTicketInterval, err := time.ParseDuration(minWinTidInterval)
 	if err != nil {
 		return Handler{}, err
 	}
 
 	handler := Handler{
-		BearerClient: bearerClient,
+		BearerClient: auth.New(logger, azureClientId, azureClientSecret, azureOpenIdTokenEndpoint),
 		DB:           db,
 		Client: http.Client{
 			Timeout: 10 * time.Second,
