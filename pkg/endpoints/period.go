@@ -52,6 +52,7 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	h.Log.Info(fmt.Sprintf("Received period %v", plan.ID))
 	_, err = fmt.Fprint(w, "{\"message\":\"Period saved\"}\n")
 	if err != nil {
 		h.Log.Error("Error when returning success", zap.Error(err))
