@@ -231,6 +231,11 @@ func formatTimesheet(log *zap.Logger, days []Dag) (map[string]models.TimeSheet, 
 							continue
 						}
 
+						if len(stemplinger) < 2 {
+							log.Info(fmt.Sprintf("All clockings for %v", day.Dato), zap.Any("stemplinger", day.Stemplinger))
+							return nil, fmt.Errorf("there are not enough clockings for fravær: %v", stemplinger)
+						}
+
 						innFravar := stemplinger[0]
 						stemplinger = stemplinger[1:]
 
