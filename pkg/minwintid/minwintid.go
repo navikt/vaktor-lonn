@@ -108,7 +108,7 @@ func createClocking(innTid, utTid string) (models.Clocking, error) {
 	return models.Clocking{In: innStemplingDate, Out: utStemplingDate}, nil
 }
 
-func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
+func formatTimesheet(log *zap.Logger, days []Dag) (map[string]models.TimeSheet, error) {
 	timesheet := make(map[string]models.TimeSheet)
 	var nextDay []models.Clocking
 
@@ -143,7 +143,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 				return stemplinger[i].StemplingTid < stemplinger[j].StemplingTid
 			})
 
-			for len(stemplinger) != 0 {
+			for len(stemplinger) > 1 {
 				innStempling := stemplinger[0]
 				stemplinger = stemplinger[1:]
 
@@ -259,6 +259,11 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, error) {
 
 				return nil, fmt.Errorf("did not get expected direction or type, got inn{direction=%v, type=%v} and out{direction=%v, type=%v}", innStempling.Retning, innStempling.Type, utStempling.Retning, utStempling.Type)
 			}
+
+			if len(stemplinger) != 0 {
+				log.Info(fmt.Sprintf("All clockings for %v", day.Dato), zap.Any("stemplinger", day.Stemplinger))
+				return nil, fmt.Errorf("there are clockings left: %v", stemplinger)
+			}
 		}
 
 		timesheet[simpleStemplingDate] = ts
@@ -369,7 +374,7 @@ func handleTransactions(handler endpoints.Handler) error {
 			continue
 		}
 
-		timesheet, err := formatTimesheet(tiddataResult.Dager)
+		timesheet, err := formatTimesheet(handler.Log, tiddataResult.Dager)
 		if err != nil {
 			handler.Log.Error("Failed trying to format MinWinTid stemplinger", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
 			continue
