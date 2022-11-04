@@ -60,7 +60,12 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 	}
 
 	if r.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("minWinTid returned http(%v)", r.StatusCode)
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		return nil, fmt.Errorf("minWinTid returned http(%v) with body: %v", r.StatusCode, string(body))
 	}
 
 	return r, nil
@@ -286,13 +291,13 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 }
 
 func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll, bearerToken string) error {
-	body, err := json.Marshal(payroll)
+	bufferBody, err := json.Marshal(payroll)
 	if err != nil {
 		return err
 	}
 
 	url := fmt.Sprintf("%v/%v", handler.VaktorPlanEndpoint, payroll.ID)
-	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(bufferBody))
 	if err != nil {
 		return err
 	}
@@ -312,13 +317,12 @@ func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll, bearerT
 		}
 	}(response.Body)
 
-	respBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		return err
-	}
-
 	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("vaktorPlan returned http(%v) with body: %v", response.StatusCode, string(respBody))
+		body, err := io.ReadAll(response.Body)
+		if err != nil {
+			return err
+		}
+		return fmt.Errorf("vaktorPlan returned http(%v) with body: %v", response.StatusCode, string(body))
 	}
 
 	return nil
