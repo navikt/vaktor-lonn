@@ -39,13 +39,30 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Queries.CreatePlan(h.Context, gensql.CreatePlanParams{
-		ID:          plan.ID,
-		Ident:       plan.Ident,
-		Plan:        body,
-		PeriodBegin: plan.Begin,
-		PeriodEnd:   plan.End,
-	})
+	oldPlan, err := h.Queries.GetPlan(h.Context, plan.ID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusInternalServerError)
+		h.Log.Error("Error when trying to check for earlier period", zap.Error(err))
+		return
+	}
+
+	if oldPlan.Ident == "" {
+		err = h.Queries.CreatePlan(h.Context, gensql.CreatePlanParams{
+			ID:          plan.ID,
+			Ident:       plan.Ident,
+			Plan:        body,
+			PeriodBegin: plan.Begin,
+			PeriodEnd:   plan.End,
+		})
+	} else {
+		err = h.Queries.UpdatePlan(h.Context, gensql.UpdatePlanParams{
+			ID:          plan.ID,
+			Ident:       plan.Ident,
+			Plan:        body,
+			PeriodBegin: plan.Begin,
+			PeriodEnd:   plan.End,
+		})
+	}
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusInternalServerError)
 		h.Log.Error("Error when trying to save period", zap.Error(err))

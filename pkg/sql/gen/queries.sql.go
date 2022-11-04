@@ -49,6 +49,25 @@ func (q *Queries) DeletePlan(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
+const getPlan = `-- name: GetPlan :one
+SELECT id, ident, plan, period_begin, period_end
+FROM beredskapsvakt
+WHERE id = $1
+`
+
+func (q *Queries) GetPlan(ctx context.Context, id uuid.UUID) (Beredskapsvakt, error) {
+	row := q.db.QueryRowContext(ctx, getPlan, id)
+	var i Beredskapsvakt
+	err := row.Scan(
+		&i.ID,
+		&i.Ident,
+		&i.Plan,
+		&i.PeriodBegin,
+		&i.PeriodEnd,
+	)
+	return i, err
+}
+
 const listBeredskapsvakter = `-- name: ListBeredskapsvakter :many
 SELECT id, ident, plan, period_begin, period_end
 FROM beredskapsvakt
@@ -82,4 +101,32 @@ func (q *Queries) ListBeredskapsvakter(ctx context.Context) ([]Beredskapsvakt, e
 		return nil, err
 	}
 	return items, nil
+}
+
+const updatePlan = `-- name: UpdatePlan :exec
+UPDATE beredskapsvakt
+SET "ident"        = $1,
+    "plan"         = $2,
+    "period_begin" = $3,
+    "period_end"   = $4
+WHERE id = $5
+`
+
+type UpdatePlanParams struct {
+	Ident       string
+	Plan        json.RawMessage
+	PeriodBegin time.Time
+	PeriodEnd   time.Time
+	ID          uuid.UUID
+}
+
+func (q *Queries) UpdatePlan(ctx context.Context, arg UpdatePlanParams) error {
+	_, err := q.db.ExecContext(ctx, updatePlan,
+		arg.Ident,
+		arg.Plan,
+		arg.PeriodBegin,
+		arg.PeriodEnd,
+		arg.ID,
+	)
+	return err
 }
