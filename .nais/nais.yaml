@@ -6,6 +6,13 @@ metadata:
   name: vaktor-lonn
   namespace: navdig
 spec:
+  accessPolicy:
+    inbound:
+      rules:
+        - application: vaktor-plan
+    outbound:
+      rules:
+        - application: vaktor-plan
   image: {{image}}
   replicas:
     min: {{replicas.min}}
