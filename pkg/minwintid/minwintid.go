@@ -185,7 +185,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 								return nil, []zap.Field{zap.Error(err)}
 							}
 
-							overtimeBecauseOfGuardDuty := strings.EqualFold(utStempling.OvertidBegrunnelse, "BV")
+							overtimeBecauseOfGuardDuty := strings.Contains(strings.ToLower(utStempling.OvertidBegrunnelse), "bv")
 
 							if utStemplingDate.YearDay() > innStemplingDate.YearDay() &&
 								!(utStemplingDate.Hour() == 0 && utStemplingDate.Minute() == 00) {
