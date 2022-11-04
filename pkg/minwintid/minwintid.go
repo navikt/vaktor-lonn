@@ -140,7 +140,8 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 
 		stemplinger := day.Stemplinger
 		if len(stemplinger) == 1 {
-			return nil, []zap.Field{zap.Error(fmt.Errorf("there are not enough clockings")), zap.Any("stemplinger", day.Stemplinger)}
+			return nil, []zap.Field{zap.Error(fmt.Errorf("there are not enough clockings")),
+				zap.Any("stemplinger", day.Stemplinger)}
 		}
 
 		if len(stemplinger) > 0 {
@@ -205,7 +206,8 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 							})
 							continue
 						}
-						return nil, []zap.Field{zap.Error(fmt.Errorf("did not get expected overtime clock-out, got direction=%v and type=%v", utOvertid.Retning, utOvertid.Type))}
+						return nil, []zap.Field{zap.Error(fmt.Errorf("did not get expected overtime clock-out, got direction=%v and type=%v", utOvertid.Retning, utOvertid.Type)),
+							zap.Any("stemplinger", day.Stemplinger)}
 					}
 
 					// Dette er en stempling med fravær
@@ -266,10 +268,12 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 							zap.Any("stemplinger", day.Stemplinger)}
 					}
 
-					return nil, []zap.Field{zap.Error(fmt.Errorf("unknown clocking out(direction=%v, type=%v)", utStempling.Retning, utStempling.Type))}
+					return nil, []zap.Field{zap.Error(fmt.Errorf("unknown clocking out(direction=%v, type=%v)", utStempling.Retning, utStempling.Type)),
+						zap.Any("stemplinger", day.Stemplinger)}
 				}
 
-				return nil, []zap.Field{zap.Error(fmt.Errorf("did not get expected direction or type, got inn{direction=%v, type=%v} and out{direction=%v, type=%v}", innStempling.Retning, innStempling.Type, utStempling.Retning, utStempling.Type))}
+				return nil, []zap.Field{zap.Error(fmt.Errorf("did not get expected direction or type, got inn{direction=%v, type=%v} and out{direction=%v, type=%v}", innStempling.Retning, innStempling.Type, utStempling.Retning, utStempling.Type)),
+					zap.Any("stemplinger", day.Stemplinger)}
 			}
 
 			if len(stemplinger) != 0 {
