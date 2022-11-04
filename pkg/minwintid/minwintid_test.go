@@ -3,7 +3,6 @@ package minwintid
 import (
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/shopspring/decimal"
-	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"reflect"
@@ -487,7 +486,7 @@ func Test_formatTimesheet(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := formatTimesheet(&zap.Logger{}, tt.args.days)
+			got, err := formatTimesheet(tt.args.days)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("formatTimesheet() error = %v, wantErr %v", err, tt.wantErr)
 				return

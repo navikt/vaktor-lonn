@@ -20,6 +20,7 @@ import (
 const (
 	DateTimeFormat  = "2006-01-02T15:04:05"
 	fravarKodeFerie = 210
+	vaktplanId      = "vaktplanId"
 )
 
 func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd time.Time, handler endpoints.Handler) (*http.Response, error) {
@@ -108,14 +109,14 @@ func createClocking(innTid, utTid string) (models.Clocking, error) {
 	return models.Clocking{In: innStemplingDate, Out: utStemplingDate}, nil
 }
 
-func formatTimesheet(log *zap.Logger, days []Dag) (map[string]models.TimeSheet, error) {
+func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 	timesheet := make(map[string]models.TimeSheet)
 	var nextDay []models.Clocking
 
 	for _, day := range days {
 		stemplingDate, err := time.Parse(DateTimeFormat, day.Dato)
 		if err != nil {
-			return nil, err
+			return nil, []zap.Field{zap.Error(err)}
 		}
 		simpleStemplingDate := stemplingDate.Format(calculator.VaktorDateFormat)
 		stillig := day.Stillinger[0]
@@ -138,6 +139,10 @@ func formatTimesheet(log *zap.Logger, days []Dag) (map[string]models.TimeSheet, 
 		}
 
 		stemplinger := day.Stemplinger
+		if len(stemplinger) == 1 {
+			return nil, []zap.Field{zap.Error(fmt.Errorf("there are not enough clockings")), zap.Any("stemplinger", day.Stemplinger)}
+		}
+
 		if len(stemplinger) > 0 {
 			sort.SliceStable(stemplinger, func(i, j int) bool {
 				return stemplinger[i].StemplingTid < stemplinger[j].StemplingTid
@@ -155,7 +160,7 @@ func formatTimesheet(log *zap.Logger, days []Dag) (map[string]models.TimeSheet, 
 					if utStempling.Retning == "Ut" && utStempling.Type == "B2" {
 						clocking, err := createClocking(innStempling.StemplingTid, utStempling.StemplingTid)
 						if err != nil {
-							return nil, err
+							return nil, []zap.Field{zap.Error(err)}
 						}
 
 						ts.Clockings = append(ts.Clockings, clocking)
@@ -171,12 +176,12 @@ func formatTimesheet(log *zap.Logger, days []Dag) (map[string]models.TimeSheet, 
 						if utOvertid.Retning == "Ut" && utOvertid.Type == "B2" {
 							innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
 							if err != nil {
-								return nil, err
+								return nil, []zap.Field{zap.Error(err)}
 							}
 
 							utStemplingDate, err := time.Parse(DateTimeFormat, utOvertid.StemplingTid)
 							if err != nil {
-								return nil, err
+								return nil, []zap.Field{zap.Error(err)}
 							}
 
 							overtimeBecauseOfGuardDuty := strings.EqualFold(utStempling.OvertidBegrunnelse, "BV")
@@ -200,18 +205,18 @@ func formatTimesheet(log *zap.Logger, days []Dag) (map[string]models.TimeSheet, 
 							})
 							continue
 						}
-						return nil, fmt.Errorf("did not get expected overtime clock-out, got direction=%v and type=%v", utOvertid.Retning, utOvertid.Type)
+						return nil, []zap.Field{zap.Error(fmt.Errorf("did not get expected overtime clock-out, got direction=%v and type=%v", utOvertid.Retning, utOvertid.Type))}
 					}
 
 					// Dette er en stempling med fravær
 					if utStempling.Retning == "Ut på fravær" && utStempling.Type == "B5" {
 						innDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
 						if err != nil {
-							return nil, err
+							return nil, []zap.Field{zap.Error(err)}
 						}
 						utDate, err := time.Parse(DateTimeFormat, utStempling.StemplingTid)
 						if err != nil {
-							return nil, err
+							return nil, []zap.Field{zap.Error(err)}
 						}
 
 						// Dette er en heldagsstempling
@@ -219,7 +224,7 @@ func formatTimesheet(log *zap.Logger, days []Dag) (map[string]models.TimeSheet, 
 							(utDate.Hour() == 8 && utDate.Minute() == 0 && utDate.Second() == 1) {
 							date, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
 							if err != nil {
-								return nil, err
+								return nil, []zap.Field{zap.Error(err)}
 							}
 
 							workdayLengthRestMinutes := int(math.Mod(ts.WorkingHours, 1) * 60)
@@ -232,8 +237,9 @@ func formatTimesheet(log *zap.Logger, days []Dag) (map[string]models.TimeSheet, 
 						}
 
 						if len(stemplinger) < 2 {
-							log.Info(fmt.Sprintf("All clockings for %v", day.Dato), zap.Any("stemplinger", day.Stemplinger))
-							return nil, fmt.Errorf("there are not enough clockings for fravær: %v", stemplinger)
+							return nil, []zap.Field{zap.Error(fmt.Errorf("there are not enough clockings for fravær")),
+								zap.Any("stemplinger", day.Stemplinger),
+								zap.Any("stemplinger_left", stemplinger)}
 						}
 
 						innFravar := stemplinger[0]
@@ -248,7 +254,7 @@ func formatTimesheet(log *zap.Logger, days []Dag) (map[string]models.TimeSheet, 
 
 							clocking, err := createClocking(innStempling.StemplingTid, utFravar.StemplingTid)
 							if err != nil {
-								return nil, err
+								return nil, []zap.Field{zap.Error(err)}
 							}
 
 							ts.Clockings = append(ts.Clockings, clocking)
@@ -256,18 +262,19 @@ func formatTimesheet(log *zap.Logger, days []Dag) (map[string]models.TimeSheet, 
 
 						}
 
-						return nil, fmt.Errorf("unknown clockings(%v)", day.Stemplinger)
+						return nil, []zap.Field{zap.Error(fmt.Errorf("unknown clockings")),
+							zap.Any("stemplinger", day.Stemplinger)}
 					}
 
-					return nil, fmt.Errorf("unknown clocking out(direction=%v, type=%v)", utStempling.Retning, utStempling.Type)
+					return nil, []zap.Field{zap.Error(fmt.Errorf("unknown clocking out(direction=%v, type=%v)", utStempling.Retning, utStempling.Type))}
 				}
 
-				return nil, fmt.Errorf("did not get expected direction or type, got inn{direction=%v, type=%v} and out{direction=%v, type=%v}", innStempling.Retning, innStempling.Type, utStempling.Retning, utStempling.Type)
+				return nil, []zap.Field{zap.Error(fmt.Errorf("did not get expected direction or type, got inn{direction=%v, type=%v} and out{direction=%v, type=%v}", innStempling.Retning, innStempling.Type, utStempling.Retning, utStempling.Type))}
 			}
 
 			if len(stemplinger) != 0 {
-				log.Info(fmt.Sprintf("All clockings for %v", day.Dato), zap.Any("stemplinger", day.Stemplinger))
-				return nil, fmt.Errorf("there are clockings left: %v", stemplinger)
+				return nil, []zap.Field{zap.Error(fmt.Errorf("there are clockings left")),
+					zap.Any("stemplinger", day.Stemplinger)}
 			}
 		}
 
@@ -349,13 +356,14 @@ func handleTransactions(handler endpoints.Handler) error {
 	for _, beredskapsvakt := range beredskapsvakter {
 		httpResponse, err := getTimesheetFromMinWinTid(beredskapsvakt.Ident, beredskapsvakt.PeriodBegin, beredskapsvakt.PeriodEnd, handler)
 		if err != nil {
-			handler.Log.Error("Failed while retrieving data from MinWinTid", zap.Error(err))
+			handler.Log.Error("Failed while retrieving data from MinWinTid", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
 			continue
 		}
 
 		tiddataResult, err := decodeMinWinTid(httpResponse)
 		if err != nil {
-			return err
+			handler.Log.Error("Failed while decoding MinWinTid data", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
+			continue
 		}
 
 		if !isTimesheetApproved(tiddataResult.Dager) {
@@ -365,23 +373,24 @@ func handleTransactions(handler endpoints.Handler) error {
 		var vaktplan models.Vaktplan
 		err = json.Unmarshal(beredskapsvakt.Plan, &vaktplan)
 		if err != nil {
-			handler.Log.Error("Failed while unmarshaling beredskapsvaktperiode", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
+			handler.Log.Error("Failed while unmarshaling beredskapsvaktperiode", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
 			continue
 		}
 
 		vacationAtTheSameTimeAsGuardDuty, err := isThereRegisteredVacationAtTheSameTimeAsGuardDuty(tiddataResult.Dager, vaktplan)
 		if err != nil {
-			handler.Log.Error("Failed while parsing date from MinWinTid", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
+			handler.Log.Error("Failed while parsing date from MinWinTid", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
 			continue
 		}
 		if vacationAtTheSameTimeAsGuardDuty {
-			handler.Log.Info("En bruker har hatt beredskapsvakt under ferien", zap.String("vaktplanId", vaktplan.ID.String()))
+			handler.Log.Info("En bruker har hatt beredskapsvakt under ferien", zap.String(vaktplanId, vaktplan.ID.String()))
 			continue
 		}
 
-		timesheet, err := formatTimesheet(handler.Log, tiddataResult.Dager)
-		if err != nil {
-			handler.Log.Error("Failed trying to format MinWinTid stemplinger", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
+		timesheet, errFields := formatTimesheet(tiddataResult.Dager)
+		if len(errFields) != 0 {
+			errFields = append(errFields, zap.String(vaktplanId, vaktplan.ID.String()))
+			handler.Log.Error("Failed trying to format MinWinTid stemplinger", errFields...)
 			continue
 		}
 
@@ -400,19 +409,19 @@ func handleTransactions(handler endpoints.Handler) error {
 
 		payroll, err := calculator.GuarddutySalary(vaktplan, minWinTid)
 		if err != nil {
-			handler.Log.Error("Failed while calculating salary", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
+			handler.Log.Error("Failed while calculating salary", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
 			continue
 		}
 
 		err = postToVaktorPlan(handler, payroll, bearerToken)
 		if err != nil {
-			handler.Log.Error("Failed while posting to Vaktor Plan", zap.Error(err))
+			handler.Log.Error("Failed while posting to Vaktor Plan", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
 			continue
 		}
 
 		err = handler.Queries.DeletePlan(handler.Context, beredskapsvakt.ID)
 		if err != nil {
-			handler.Log.Error("Failed while deleting beredskapsvakt", zap.Error(err), zap.String("vaktplanId", vaktplan.ID.String()))
+			handler.Log.Error("Failed while deleting beredskapsvakt", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
 			continue
 		}
 	}
