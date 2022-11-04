@@ -306,6 +306,7 @@ func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll, bearerT
 	if err != nil {
 		return err
 	}
+
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
@@ -313,8 +314,13 @@ func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll, bearerT
 		}
 	}(response.Body)
 
+	respBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+
 	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("vaktorPlan returned http(%v) with body: %v", response.StatusCode, response.Body)
+		return fmt.Errorf("vaktorPlan returned http(%v) with body: %v", response.StatusCode, string(respBody))
 	}
 
 	return nil
