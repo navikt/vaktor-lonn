@@ -1,6 +1,7 @@
 package minwintid
 
 import (
+	"github.com/google/go-cmp/cmp"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/shopspring/decimal"
 	"io"
@@ -901,8 +902,10 @@ func Test_formatTimesheet(t *testing.T) {
 				t.Errorf("formatTimesheet() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("formatTimesheet() got = %v, want %v", got, tt.want)
+
+			// TODO: Denne må jeg bruke alle steder
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("formatTimesheet() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
