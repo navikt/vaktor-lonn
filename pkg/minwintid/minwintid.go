@@ -314,7 +314,7 @@ func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll, bearerT
 	}(response.Body)
 
 	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("vaktorPlan returned http(%v)", response.StatusCode)
+		return fmt.Errorf("vaktorPlan returned http(%v) with body: %v", response.StatusCode, response.Body)
 	}
 
 	return nil
