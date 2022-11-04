@@ -60,12 +60,7 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 	}
 
 	if r.StatusCode != http.StatusOK {
-		body, err := io.ReadAll(r.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		return nil, fmt.Errorf("minWinTid returned http(%v) with body: %v", r.StatusCode, string(body))
+		return nil, fmt.Errorf("minWinTid returned http(%v)", r.StatusCode)
 	}
 
 	return r, nil
