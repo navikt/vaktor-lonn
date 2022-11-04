@@ -140,7 +140,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 
 		stemplinger := day.Stemplinger
 		if len(stemplinger) == 1 {
-			return nil, []zap.Field{zap.Error(fmt.Errorf("there are not enough clockings")),
+			return nil, []zap.Field{zap.Error(fmt.Errorf("there are too few clockings")),
 				zap.Any("stemplinger", day.Stemplinger)}
 		}
 
@@ -238,34 +238,32 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 							continue
 						}
 
-						if len(stemplinger) < 2 {
-							return nil, []zap.Field{zap.Error(fmt.Errorf("there are not enough clockings for fravær")),
-								zap.Any("stemplinger", day.Stemplinger),
-								zap.Any("stemplinger_left", stemplinger)}
-						}
+						if len(stemplinger) >= 2 {
+							innFravar := stemplinger[0]
+							utFravar := stemplinger[1]
 
-						innFravar := stemplinger[0]
-						stemplinger = stemplinger[1:]
+							// Fravær i arbeidstid
+							if innFravar.Retning == "Inn fra fravær" && innFravar.Type == "B4" &&
+								utFravar.Retning == "Ut" && utFravar.Type == "B2" {
+								stemplinger = stemplinger[2:]
 
-						utFravar := stemplinger[0]
-						stemplinger = stemplinger[1:]
+								clocking, err := createClocking(innStempling.StemplingTid, utFravar.StemplingTid)
+								if err != nil {
+									return nil, []zap.Field{zap.Error(err)}
+								}
 
-						// Fravær i arbeidstid
-						if innFravar.Retning == "Inn fra fravær" && innFravar.Type == "B4" &&
-							utFravar.Retning == "Ut" && utFravar.Type == "B2" {
-
-							clocking, err := createClocking(innStempling.StemplingTid, utFravar.StemplingTid)
-							if err != nil {
-								return nil, []zap.Field{zap.Error(err)}
+								ts.Clockings = append(ts.Clockings, clocking)
+								continue
 							}
-
-							ts.Clockings = append(ts.Clockings, clocking)
-							continue
-
 						}
 
-						return nil, []zap.Field{zap.Error(fmt.Errorf("unknown clockings")),
-							zap.Any("stemplinger", day.Stemplinger)}
+						clocking, err := createClocking(innStempling.StemplingTid, utStempling.StemplingTid)
+						if err != nil {
+							return nil, []zap.Field{zap.Error(err)}
+						}
+
+						ts.Clockings = append(ts.Clockings, clocking)
+						continue
 					}
 
 					return nil, []zap.Field{zap.Error(fmt.Errorf("unknown clocking out(direction=%v, type=%v)", utStempling.Retning, utStempling.Type)),

@@ -483,6 +483,132 @@ func Test_formatTimesheet(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "Kun ut på fravær",
+			args: args{
+				days: []Dag{
+					{
+						Dato:       "2022-01-20T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   3,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid: "2022-01-20T08:09:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-01-20T14:34:00",
+								Retning:      "Ut på fravær",
+								Type:         "B5",
+								FravarKode:   470,
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855210",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
+					},
+				},
+			},
+			want: map[string]models.TimeSheet{
+				"2022-01-20": {
+					Date:         time.Date(2022, 1, 20, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Salary:       decimal.NewFromInt(500_000),
+					Formal:       "000000",
+					Koststed:     "855210",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 1, 20, 8, 9, 0, 0, time.UTC),
+							Out: time.Date(2022, 1, 20, 14, 34, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Ut på frævar, så inn igjen",
+			args: args{
+				days: []Dag{
+					{
+						Dato:       "2022-01-24T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   3,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid: "2022-01-24T08:27:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-01-24T10:01:00",
+								Retning:      "Ut på fravær",
+								Type:         "B5",
+								FravarKode:   180,
+							},
+							{
+								StemplingTid: "2022-01-24T11:27:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-01-24T15:45:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855210",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
+					},
+				},
+			},
+			want: map[string]models.TimeSheet{
+				"2022-01-24": {
+					Date:         time.Date(2022, 1, 24, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Salary:       decimal.NewFromInt(500_000),
+					Formal:       "000000",
+					Koststed:     "855210",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 1, 24, 8, 27, 0, 0, time.UTC),
+							Out: time.Date(2022, 1, 24, 10, 01, 0, 0, time.UTC),
+						},
+						{
+							In:  time.Date(2022, 1, 24, 11, 27, 0, 0, time.UTC),
+							Out: time.Date(2022, 1, 24, 15, 45, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
