@@ -1,8 +1,8 @@
 package ranges
 
 import (
+	"github.com/google/go-cmp/cmp"
 	"github.com/navikt/vaktor-lonn/pkg/models"
-	"reflect"
 	"testing"
 	"time"
 )
@@ -65,8 +65,9 @@ func TestFromTime(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := FromTime(tt.args.in, tt.args.out); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromTime() = %v, want %v", got, tt.want)
+			got := FromTime(tt.args.in, tt.args.out)
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("FromTime() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
@@ -306,8 +307,9 @@ func Test_createRangeForPeriod(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := CreateForPeriod(tt.args.period, tt.args.threshold)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("CreateRangeForPeriod() got = %v, want %v", got, tt.want)
+
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("CreateRangeForPeriod() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}

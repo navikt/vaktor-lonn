@@ -6,7 +6,6 @@ import (
 	"github.com/shopspring/decimal"
 	"io"
 	"net/http"
-	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -903,7 +902,6 @@ func Test_formatTimesheet(t *testing.T) {
 				return
 			}
 
-			// TODO: Denne må jeg bruke alle steder
 			if diff := cmp.Diff(tt.want, got); diff != "" {
 				t.Errorf("formatTimesheet() mismatch (-want +got):\n%s", diff)
 			}
@@ -1294,8 +1292,8 @@ func Test_decodeMinWinTid(t *testing.T) {
 				t.Errorf("decodeMinWinTid() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("decodeMinWinTid() got = %v, want %v", got, tt.want)
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("decodeMinWinTid() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
