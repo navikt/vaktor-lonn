@@ -362,6 +362,10 @@ func decodeMinWinTid(httpResponse *http.Response) (TiddataResult, error) {
 		return TiddataResult{}, err
 	}
 
+	sort.SliceStable(dager, func(i, j int) bool {
+		return dager[i].Dato < dager[j].Dato
+	})
+
 	result.Dager = dager
 	result.VaktorDager = ""
 
