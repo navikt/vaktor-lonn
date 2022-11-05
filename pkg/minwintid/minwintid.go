@@ -149,7 +149,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 				return stemplinger[i].StemplingTid < stemplinger[j].StemplingTid
 			})
 
-			for len(stemplinger) > 1 {
+			for len(stemplinger) >= 2 {
 				innStempling := stemplinger[0]
 				stemplinger = stemplinger[1:]
 
