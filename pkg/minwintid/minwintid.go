@@ -277,6 +277,17 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 
 					return nil, []zap.Field{zap.Error(fmt.Errorf("unknown clocking out(direction=%v, type=%v)", utStempling.Retning, utStempling.Type)),
 						zap.Any("stemplinger", day.Stemplinger)}
+				} else if innStempling.Retning == "Inn fra fravær" && innStempling.Type == "B4" {
+					// Dette er en vanlig utstempling etter fravær
+					if utStempling.Retning == "Ut" && utStempling.Type == "B2" {
+						clocking, err := createClocking(innStempling.StemplingTid, utStempling.StemplingTid)
+						if err != nil {
+							return nil, []zap.Field{zap.Error(err)}
+						}
+
+						ts.Clockings = append(ts.Clockings, clocking)
+						continue
+					}
 				}
 
 				return nil, []zap.Field{zap.Error(fmt.Errorf("did not get expected direction or type, got inn{direction=%v, type=%v} and out{direction=%v, type=%v}", innStempling.Retning, innStempling.Type, utStempling.Retning, utStempling.Type)),

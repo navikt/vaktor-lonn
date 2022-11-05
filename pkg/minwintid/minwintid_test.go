@@ -343,6 +343,61 @@ func Test_formatTimesheet(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "Inn fra fravær",
+			args: args{
+				days: []Dag{
+					{
+						Dato:       "2022-10-20T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "Heltid 0800-1545 (2018)",
+						Godkjent:   3,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid: "2022-10-20T11:12:10",
+								Retning:      "Inn fra fravær",
+								Type:         "B4",
+								FravarKode:   630,
+							},
+							{
+								StemplingTid: "2022-10-20T16:00:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855210",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
+					},
+				},
+			},
+			want: map[string]models.TimeSheet{
+				"2022-10-20": {
+					Date:         time.Date(2022, 10, 20, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "Heltid 0800-1545 (2018)",
+					Salary:       decimal.NewFromInt(500_000),
+					Formal:       "000000",
+					Koststed:     "855210",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 10, 20, 11, 12, 10, 0, time.UTC),
+							Out: time.Date(2022, 10, 20, 16, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "To overtid på natten",
 			args: args{
 				days: []Dag{
