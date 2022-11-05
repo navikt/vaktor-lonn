@@ -235,6 +235,15 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 								In:  date,
 								Out: time.Date(date.Year(), date.Month(), date.Day(), 15, workdayLengthRestMinutes, 0, 0, time.UTC),
 							})
+
+							if len(stemplinger) >= 2 {
+								innFravar := stemplinger[0]
+								utFravar := stemplinger[1]
+								if innFravar.Retning == "Inn fra fravær" && innFravar.Type == "B4" &&
+									utFravar.Retning == "Ut" && utFravar.Type == "B2" {
+									stemplinger = stemplinger[2:]
+								}
+							}
 							continue
 						}
 
