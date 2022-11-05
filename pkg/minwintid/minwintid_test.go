@@ -1015,6 +1015,350 @@ func Test_formatTimesheet(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "En tilfeldig døgnkontinuerlig vaktuke",
+			args: args{
+				days: []Dag{
+					{
+						Dato:       "2022-10-05T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   2,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid:       "2022-10-05T07:21:42",
+								Retning:            "Inn",
+								Type:               "B1",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+							{
+								StemplingTid:       "2022-10-05T15:24:14",
+								Retning:            "Ut",
+								Type:               "B2",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
+							},
+						},
+					},
+					{
+						Dato:       "2022-10-06T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   2,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid:       "2022-10-06T07:13:24",
+								Retning:            "Inn",
+								Type:               "B1",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+							{
+								StemplingTid:       "2022-10-06T15:03:51",
+								Retning:            "Ut",
+								Type:               "B2",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
+							},
+						},
+					},
+					{
+						Dato:       "2022-10-07T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   2,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid:       "2022-10-07T07:18:52",
+								Retning:            "Inn",
+								Type:               "B1",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+							{
+								StemplingTid:       "2022-10-07T15:06:59",
+								Retning:            "Ut",
+								Type:               "B2",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
+							},
+						},
+					},
+					{
+						Dato:        "2022-10-08T00:00:00",
+						SkjemaTid:   0,
+						SkjemaNavn:  "BV Lørdag IKT",
+						Godkjent:    2,
+						Virkedag:    "Lørdag",
+						Stemplinger: nil,
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
+							},
+						},
+					},
+					{
+						Dato:        "2022-10-09T00:00:00",
+						SkjemaTid:   0,
+						SkjemaNavn:  "BV Søndag IKT",
+						Godkjent:    2,
+						Virkedag:    "Søndag",
+						Stemplinger: nil,
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
+							},
+						},
+					},
+					{
+						Dato:       "2022-10-10T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   2,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid:       "2022-10-10T07:18:32",
+								Retning:            "Inn",
+								Type:               "B1",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+							{
+								StemplingTid:       "2022-10-10T15:25:00",
+								Retning:            "Ut",
+								Type:               "B2",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
+							},
+						},
+					},
+					{
+						Dato:       "2022-10-11T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   2,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid:       "2022-10-11T07:09:58",
+								Retning:            "Inn",
+								Type:               "B1",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+							{
+								StemplingTid:       "2022-10-11T15:23:41",
+								Retning:            "Ut",
+								Type:               "B2",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
+							},
+						},
+					},
+					{
+						Dato:       "2022-10-12T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   2,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid:       "2022-10-12T08:00:00",
+								Retning:            "Inn",
+								Type:               "B1",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+							{
+								StemplingTid:       "2022-10-12T09:00:00",
+								Retning:            "Ut",
+								Type:               "B2",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
+							},
+						},
+					},
+				},
+			},
+			want: map[string]models.TimeSheet{
+				"2022-10-05": {
+					Date:         time.Date(2022, 10, 5, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Salary:       decimal.NewFromInt(725000),
+					Koststed:     "855130",
+					Formal:       "000000",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 10, 05, 07, 21, 42, 0, time.UTC),
+							Out: time.Date(2022, 10, 05, 15, 24, 14, 0, time.UTC),
+						},
+					},
+				},
+				"2022-10-06": {
+					Date:         time.Date(2022, 10, 6, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Salary:       decimal.NewFromInt(725000),
+					Koststed:     "855130",
+					Formal:       "000000",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 10, 06, 07, 13, 24, 0, time.UTC),
+							Out: time.Date(2022, 10, 06, 15, 03, 51, 0, time.UTC),
+						},
+					},
+				},
+				"2022-10-07": {
+					Date:         time.Date(2022, 10, 7, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Salary:       decimal.NewFromInt(725000),
+					Koststed:     "855130",
+					Formal:       "000000",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 10, 07, 07, 18, 52, 0, time.UTC),
+							Out: time.Date(2022, 10, 07, 15, 06, 59, 0, time.UTC),
+						},
+					},
+				},
+				"2022-10-08": {
+					Date:       time.Date(2022, 10, 8, 0, 0, 0, 0, time.UTC),
+					WorkingDay: "Lørdag",
+					FormName:   "BV Lørdag IKT",
+					Salary:     decimal.NewFromInt(725000),
+					Koststed:   "855130",
+					Formal:     "000000",
+					Aktivitet:  "000000",
+					Clockings:  []models.Clocking{},
+				},
+				"2022-10-09": {
+					Date:       time.Date(2022, 10, 9, 0, 0, 0, 0, time.UTC),
+					WorkingDay: "Søndag",
+					FormName:   "BV Søndag IKT",
+					Salary:     decimal.NewFromInt(725000),
+					Koststed:   "855130",
+					Formal:     "000000",
+					Aktivitet:  "000000",
+					Clockings:  []models.Clocking{},
+				},
+				"2022-10-10": {
+					Date:         time.Date(2022, 10, 10, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Salary:       decimal.NewFromInt(725000),
+					Koststed:     "855130",
+					Formal:       "000000",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 10, 10, 07, 18, 32, 0, time.UTC),
+							Out: time.Date(2022, 10, 10, 15, 25, 0, 0, time.UTC),
+						},
+					},
+				},
+				"2022-10-11": {
+					Date:         time.Date(2022, 10, 11, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Salary:       decimal.NewFromInt(725000),
+					Koststed:     "855130",
+					Formal:       "000000",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 10, 11, 7, 9, 58, 0, time.UTC),
+							Out: time.Date(2022, 10, 11, 15, 23, 41, 0, time.UTC),
+						},
+					},
+				},
+				"2022-10-12": {
+					Date:         time.Date(2022, 10, 12, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Salary:       decimal.NewFromInt(725000),
+					Koststed:     "855130",
+					Formal:       "000000",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 10, 12, 8, 0, 0, 0, time.UTC),
+							Out: time.Date(2022, 10, 12, 9, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1394,6 +1738,252 @@ func Test_decodeMinWinTid(t *testing.T) {
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
+							},
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "En tilfeldig døgnkontinuerlig vaktuke",
+			args: args{
+				body: `{
+	"Vaktor.Vaktor_TiddataResponse": {
+		"Vaktor.Vaktor_TiddataResult": [{
+			"Vaktor.nav_id": "123456",
+			"Vaktor.resource_id": "E123456",
+			"Vaktor.leder_resource_id": "654321",
+			"Vaktor.leder_nav_id": "M654321",
+			"Vaktor.leder_navn": "Kalpana, Bran",
+			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
+        	"Vaktor.dager": "[{\"dato\":\"2022-10-05T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-05T07:21:42\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-05T15:24:14\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-12T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-05T08:36:43\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-12T08:00:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-12T09:00:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-11T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-11T07:09:58\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-11T15:23:41\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-09T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Søndag IKT\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Søndag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-07T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-07T07:18:52\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-07T15:06:59\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-06T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-06T07:13:24\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-06T15:03:51\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-10T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-10T07:18:32\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-10T15:25:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-08T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Lørdag IKT\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Lørdag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"BDM855130\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
+      }]
+	}
+}`,
+			},
+			want: TiddataResult{
+				VaktorNavId:      "123456",
+				VaktorResourceId: "E123456",
+				VaktorLederNavId: "M654321",
+				VaktorLederNavn:  "Kalpana, Bran",
+				VaktorDager:      "",
+				Dager: []Dag{
+					{
+						Dato:       "2022-10-05T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   2,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid:       "2022-10-05T07:21:42",
+								Retning:            "Inn",
+								Type:               "B1",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+							{
+								StemplingTid:       "2022-10-05T15:24:14",
+								Retning:            "Ut",
+								Type:               "B2",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
+							},
+						},
+					},
+					{
+						Dato:       "2022-10-06T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   2,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid:       "2022-10-06T07:13:24",
+								Retning:            "Inn",
+								Type:               "B1",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+							{
+								StemplingTid:       "2022-10-06T15:03:51",
+								Retning:            "Ut",
+								Type:               "B2",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
+							},
+						},
+					},
+					{
+						Dato:       "2022-10-07T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   2,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid:       "2022-10-07T07:18:52",
+								Retning:            "Inn",
+								Type:               "B1",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+							{
+								StemplingTid:       "2022-10-07T15:06:59",
+								Retning:            "Ut",
+								Type:               "B2",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
+							},
+						},
+					},
+					{
+						Dato:        "2022-10-08T00:00:00",
+						SkjemaTid:   0,
+						SkjemaNavn:  "BV Lørdag IKT",
+						Godkjent:    2,
+						Virkedag:    "Lørdag",
+						Stemplinger: nil,
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
+							},
+						},
+					},
+					{
+						Dato:        "2022-10-09T00:00:00",
+						SkjemaTid:   0,
+						SkjemaNavn:  "BV Søndag IKT",
+						Godkjent:    2,
+						Virkedag:    "Søndag",
+						Stemplinger: nil,
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
+							},
+						},
+					},
+					{
+						Dato:       "2022-10-10T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   2,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid:       "2022-10-10T07:18:32",
+								Retning:            "Inn",
+								Type:               "B1",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+							{
+								StemplingTid:       "2022-10-10T15:25:00",
+								Retning:            "Ut",
+								Type:               "B2",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
+							},
+						},
+					},
+					{
+						Dato:       "2022-10-11T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   2,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid:       "2022-10-11T07:09:58",
+								Retning:            "Inn",
+								Type:               "B1",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+							{
+								StemplingTid:       "2022-10-11T15:23:41",
+								Retning:            "Ut",
+								Type:               "B2",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
+							},
+						},
+					},
+					{
+						Dato:       "2022-10-12T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   2,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid:       "2022-10-12T08:00:00",
+								Retning:            "Inn",
+								Type:               "B1",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+							{
+								StemplingTid:       "2022-10-12T09:00:00",
+								Retning:            "Ut",
+								Type:               "B2",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "855130",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  725000,
 							},
 						},
 					},

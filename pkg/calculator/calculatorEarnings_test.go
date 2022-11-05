@@ -695,6 +695,187 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 			},
 			want: decimal.NewFromFloat(1_623.36),
 		},
+
+		{
+			name: "En tilfeldig døgnkontinuerlig vaktuke",
+			args: args{
+				satser: map[string]decimal.Decimal{
+					"lørsøn":  decimal.NewFromInt(65),
+					"0620":    decimal.NewFromInt(15),
+					"2006":    decimal.NewFromInt(25),
+					"utvidet": decimal.NewFromInt(25),
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2022-10-05": {
+						Date:         time.Date(2022, 10, 5, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(725000),
+						Koststed:     "855130",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 05, 07, 21, 42, 0, time.UTC),
+								Out: time.Date(2022, 10, 05, 15, 24, 14, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-06": {
+						Date:         time.Date(2022, 10, 6, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(725000),
+						Koststed:     "855130",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 06, 07, 13, 24, 0, time.UTC),
+								Out: time.Date(2022, 10, 06, 15, 03, 51, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-07": {
+						Date:         time.Date(2022, 10, 7, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(725000),
+						Koststed:     "855130",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 07, 07, 18, 52, 0, time.UTC),
+								Out: time.Date(2022, 10, 07, 15, 06, 59, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-08": {
+						Date:       time.Date(2022, 10, 8, 0, 0, 0, 0, time.UTC),
+						WorkingDay: "Lørdag",
+						FormName:   "BV Lørdag IKT",
+						Salary:     decimal.NewFromInt(725000),
+						Koststed:   "855130",
+						Formal:     "000000",
+						Aktivitet:  "000000",
+						Clockings:  []models.Clocking{},
+					},
+					"2022-10-09": {
+						Date:       time.Date(2022, 10, 9, 0, 0, 0, 0, time.UTC),
+						WorkingDay: "Søndag",
+						FormName:   "BV Søndag IKT",
+						Salary:     decimal.NewFromInt(725000),
+						Koststed:   "855130",
+						Formal:     "000000",
+						Aktivitet:  "000000",
+						Clockings:  []models.Clocking{},
+					},
+					"2022-10-10": {
+						Date:         time.Date(2022, 10, 10, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(725000),
+						Koststed:     "855130",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 10, 07, 18, 32, 0, time.UTC),
+								Out: time.Date(2022, 10, 10, 15, 25, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-11": {
+						Date:         time.Date(2022, 10, 11, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(725000),
+						Koststed:     "855130",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 11, 7, 9, 58, 0, time.UTC),
+								Out: time.Date(2022, 10, 11, 15, 23, 41, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-12": {
+						Date:         time.Date(2022, 10, 12, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(725000),
+						Koststed:     "855130",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 12, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 12, 9, 0, 0, 0, time.UTC),
+							},
+						},
+					},
+				},
+				guardPeriod: map[string][]models.Period{
+					"2022-10-05": {
+						{
+							Begin: time.Date(2022, 10, 5, 12, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 6, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-06": {
+						{
+							Begin: time.Date(2022, 10, 6, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 7, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-07": {
+						{
+							Begin: time.Date(2022, 10, 7, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 8, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-08": {
+						{
+							Begin: time.Date(2022, 10, 8, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 9, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-09": {
+						{
+							Begin: time.Date(2022, 10, 9, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 10, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-10": {
+						{
+							Begin: time.Date(2022, 10, 10, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 11, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-11": {
+						{
+							Begin: time.Date(2022, 10, 11, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 12, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-12": {
+						{
+							Begin: time.Date(2022, 10, 12, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 12, 12, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			want: decimal.NewFromFloat(23_161.16),
+		},
 	}
 
 	for _, tt := range tests {
