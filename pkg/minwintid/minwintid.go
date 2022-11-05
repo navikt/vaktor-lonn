@@ -440,12 +440,6 @@ func handleTransactions(handler endpoints.Handler) error {
 			continue
 		}
 
-		marshal, err := json.Marshal(payroll.TypeCodes)
-		if err != nil {
-			fmt.Println(err)
-		}
-		handler.Log.Info("Skjult utregning", zap.Any(vaktplanId, marshal), zap.String(vaktplanId, vaktplan.ID.String()))
-
 		err = postToVaktorPlan(handler, payroll, bearerToken)
 		if err != nil {
 			handler.Log.Error("Failed while posting to Vaktor Plan", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
