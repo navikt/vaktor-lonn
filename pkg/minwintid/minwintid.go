@@ -7,6 +7,7 @@ import (
 	"github.com/navikt/vaktor-lonn/pkg/calculator"
 	"github.com/navikt/vaktor-lonn/pkg/endpoints"
 	"github.com/navikt/vaktor-lonn/pkg/models"
+	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
 	"io"
@@ -23,11 +24,11 @@ const (
 	vaktplanId      = "vaktplanId"
 )
 
-func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd time.Time, handler endpoints.Handler) (*http.Response, error) {
+func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd time.Time, handler endpoints.Handler) (Response, error) {
 	config := handler.MinWinTidConfig
 	req, err := http.NewRequest(http.MethodGet, config.Endpoint, nil)
 	if err != nil {
-		return nil, err
+		return Response{}, err
 	}
 
 	req.SetBasicAuth(config.Username, config.Password)
@@ -55,15 +56,21 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 		}
 
 		if err != nil {
-			return nil, err
+			return Response{}, err
 		}
 	}
 
 	if r.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("minWinTid returned http(%v)", r.StatusCode)
+		return Response{}, fmt.Errorf("minWinTid returned http(%v)", r.StatusCode)
 	}
 
-	return r, nil
+	var response Response
+	err = json.NewDecoder(r.Body).Decode(&response)
+	if err != nil {
+		return Response{}, err
+	}
+
+	return response, nil
 }
 
 func isTimesheetApproved(days []Dag) bool {
@@ -343,13 +350,7 @@ func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll, bearerT
 	return nil
 }
 
-func decodeMinWinTid(httpResponse *http.Response) (TiddataResult, error) {
-	var response Response
-	err := json.NewDecoder(httpResponse.Body).Decode(&response)
-	if err != nil {
-		return TiddataResult{}, err
-	}
-
+func decodeMinWinTid(response Response) (TiddataResult, error) {
 	results := response.VaktorVaktorTiddataResponse.VaktorVaktorTiddataResult
 	if len(results) != 1 {
 		return TiddataResult{}, fmt.Errorf("not enough data from MinWinTid, missing TiddataResult")
@@ -357,7 +358,7 @@ func decodeMinWinTid(httpResponse *http.Response) (TiddataResult, error) {
 
 	result := results[0]
 	var dager []Dag
-	err = json.Unmarshal([]byte(result.VaktorDager), &dager)
+	err := json.Unmarshal([]byte(result.VaktorDager), &dager)
 	if err != nil {
 		return TiddataResult{}, err
 	}
@@ -370,6 +371,62 @@ func decodeMinWinTid(httpResponse *http.Response) (TiddataResult, error) {
 	result.VaktorDager = ""
 
 	return result, err
+}
+
+func calculateSalary(log *zap.Logger, beredskapsvakt gensql.Beredskapsvakt, response Response) (models.Payroll, bool) {
+	tiddataResult, err := decodeMinWinTid(response)
+	if err != nil {
+		log.Error("Failed while decoding MinWinTid data", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
+		return models.Payroll{}, false
+	}
+
+	if !isTimesheetApproved(tiddataResult.Dager) {
+		return models.Payroll{}, false
+	}
+
+	var vaktplan models.Vaktplan
+	err = json.Unmarshal(beredskapsvakt.Plan, &vaktplan)
+	if err != nil {
+		log.Error("Failed while unmarshaling beredskapsvaktperiode", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
+		return models.Payroll{}, false
+	}
+
+	vacationAtTheSameTimeAsGuardDuty, err := isThereRegisteredVacationAtTheSameTimeAsGuardDuty(tiddataResult.Dager, vaktplan)
+	if err != nil {
+		log.Error("Failed while parsing date from MinWinTid", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
+		return models.Payroll{}, false
+	}
+	if vacationAtTheSameTimeAsGuardDuty {
+		log.Info("En bruker har hatt beredskapsvakt under ferien", zap.String(vaktplanId, vaktplan.ID.String()))
+		return models.Payroll{}, false
+	}
+
+	timesheet, errFields := formatTimesheet(tiddataResult.Dager)
+	if len(errFields) != 0 {
+		errFields = append(errFields, zap.String(vaktplanId, vaktplan.ID.String()))
+		log.Error("Failed trying to format MinWinTid stemplinger", errFields...)
+		return models.Payroll{}, false
+	}
+
+	minWinTid := models.MinWinTid{
+		ResourceID:   tiddataResult.VaktorNavId,
+		ApproverID:   tiddataResult.VaktorLederNavId,
+		ApproverName: tiddataResult.VaktorLederNavn,
+		Satser: map[string]decimal.Decimal{
+			"lørsøn":  decimal.NewFromInt(65),
+			"0620":    decimal.NewFromInt(15),
+			"2006":    decimal.NewFromInt(25),
+			"utvidet": decimal.NewFromInt(25),
+		},
+		Timesheet: timesheet,
+	}
+
+	payroll, err := calculator.GuarddutySalary(vaktplan, minWinTid)
+	if err != nil {
+		return models.Payroll{}, false
+	}
+
+	return payroll, true
 }
 
 func handleTransactions(handler endpoints.Handler) error {
@@ -385,74 +442,26 @@ func handleTransactions(handler endpoints.Handler) error {
 	}
 
 	for _, beredskapsvakt := range beredskapsvakter {
-		httpResponse, err := getTimesheetFromMinWinTid(beredskapsvakt.Ident, beredskapsvakt.PeriodBegin, beredskapsvakt.PeriodEnd, handler)
+		response, err := getTimesheetFromMinWinTid(beredskapsvakt.Ident, beredskapsvakt.PeriodBegin, beredskapsvakt.PeriodEnd, handler)
 		if err != nil {
 			handler.Log.Error("Failed while retrieving data from MinWinTid", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
 			continue
 		}
 
-		tiddataResult, err := decodeMinWinTid(httpResponse)
-		if err != nil {
-			handler.Log.Error("Failed while decoding MinWinTid data", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
-			continue
-		}
-
-		if !isTimesheetApproved(tiddataResult.Dager) {
-			continue
-		}
-
-		var vaktplan models.Vaktplan
-		err = json.Unmarshal(beredskapsvakt.Plan, &vaktplan)
-		if err != nil {
-			handler.Log.Error("Failed while unmarshaling beredskapsvaktperiode", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
-			continue
-		}
-
-		vacationAtTheSameTimeAsGuardDuty, err := isThereRegisteredVacationAtTheSameTimeAsGuardDuty(tiddataResult.Dager, vaktplan)
-		if err != nil {
-			handler.Log.Error("Failed while parsing date from MinWinTid", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
-			continue
-		}
-		if vacationAtTheSameTimeAsGuardDuty {
-			handler.Log.Info("En bruker har hatt beredskapsvakt under ferien", zap.String(vaktplanId, vaktplan.ID.String()))
-			continue
-		}
-
-		timesheet, errFields := formatTimesheet(tiddataResult.Dager)
-		if len(errFields) != 0 {
-			errFields = append(errFields, zap.String(vaktplanId, vaktplan.ID.String()))
-			handler.Log.Error("Failed trying to format MinWinTid stemplinger", errFields...)
-			continue
-		}
-
-		minWinTid := models.MinWinTid{
-			ResourceID:   tiddataResult.VaktorNavId,
-			ApproverID:   tiddataResult.VaktorLederNavId,
-			ApproverName: tiddataResult.VaktorLederNavn,
-			Satser: map[string]decimal.Decimal{
-				"lørsøn":  decimal.NewFromInt(65),
-				"0620":    decimal.NewFromInt(15),
-				"2006":    decimal.NewFromInt(25),
-				"utvidet": decimal.NewFromInt(25),
-			},
-			Timesheet: timesheet,
-		}
-
-		payroll, err := calculator.GuarddutySalary(vaktplan, minWinTid)
-		if err != nil {
-			handler.Log.Error("Failed while calculating salary", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
+		payroll, ok := calculateSalary(handler.Log, beredskapsvakt, response)
+		if !ok {
 			continue
 		}
 
 		err = postToVaktorPlan(handler, payroll, bearerToken)
 		if err != nil {
-			handler.Log.Error("Failed while posting to Vaktor Plan", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
+			handler.Log.Error("Failed while posting to Vaktor Plan", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
 			continue
 		}
 
 		err = handler.Queries.DeletePlan(handler.Context, beredskapsvakt.ID)
 		if err != nil {
-			handler.Log.Error("Failed while deleting beredskapsvakt", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
+			handler.Log.Error("Failed while deleting beredskapsvakt", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
 			continue
 		}
 	}
