@@ -1,6 +1,7 @@
 package calculator
 
 import (
+	"github.com/google/go-cmp/cmp"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"testing"
 	"time"
@@ -217,6 +218,122 @@ func Test_calculateDaylightSavingTimeModifier(t *testing.T) {
 			got := calculateDaylightSavingTimeModifier(tt.args.periods, tt.args.date)
 			if got != tt.want {
 				t.Errorf("calculateDaylightSavingTimeModifier() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_createKjernetid(t *testing.T) {
+	type args struct {
+		date     time.Time
+		formName string
+	}
+	tests := []struct {
+		name string
+		args args
+		want models.Period
+	}{
+		{
+			name: "Vanlig kjernetid",
+			args: args{
+				date:     time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
+				formName: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+			},
+			want: models.Period{
+				Begin: time.Date(2022, 11, 6, 9, 0, 0, 0, time.UTC),
+				End:   time.Date(2022, 11, 6, 14, 30, 0, 0, time.UTC),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := createKjernetid(tt.args.date, tt.args.formName)
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("createKjernetid() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func Test_calculateGuardDutyInKjernetid(t *testing.T) {
+	type args struct {
+		currentDay models.TimeSheet
+		date       time.Time
+		period     models.Period
+	}
+	tests := []struct {
+		name string
+		args args
+		want float64
+	}{
+		{
+			name: "Vanlig arbeid i kjernetid",
+			args: args{
+				currentDay: models.TimeSheet{
+					WorkingDay: "Virkedag",
+					FormName:   "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 11, 6, 8, 0, 0, 0, time.UTC),
+							Out: time.Date(2022, 11, 6, 15, 45, 0, 0, time.UTC),
+						},
+					},
+				},
+				date: time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
+				period: models.Period{
+					Begin: time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
+				},
+			},
+			want: 0,
+		},
+		{
+			name: "Ingen arbeid i kjernetid",
+			args: args{
+				currentDay: models.TimeSheet{
+					WorkingDay: "Virkedag",
+					FormName:   "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 11, 6, 15, 0, 0, 0, time.UTC),
+							Out: time.Date(2022, 11, 6, 20, 45, 0, 0, time.UTC),
+						},
+					},
+				},
+				date: time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
+				period: models.Period{
+					Begin: time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
+				},
+			},
+			want: 330,
+		},
+		{
+			name: "Kom sent på jobb",
+			args: args{
+				currentDay: models.TimeSheet{
+					WorkingDay: "Virkedag",
+					FormName:   "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 11, 6, 10, 0, 0, 0, time.UTC),
+							Out: time.Date(2022, 11, 6, 17, 45, 0, 0, time.UTC),
+						},
+					},
+				},
+				date: time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
+				period: models.Period{
+					Begin: time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
+				},
+			},
+			want: 60,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := calculateGuardDutyInKjernetid(tt.args.currentDay, tt.args.date, tt.args.period); got != tt.want {
+				t.Errorf("calculateGuardDutyInKjernetid() = %v, want %v", got, tt.want)
 			}
 		})
 	}
