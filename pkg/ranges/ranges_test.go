@@ -52,7 +52,7 @@ func TestFromTime(t *testing.T) {
 		want Range
 	}{
 		{
-			name: "",
+			name: "2 timers range",
 			args: args{
 				in:  time.Date(2022, 10, 31, 14, 30, 0, 0, time.UTC),
 				out: time.Date(2022, 10, 31, 16, 30, 0, 0, time.UTC),

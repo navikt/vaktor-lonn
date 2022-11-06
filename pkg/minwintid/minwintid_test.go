@@ -2037,7 +2037,7 @@ func Test_calculateSalary(t *testing.T) {
 		want want
 	}{
 		{
-			name: "",
+			name: "Dybde test av en tilfeldig vakt",
 			args: args{
 				beredskapsvakt: gensql.Beredskapsvakt{
 					Ident:       "a123456",
