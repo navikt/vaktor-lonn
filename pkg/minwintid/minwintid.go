@@ -146,7 +146,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 		}
 
 		stemplinger := day.Stemplinger
-		if len(stemplinger) == 0 {
+		if len(stemplinger) == 0 && day.SkjemaTid != 0 {
 			ts.Clockings = append(ts.Clockings, createPerfectClocking(day.SkjemaTid, stemplingDate))
 		}
 
