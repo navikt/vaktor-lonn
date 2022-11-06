@@ -51,9 +51,14 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 			}, currentDay.Clockings)
 			dutyHours.Hvilende0620 += minutesWithGuardDuty
 
+			// TODO: Disse modifiers burde begge trekkes fra, tungvindt å legge til et negativt tall
+			// TODO: Lag en skikkelig test av denne
 			kjernetidModifier := calculateGuardDutyInKjernetid(currentDay, date, period)
+			dutyHours.Hvilende0620 -= kjernetidModifier
+
+			// TODO: Lag en skikkelig test av denne
 			maxGuardDutyModifier := calculateMaxGuardDutyTime(currentDay, dutyHours.Hvilende0620+dutyHours.Hvilende2000+dutyHours.Hvilende0006)
-			dutyHours.Hvilende0620 += kjernetidModifier - maxGuardDutyModifier
+			dutyHours.Hvilende0620 += maxGuardDutyModifier
 
 			if isWeekend(currentDay.WorkingDay) {
 				// sjekk om man har vakt i perioden 00-24
