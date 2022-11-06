@@ -56,7 +56,6 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 								Out: time.Date(2022, 3, 15, 16, 0, 0, 0, time.UTC),
 							},
 						},
-						//"07:00-16:00"
 					},
 					"2022-03-16": {
 						Date:         time.Date(2022, 3, 16, 0, 0, 0, 0, time.UTC),
