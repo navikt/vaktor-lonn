@@ -156,6 +156,247 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 		},
 
 		{
+			name: "døgnvakt uten stemplinger",
+			args: args{
+				satser: map[string]decimal.Decimal{
+					"lørsøn":  decimal.NewFromInt(65),
+					"0620":    decimal.NewFromInt(15),
+					"2006":    decimal.NewFromInt(25),
+					"utvidet": decimal.NewFromInt(25),
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2022-03-14": {
+						Date:         time.Date(2022, 3, 14, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
+					},
+					"2022-03-15": {
+						Date:         time.Date(2022, 3, 15, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
+					},
+					"2022-03-16": {
+						Date:         time.Date(2022, 3, 16, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
+					},
+					"2022-03-17": {
+						Date:         time.Date(2022, 3, 17, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
+					},
+					"2022-03-18": {
+						Date:         time.Date(2022, 3, 18, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
+					},
+					"2022-03-19": {
+						Date:         time.Date(2022, 3, 19, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Lørdag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
+					},
+					"2022-03-20": {
+						Date:         time.Date(2022, 3, 20, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Søndag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
+					},
+				},
+				guardPeriod: map[string][]models.Period{
+					"2022-03-14": {
+						{
+							Begin: time.Date(2022, 3, 14, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 15, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-03-15": {
+						{
+							Begin: time.Date(2022, 3, 15, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 16, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-03-16": {
+						{
+							Begin: time.Date(2022, 3, 16, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 17, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-03-17": {
+						{
+							Begin: time.Date(2022, 3, 17, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 18, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-03-18": {
+						{
+							Begin: time.Date(2022, 3, 18, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 19, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-03-19": {
+						{
+							Begin: time.Date(2022, 3, 19, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 20, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-03-20": {
+						{
+							Begin: time.Date(2022, 3, 20, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 21, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			want: decimal.NewFromFloat(16_467.1),
+		},
+
+		{
+			name: "døgnvakt med perfekt stempling",
+			args: args{
+				satser: map[string]decimal.Decimal{
+					"lørsøn":  decimal.NewFromInt(65),
+					"0620":    decimal.NewFromInt(15),
+					"2006":    decimal.NewFromInt(25),
+					"utvidet": decimal.NewFromInt(25),
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2022-03-14": {
+						Date:         time.Date(2022, 3, 14, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 3, 14, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 3, 14, 15, 45, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-03-15": {
+						Date:         time.Date(2022, 3, 15, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 3, 15, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 3, 15, 15, 45, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-03-16": {
+						Date:         time.Date(2022, 3, 16, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 3, 16, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 3, 16, 15, 45, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-03-17": {
+						Date:         time.Date(2022, 3, 17, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 3, 17, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 3, 17, 15, 45, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-03-18": {
+						Date:         time.Date(2022, 3, 18, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 3, 18, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 3, 18, 15, 45, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-03-19": {
+						Date:         time.Date(2022, 3, 19, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Lørdag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
+					},
+					"2022-03-20": {
+						Date:         time.Date(2022, 3, 20, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Søndag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
+					},
+				},
+				guardPeriod: map[string][]models.Period{
+					"2022-03-14": {
+						{
+							Begin: time.Date(2022, 3, 14, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 15, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-03-15": {
+						{
+							Begin: time.Date(2022, 3, 15, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 16, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-03-16": {
+						{
+							Begin: time.Date(2022, 3, 16, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 17, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-03-17": {
+						{
+							Begin: time.Date(2022, 3, 17, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 18, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-03-18": {
+						{
+							Begin: time.Date(2022, 3, 18, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 19, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-03-19": {
+						{
+							Begin: time.Date(2022, 3, 19, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 20, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-03-20": {
+						{
+							Begin: time.Date(2022, 3, 20, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 3, 21, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			want: decimal.NewFromFloat(16_467.1),
+		},
+
+		{
 			name: "Utvidet beredskap",
 			args: args{
 				satser: map[string]decimal.Decimal{
