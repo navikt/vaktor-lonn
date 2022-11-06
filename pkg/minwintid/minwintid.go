@@ -146,6 +146,10 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 		}
 
 		stemplinger := day.Stemplinger
+		if len(stemplinger) == 0 {
+			ts.Clockings = append(ts.Clockings, createPerfectClocking(day.SkjemaTid, stemplingDate))
+		}
+
 		if len(stemplinger) == 1 {
 			return nil, []zap.Field{zap.Error(fmt.Errorf("there are too few clockings")),
 				zap.Any("stemplinger", day.Stemplinger)}
@@ -310,6 +314,15 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 		timesheet[simpleStemplingDate] = ts
 	}
 	return timesheet, nil
+}
+
+func createPerfectClocking(tid float64, date time.Time) models.Clocking {
+	in := time.Date(date.Year(), date.Month(), date.Day(), 8, 0, 0, 0, time.UTC)
+	out := in.Add(time.Duration(tid*60) * time.Minute)
+	return models.Clocking{
+		In:  in,
+		Out: out,
+	}
 }
 
 func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll, bearerToken string) error {

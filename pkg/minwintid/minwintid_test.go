@@ -2099,3 +2099,56 @@ func Test_calculateSalary(t *testing.T) {
 		})
 	}
 }
+
+func Test_createPerfectClocking(t *testing.T) {
+	type args struct {
+		tid  float64
+		date time.Time
+	}
+	tests := []struct {
+		name string
+		args args
+		want models.Clocking
+	}{
+		{
+			name: "Vintertid",
+			args: args{
+				tid:  7.75,
+				date: time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
+			},
+			want: models.Clocking{
+				In:  time.Date(2022, 11, 6, 8, 0, 0, 0, time.UTC),
+				Out: time.Date(2022, 11, 6, 15, 45, 0, 0, time.UTC),
+			},
+		},
+		{
+			name: "Sommertid",
+			args: args{
+				tid:  7,
+				date: time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
+			},
+			want: models.Clocking{
+				In:  time.Date(2022, 11, 6, 8, 0, 0, 0, time.UTC),
+				Out: time.Date(2022, 11, 6, 15, 0, 0, 0, time.UTC),
+			},
+		},
+		{
+			name: "Normaltid",
+			args: args{
+				tid:  7.5,
+				date: time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
+			},
+			want: models.Clocking{
+				In:  time.Date(2022, 11, 6, 8, 0, 0, 0, time.UTC),
+				Out: time.Date(2022, 11, 6, 15, 30, 0, 0, time.UTC),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := createPerfectClocking(tt.args.tid, tt.args.date); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("createPerfectClocking() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
