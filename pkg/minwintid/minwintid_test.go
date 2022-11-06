@@ -2088,7 +2088,6 @@ func Test_calculateSalary(t *testing.T) {
 			}
 
 			got, ok := calculateSalary(log, tt.args.beredskapsvakt, response)
-
 			if (!ok) != tt.want.ok {
 				t.Errorf("calculateSalary() ok = %v, want.ok %v", ok, tt.want.ok)
 				return
@@ -2146,8 +2145,9 @@ func Test_createPerfectClocking(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := createPerfectClocking(tt.args.tid, tt.args.date); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("createPerfectClocking() = %v, want %v", got, tt.want)
+			got := createPerfectClocking(tt.args.tid, tt.args.date)
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("createPerfectClocking() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
