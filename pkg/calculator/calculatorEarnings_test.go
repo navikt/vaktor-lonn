@@ -1,7 +1,6 @@
 package calculator
 
 import (
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/navikt/vaktor-lonn/pkg/compensation"
 	"github.com/navikt/vaktor-lonn/pkg/models"
@@ -429,7 +428,6 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 					"2006":    decimal.NewFromInt(20),
 					"utvidet": decimal.NewFromInt(15),
 				},
-				// TODO: Mangler vi arbeidstid her?
 				timesheet: map[string]models.TimeSheet{
 					"2022-07-16": {
 						Date:         time.Date(2022, 7, 16, 0, 0, 0, 0, time.UTC),
@@ -912,7 +910,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 
 			if !total.Equal(tt.want) {
 				t.Errorf("calculateEarnings() got = %v, want %v", total, tt.want)
-				fmt.Printf("Morgen: %v, Dag: %v, Kveld: %v, Helg: %v\n", payroll.TypeCodes[models.ArtskodeMorgen],
+				t.Errorf("Morgen: %v, Dag: %v, Kveld: %v, Helg: %v\n", payroll.TypeCodes[models.ArtskodeMorgen],
 					payroll.TypeCodes[models.ArtskodeDag], payroll.TypeCodes[models.ArtskodeKveld], payroll.TypeCodes[models.ArtskodeHelg])
 			}
 		})
