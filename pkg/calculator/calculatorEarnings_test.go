@@ -871,7 +871,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(23_161.16),
+			want: decimal.NewFromFloat(22_365.75),
 		},
 	}
 
