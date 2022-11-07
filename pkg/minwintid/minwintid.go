@@ -394,7 +394,6 @@ func calculateSalary(log *zap.Logger, beredskapsvakt gensql.Beredskapsvakt, resp
 	}
 
 	if !isTimesheetApproved(tiddataResult.Dager) {
-		log.Info("timesheet is not approved", zap.String(vaktplanId, beredskapsvakt.ID.String()))
 		return models.Payroll{}, false
 	}
 
@@ -452,7 +451,6 @@ func handleTransactions(handler endpoints.Handler) error {
 
 	beredskapsvakter, err := handler.Queries.ListBeredskapsvakter(handler.Context)
 	if err != nil {
-		handler.Log.Error("Failed while listing beredskapsvakter", zap.Error(err))
 		return err
 	}
 
