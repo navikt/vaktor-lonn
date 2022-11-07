@@ -9,6 +9,7 @@ import (
 	"go.uber.org/zap"
 	"io"
 	"net/http"
+	"sort"
 	"time"
 )
 
@@ -50,6 +51,7 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 	for key, _ := range plan.Schedule {
 		dates = append(dates, key)
 	}
+	sort.Strings(dates)
 	periodBegin, err := time.Parse(calculator.VaktorDateFormat, dates[0])
 	periodEnd, err := time.Parse(calculator.VaktorDateFormat, dates[len(dates)-1])
 
