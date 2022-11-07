@@ -3,11 +3,13 @@ package endpoints
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/navikt/vaktor-lonn/pkg/calculator"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
 	"go.uber.org/zap"
 	"io"
 	"net/http"
+	"time"
 )
 
 const (
@@ -44,12 +46,19 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var dates []string
+	for key, _ := range plan.Schedule {
+		dates = append(dates, key)
+	}
+	periodBegin, err := time.Parse(calculator.VaktorDateFormat, dates[0])
+	periodEnd, err := time.Parse(calculator.VaktorDateFormat, dates[len(dates)-1])
+
 	err = h.Queries.CreatePlan(h.Context, gensql.CreatePlanParams{
 		ID:          plan.ID,
 		Ident:       plan.Ident,
 		Plan:        body,
-		PeriodBegin: plan.Begin,
-		PeriodEnd:   plan.End,
+		PeriodBegin: periodBegin,
+		PeriodEnd:   periodEnd,
 	})
 
 	if err != nil {
