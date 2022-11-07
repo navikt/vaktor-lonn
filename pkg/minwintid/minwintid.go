@@ -436,6 +436,7 @@ func calculateSalary(log *zap.Logger, beredskapsvakt gensql.Beredskapsvakt, resp
 
 	payroll, err := calculator.GuarddutySalary(vaktplan, minWinTid)
 	if err != nil {
+		log.Error("Failed while calcualting guard duty salary", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
 		return models.Payroll{}, false
 	}
 
