@@ -394,6 +394,7 @@ func calculateSalary(log *zap.Logger, beredskapsvakt gensql.Beredskapsvakt, resp
 	}
 
 	if !isTimesheetApproved(tiddataResult.Dager) {
+		log.Info("timesheet is not approved", zap.String(vaktplanId, beredskapsvakt.ID.String()))
 		return models.Payroll{}, false
 	}
 
