@@ -891,6 +891,156 @@ func Test_formatTimesheet(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "Lang dag, overtid på kvelden, og overtid over midnatt, med kort vakt påfølgende dag",
+			args: args{
+				days: []Dag{
+					{
+						Dato:       "2022-10-18T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   3,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid: "2022-10-18T08:30:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-10-18T17:00:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-10-18T20:00:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid:       "2022-10-18T20:59:59",
+								Retning:            "Overtid                 ",
+								Type:               "B6",
+								FravarKode:         0,
+								OvertidBegrunnelse: "",
+							},
+							{
+								StemplingTid: "2022-10-18T21:00:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-10-18T23:30:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid:       "2022-10-19T00:29:59",
+								Retning:            "Overtid                 ",
+								Type:               "B6",
+								FravarKode:         1,
+								OvertidBegrunnelse: "",
+							},
+							{
+								StemplingTid: "2022-10-19T00:30:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "000000",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
+					},
+					{
+						Dato:       "2022-10-19T00:00:00",
+						SkjemaTid:  7.75,
+						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Godkjent:   3,
+						Virkedag:   "Virkedag",
+						Stemplinger: []Stempling{
+							{
+								StemplingTid: "2022-10-19T08:00:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2022-10-19T17:00:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+						},
+						Stillinger: []Stilling{
+							{
+								Koststed:  "000000",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
+					},
+				},
+			},
+			want: map[string]models.TimeSheet{
+				"2022-10-18": {
+					Date:         time.Date(2022, 10, 18, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Salary:       decimal.NewFromInt(500_000),
+					Formal:       "000000",
+					Koststed:     "000000",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 10, 18, 8, 30, 0, 0, time.UTC),
+							Out: time.Date(2022, 10, 18, 17, 0, 0, 0, time.UTC),
+						},
+						{
+							In:  time.Date(2022, 10, 18, 20, 0, 0, 0, time.UTC),
+							Out: time.Date(2022, 10, 18, 21, 0, 0, 0, time.UTC),
+						},
+						{
+							In:  time.Date(2022, 10, 18, 23, 30, 0, 0, time.UTC),
+							Out: time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+				"2022-10-19": {
+					Date:         time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Salary:       decimal.NewFromInt(500_000),
+					Formal:       "000000",
+					Koststed:     "000000",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
+							Out: time.Date(2022, 10, 19, 0, 30, 0, 0, time.UTC),
+						},
+						{
+							In:  time.Date(2022, 10, 19, 8, 0, 0, 0, time.UTC),
+							Out: time.Date(2022, 10, 19, 17, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "Kun ut på fravær",
 			args: args{
 				days: []Dag{
@@ -2072,6 +2222,169 @@ func Test_calculateSalary(t *testing.T) {
 					},
 					Formal:    "000000",
 					Koststed:  "855120",
+
+		{
+			name: "vanlig ukesvakt",
+			args: args{
+				beredskapsvakt: gensql.Beredskapsvakt{
+					Ident:       "a123456",
+					Plan:        json.RawMessage(`{"id":"b4ac8e53-9d64-4557-8ef8-d00774ab9c06","user_id":"E123456","start_timestamp":"2022-10-12T12:00:00Z","end_timestamp":"2022-10-19T12:00:00Z","schedule":{"2022-10-12":[{"start_timestamp":"2022-10-12T12:00:00Z","end_timestamp":"2022-10-13T00:00:00Z"}],"2022-10-13":[{"start_timestamp":"2022-10-13T00:00:00Z","end_timestamp":"2022-10-14T00:00:00Z"}],"2022-10-14":[{"start_timestamp":"2022-10-14T00:00:00Z","end_timestamp":"2022-10-15T00:00:00Z"}],"2022-10-15":[{"start_timestamp":"2022-10-15T00:00:00Z","end_timestamp":"2022-10-16T00:00:00Z"}],"2022-10-16":[{"start_timestamp":"2022-10-16T00:00:00Z","end_timestamp":"2022-10-17T00:00:00Z"}],"2022-10-17":[{"start_timestamp":"2022-10-17T00:00:00Z","end_timestamp":"2022-10-18T00:00:00Z"}],"2022-10-18":[{"start_timestamp":"2022-10-18T00:00:00Z","end_timestamp":"2022-10-19T00:00:00Z"}],"2022-10-19":[{"start_timestamp":"2022-10-19T00:00:00Z","end_timestamp":"2022-10-19T12:00:00Z"}]}}`),
+					PeriodBegin: time.Date(2022, 10, 12, 12, 0, 0, 0, time.UTC),
+					PeriodEnd:   time.Date(2022, 10, 9, 12, 0, 0, 0, time.UTC),
+				},
+				body: `{
+	"Vaktor.Vaktor_TiddataResponse": {
+		"Vaktor.Vaktor_TiddataResult": [{
+			"Vaktor.nav_id": "123456",
+			"Vaktor.resource_id": "E123456",
+			"Vaktor.leder_resource_id": "654321",
+			"Vaktor.leder_nav_id": "M654321",
+			"Vaktor.leder_navn": "Kalpana, Bran",
+			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
+			"Vaktor.dager": "[{\"dato\":\"2022-10-12T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"b140650\",\"godkjent_dato\":\"2022-11-03T17:12:18\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-12T08:00:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-12T16:00:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"964000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":964000,\"RATE_I143\":0,\"RATE_B100\":964000,\"RATE_K170\":35,\"RATE_K171\":15,\"RATE_K172\":25,\"RATE_K160\":25,\"RATE_K161\":65,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-19T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"b140650\",\"godkjent_dato\":\"2022-11-03T17:12:18\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-19T08:00:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-19T17:00:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"964000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":964000,\"RATE_I143\":0,\"RATE_B100\":964000,\"RATE_K170\":35,\"RATE_K171\":15,\"RATE_K172\":25,\"RATE_K160\":25,\"RATE_K161\":65,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-18T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"b140650\",\"godkjent_dato\":\"2022-11-03T17:12:18\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-18T08:30:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-19T00:29:59\",\"Navn\":\"Overtid                 \",\"Type\":\"B6\",\"Fravar_kode\":1,\"Fravar_kode_navn\":\"Inne\",\"Overtid_Begrunnelse\":\"Oppringt vakt, feilsøk\"},{\"Stempling_Tid\":\"2022-10-18T20:59:59\",\"Navn\":\"Overtid                 \",\"Type\":\"B6\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":\"Endring i prod\"},{\"Stempling_Tid\":\"2022-10-19T00:30:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-18T23:30:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-18T21:00:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-18T20:00:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-18T17:00:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"964000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":964000,\"RATE_I143\":0,\"RATE_B100\":964000,\"RATE_K170\":35,\"RATE_K171\":15,\"RATE_K172\":25,\"RATE_K160\":25,\"RATE_K161\":65,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-17T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"b140650\",\"godkjent_dato\":\"2022-11-03T17:12:18\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-17T08:45:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-17T16:30:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"964000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":964000,\"RATE_I143\":0,\"RATE_B100\":964000,\"RATE_K170\":35,\"RATE_K171\":15,\"RATE_K172\":25,\"RATE_K160\":25,\"RATE_K161\":65,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-16T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Søndag IKT\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"b140650\",\"godkjent_dato\":\"2022-11-03T17:12:18\",\"virkedag\":\"Søndag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"964000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":964000,\"RATE_I143\":0,\"RATE_B100\":964000,\"RATE_K170\":35,\"RATE_K171\":15,\"RATE_K172\":25,\"RATE_K160\":25,\"RATE_K161\":65,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-15T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Lørdag IKT\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"b140650\",\"godkjent_dato\":\"2022-11-03T17:12:18\",\"virkedag\":\"Lørdag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"964000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":964000,\"RATE_I143\":0,\"RATE_B100\":964000,\"RATE_K170\":35,\"RATE_K171\":15,\"RATE_K172\":25,\"RATE_K160\":25,\"RATE_K161\":65,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-14T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"b140650\",\"godkjent_dato\":\"2022-11-03T17:12:18\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-14T08:00:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-14T14:00:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"964000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":964000,\"RATE_I143\":0,\"RATE_B100\":964000,\"RATE_K170\":35,\"RATE_K171\":15,\"RATE_K172\":25,\"RATE_K160\":25,\"RATE_K161\":65,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-13T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"b140650\",\"godkjent_dato\":\"2022-11-03T17:12:18\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-13T07:45:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-13T18:00:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"964000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":964000,\"RATE_I143\":0,\"RATE_B100\":964000,\"RATE_K170\":35,\"RATE_K171\":15,\"RATE_K172\":25,\"RATE_K160\":25,\"RATE_K161\":65,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
+		}]
+	}
+}`,
+			},
+			want: want{
+				payroll: models.Payroll{
+					ID:           uuid.MustParse("b4ac8e53-9d64-4557-8ef8-d00774ab9c06"),
+					ApproverID:   "M654321",
+					ApproverName: "Kalpana, Bran",
+					TypeCodes: map[string]decimal.Decimal{
+						"2680": decimal.NewFromFloat(7302.97),
+						"2681": decimal.NewFromFloat(4635.22),
+						"2682": decimal.NewFromFloat(5312.08),
+						"2683": decimal.NewFromFloat(10628.76),
+					},
+					Formal:    "000000",
+					Koststed:  "000000",
+					Aktivitet: "000000",
+				},
+				ok: false,
+			},
+		},
+
+		{
+			name: "delt vakt i månedsskifte",
+			args: args{
+				beredskapsvakt: gensql.Beredskapsvakt{
+					Ident:       "a123456",
+					Plan:        json.RawMessage(`{"id":"b4ac8e53-9d64-4557-8ef8-d00774ab9c06","user_id":"A133321","start_timestamp":"2022-10-26T12:00:00Z","end_timestamp":"2022-11-01T00:00:00Z","schedule":{"2022-10-26":[{"start_timestamp":"2022-10-26T12:00:00Z","end_timestamp":"2022-10-27T00:00:00Z"}],"2022-10-27":[{"start_timestamp":"2022-10-27T00:00:00Z","end_timestamp":"2022-10-28T00:00:00Z"}],"2022-10-28":[{"start_timestamp":"2022-10-28T00:00:00Z","end_timestamp":"2022-10-29T00:00:00Z"}],"2022-10-29":[{"start_timestamp":"2022-10-29T00:00:00Z","end_timestamp":"2022-10-30T00:00:00Z"}],"2022-10-30":[{"start_timestamp":"2022-10-30T00:00:00Z","end_timestamp":"2022-10-31T00:00:00Z"}],"2022-10-31":[{"start_timestamp":"2022-10-31T00:00:00Z","end_timestamp":"2022-11-01T00:00:00Z"}]}}`),
+					PeriodBegin: time.Date(2022, 10, 26, 12, 0, 0, 0, time.UTC),
+					PeriodEnd:   time.Date(2022, 11, 1, 0, 0, 0, 0, time.UTC),
+				},
+				body: `{
+	"Vaktor.Vaktor_TiddataResponse": {
+		"Vaktor.Vaktor_TiddataResult": [{
+			"Vaktor.nav_id": "123456",
+			"Vaktor.resource_id": "E123456",
+			"Vaktor.leder_resource_id": "654321",
+			"Vaktor.leder_nav_id": "M654321",
+			"Vaktor.leder_navn": "Kalpana, Bran",
+			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
+			"Vaktor.dager": "[{\"dato\":\"2022-10-26T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"b140650\",\"godkjent_dato\":\"2022-11-03T17:11:48\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-26T07:01:58\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-26T14:59:32\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"850000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":850000,\"RATE_I143\":0,\"RATE_B100\":850000,\"RATE_K170\":35,\"RATE_K171\":15,\"RATE_K172\":25,\"RATE_K160\":25,\"RATE_K161\":65,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-31T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"b140650\",\"godkjent_dato\":\"2022-11-03T17:11:48\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-31T06:55:03\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-31T14:56:21\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"850000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":850000,\"RATE_I143\":0,\"RATE_B100\":850000,\"RATE_K170\":35,\"RATE_K171\":15,\"RATE_K172\":25,\"RATE_K160\":25,\"RATE_K161\":65,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-30T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Søndag IKT\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"b140650\",\"godkjent_dato\":\"2022-11-03T17:11:48\",\"virkedag\":\"Søndag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"850000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":850000,\"RATE_I143\":0,\"RATE_B100\":850000,\"RATE_K170\":35,\"RATE_K171\":15,\"RATE_K172\":25,\"RATE_K160\":25,\"RATE_K161\":65,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-29T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Lørdag IKT\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"b140650\",\"godkjent_dato\":\"2022-11-03T17:11:48\",\"virkedag\":\"Lørdag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"850000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":850000,\"RATE_I143\":0,\"RATE_B100\":850000,\"RATE_K170\":35,\"RATE_K171\":15,\"RATE_K172\":25,\"RATE_K160\":25,\"RATE_K161\":65,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-28T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"b140650\",\"godkjent_dato\":\"2022-11-03T17:11:48\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-28T07:02:29\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-28T15:52:28\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"850000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":850000,\"RATE_I143\":0,\"RATE_B100\":850000,\"RATE_K170\":35,\"RATE_K171\":15,\"RATE_K172\":25,\"RATE_K160\":25,\"RATE_K161\":65,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-27T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"b140650\",\"godkjent_dato\":\"2022-11-03T17:11:48\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-27T07:16:24\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-27T16:04:18\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"850000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"AK_UNIO\",\"TILL_LONN\":\"0\",\"RATE_K001\":850000,\"RATE_I143\":0,\"RATE_B100\":850000,\"RATE_K170\":35,\"RATE_K171\":15,\"RATE_K172\":25,\"RATE_K160\":25,\"RATE_K161\":65,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
+		}]
+	}
+}`,
+			},
+			want: want{
+				payroll: models.Payroll{
+					ID:           uuid.MustParse("b4ac8e53-9d64-4557-8ef8-d00774ab9c06"),
+					ApproverID:   "M654321",
+					ApproverName: "Kalpana, Bran",
+					TypeCodes: map[string]decimal.Decimal{
+						"2680": decimal.NewFromFloat(4083.11),
+						"2681": decimal.NewFromFloat(3540.54),
+						"2682": decimal.NewFromFloat(3704.59),
+						"2683": decimal.NewFromFloat(9642.41),
+					},
+					Formal:    "000000",
+					Koststed:  "000000",
+					Aktivitet: "000000",
+				},
+				ok: false,
+			},
+		},
+
+		{
+			name: "helg med overtid (ikke bv)",
+			args: args{
+				beredskapsvakt: gensql.Beredskapsvakt{
+					Ident:       "a123456",
+					Plan:        json.RawMessage(`{"id":"b4ac8e53-9d64-4557-8ef8-d00774ab9c06","user_id":"A133321","start_timestamp":"2022-10-15T00:00:00Z","end_timestamp":"2022-10-16T00:00:00Z","schedule":{"2022-10-15":[{"start_timestamp":"2022-10-15T00:00:00Z","end_timestamp":"2022-10-16T00:00:00Z"}],"2022-10-16":[{"start_timestamp":"2022-10-16T00:00:00Z","end_timestamp":"2022-10-17T00:00:00Z"}]}}`),
+					PeriodBegin: time.Date(2022, 10, 15, 0, 0, 0, 0, time.UTC),
+					PeriodEnd:   time.Date(2022, 10, 16, 0, 0, 0, 0, time.UTC),
+				},
+				body: `{
+	"Vaktor.Vaktor_TiddataResponse": {
+		"Vaktor.Vaktor_TiddataResult": [{
+			"Vaktor.nav_id": "123456",
+			"Vaktor.resource_id": "E123456",
+			"Vaktor.leder_resource_id": "654321",
+			"Vaktor.leder_nav_id": "M654321",
+			"Vaktor.leder_navn": "Kalpana, Bran",
+			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
+			"Vaktor.dager": "[{\"dato\":\"2022-10-16T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Søndag IKT\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:46:53\",\"virkedag\":\"Søndag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-16T15:59:56\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-16T17:48:38\",\"Navn\":\"Overtid                 \",\"Type\":\"B6\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":\"Statussjekk helg + populering av database for bussines objects.\"},{\"Stempling_Tid\":\"2022-10-16T17:48:40\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-16T20:51:58\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-16T21:02:06\",\"Navn\":\"Overtid                 \",\"Type\":\"B6\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":\"Duplisering av Business Objects-base https://jira.adeo.no/browse/IKT-475117\"},{\"Stempling_Tid\":\"2022-10-16T21:02:09\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"265\",\"parttime_pct\":100,\"post_code\":\"1434\",\"post_description\":\"Rådgiver\",\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"68\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":636700,\"RATE_I143\":0,\"RATE_B100\":636700,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-15T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Lørdag IKT\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:46:53\",\"virkedag\":\"Lørdag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"265\",\"parttime_pct\":100,\"post_code\":\"1434\",\"post_description\":\"Rådgiver\",\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"68\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":636700,\"RATE_I143\":0,\"RATE_B100\":636700,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
+		}]
+	}
+}`,
+			},
+			want: want{
+				payroll: models.Payroll{
+					ID:           uuid.MustParse("b4ac8e53-9d64-4557-8ef8-d00774ab9c06"),
+					ApproverID:   "M654321",
+					ApproverName: "Kalpana, Bran",
+					TypeCodes: map[string]decimal.Decimal{
+						"2680": decimal.NewFromFloat(300),
+						"2681": decimal.NewFromFloat(200),
+						"2682": decimal.NewFromFloat(390),
+						"2683": decimal.NewFromFloat(6930.58),
+					},
+					Formal:    "000000",
+					Koststed:  "000000",
+					Aktivitet: "000000",
+				},
+				ok: false,
+			},
+		},
+
+		{
+			name: "ukesvakt med helg i overtid (ikke merket bv)",
+			args: args{
+				beredskapsvakt: gensql.Beredskapsvakt{
+					Ident:       "a123456",
+					Plan:        json.RawMessage(`{"id":"b4ac8e53-9d64-4557-8ef8-d00774ab9c06","user_id":"A133321","start_timestamp":"2022-10-15T00:00:00Z","end_timestamp":"2022-10-16T00:00:00Z","schedule":{"2022-10-10":[{"start_timestamp":"2022-10-10T12:00:00Z","end_timestamp":"2022-10-11T00:00:00Z"}],"2022-10-11":[{"start_timestamp":"2022-10-11T00:00:00Z","end_timestamp":"2022-10-12T00:00:00Z"}],"2022-10-12":[{"start_timestamp":"2022-10-12T00:00:00Z","end_timestamp":"2022-10-13T00:00:00Z"}],"2022-10-13":[{"start_timestamp":"2022-10-13T00:00:00Z","end_timestamp":"2022-10-14T00:00:00Z"}],"2022-10-14":[{"start_timestamp":"2022-10-14T00:00:00Z","end_timestamp":"2022-10-15T00:00:00Z"}],"2022-10-15":[{"start_timestamp":"2022-10-15T00:00:00Z","end_timestamp":"2022-10-16T00:00:00Z"}],"2022-10-16":[{"start_timestamp":"2022-10-16T00:00:00Z","end_timestamp":"2022-10-17T00:00:00Z"}],"2022-10-17":[{"start_timestamp":"2022-10-17T00:00:00Z","end_timestamp":"2022-10-18T12:00:00Z"}]}}`),
+					PeriodBegin: time.Date(2022, 10, 10, 0, 0, 0, 0, time.UTC),
+					PeriodEnd:   time.Date(2022, 10, 17, 0, 0, 0, 0, time.UTC),
+				},
+				body: `{
+	"Vaktor.Vaktor_TiddataResponse": {
+		"Vaktor.Vaktor_TiddataResult": [{
+			"Vaktor.nav_id": "123456",
+			"Vaktor.resource_id": "E123456",
+			"Vaktor.leder_resource_id": "654321",
+			"Vaktor.leder_nav_id": "M654321",
+			"Vaktor.leder_navn": "Kalpana, Bran",
+			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
+			"Vaktor.dager": "[{\"dato\":\"2022-10-10T00:00:00\",\"skjema_tid\":7.5,\"skjema_navn\":\"BV Heltid 0800-1530 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:46:53\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-10T06:52:42\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-10T15:53:09\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-10T12:20:56\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":1,\"Fravar_kode_navn\":\"Inne\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-10T12:06:46\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-10T09:16:47\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":1,\"Fravar_kode_navn\":\"Inne\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-10T09:01:34\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"265\",\"parttime_pct\":100,\"post_code\":\"1434\",\"post_description\":\"Rådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"68\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":636700,\"RATE_I143\":0,\"RATE_B100\":636700,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-17T00:00:00\",\"skjema_tid\":7.5,\"skjema_navn\":\"BV Heltid 0800-1530 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:46:53\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-17T10:08:09\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":1,\"Fravar_kode_navn\":\"Inne\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-17T16:05:04\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-17T13:05:03\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":1,\"Fravar_kode_navn\":\"Inne\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-17T12:51:38\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"265\",\"parttime_pct\":100,\"post_code\":\"1434\",\"post_description\":\"Rådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"68\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":636700,\"RATE_I143\":0,\"RATE_B100\":636700,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-16T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Søndag IKT\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:46:53\",\"virkedag\":\"Søndag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-16T15:59:56\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-16T21:02:09\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-16T21:02:06\",\"Navn\":\"Overtid                 \",\"Type\":\"B6\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":\"Duplisering av Business Objects-base https:\/\/jira.adeo.no\/browse\/IKT-475117\"},{\"Stempling_Tid\":\"2022-10-16T20:51:58\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-16T17:48:40\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-16T17:48:38\",\"Navn\":\"Overtid                 \",\"Type\":\"B6\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":\"Statussjekk helg + populering av database for bussines objects.\"}],\"Stillinger\":[{\"post_id\":\"265\",\"parttime_pct\":100,\"post_code\":\"1434\",\"post_description\":\"Rådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"68\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":636700,\"RATE_I143\":0,\"RATE_B100\":636700,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-15T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Lørdag IKT\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:46:53\",\"virkedag\":\"Lørdag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"265\",\"parttime_pct\":100,\"post_code\":\"1434\",\"post_description\":\"Rådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"68\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":636700,\"RATE_I143\":0,\"RATE_B100\":636700,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-14T00:00:00\",\"skjema_tid\":7.5,\"skjema_navn\":\"BV Heltid 0800-1530 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:46:53\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-14T08:09:47\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-14T16:19:46\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"265\",\"parttime_pct\":100,\"post_code\":\"1434\",\"post_description\":\"Rådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"68\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":636700,\"RATE_I143\":0,\"RATE_B100\":636700,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-13T00:00:00\",\"skjema_tid\":7.5,\"skjema_navn\":\"BV Heltid 0800-1530 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:46:53\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-13T09:35:02\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":1,\"Fravar_kode_navn\":\"Inne\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-13T16:35:03\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"265\",\"parttime_pct\":100,\"post_code\":\"1434\",\"post_description\":\"Rådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"68\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":636700,\"RATE_I143\":0,\"RATE_B100\":636700,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-12T00:00:00\",\"skjema_tid\":7.5,\"skjema_navn\":\"BV Heltid 0800-1530 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:46:53\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-12T07:50:17\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-12T14:38:11\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"265\",\"parttime_pct\":100,\"post_code\":\"1434\",\"post_description\":\"Rådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"68\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":636700,\"RATE_I143\":0,\"RATE_B100\":636700,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-11T00:00:00\",\"skjema_tid\":7.5,\"skjema_navn\":\"BV Heltid 0800-1530 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:46:53\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-11T07:54:09\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-11T16:11:56\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-11T11:12:15\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":1,\"Fravar_kode_navn\":\"Inne\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-11T10:50:29\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"265\",\"parttime_pct\":100,\"post_code\":\"1434\",\"post_description\":\"Rådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"68\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":636700,\"RATE_I143\":0,\"RATE_B100\":636700,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
+		}]
+	}
+}`,
+			},
+			want: want{
+				payroll: models.Payroll{
+					ID:           uuid.MustParse("b4ac8e53-9d64-4557-8ef8-d00774ab9c06"),
+					ApproverID:   "M654321",
+					ApproverName: "Kalpana, Bran",
+					TypeCodes: map[string]decimal.Decimal{
+						"2680": decimal.NewFromFloat(5179.95),
+						"2681": decimal.NewFromFloat(4103.96),
+						"2682": decimal.NewFromFloat(4643.70),
+						"2683": decimal.NewFromFloat(6930.58),
+					},
+					Formal:    "000000",
+					Koststed:  "000000",
 					Aktivitet: "000000",
 				},
 				ok: false,

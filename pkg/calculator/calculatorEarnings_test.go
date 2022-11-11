@@ -895,6 +895,50 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 		},
 
 		{
+			name: "Helgevakt uten utrykning",
+			args: args{
+				satser: map[string]decimal.Decimal{
+					"lørsøn":  decimal.NewFromInt(65),
+					"0620":    decimal.NewFromInt(15),
+					"2006":    decimal.NewFromInt(25),
+					"utvidet": decimal.NewFromInt(25),
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2022-09-24": {
+						Date:         time.Date(2022, 9, 24, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						FormName:     "BV Lørdag IKT",
+						WorkingDay:   "Lørdag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
+					}, "2022-09-25": {
+						Date:         time.Date(2022, 9, 25, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						FormName:     "BV Søndag IKT",
+						WorkingDay:   "Søndag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    []models.Clocking{},
+					},
+				},
+				guardPeriod: map[string][]models.Period{
+					"2022-09-24": {
+						{
+							Begin: time.Date(2022, 9, 24, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 9, 25, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-09-25": {
+						{
+							Begin: time.Date(2022, 9, 25, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 9, 26, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			want: decimal.NewFromFloat(6_733.19),
+		},
+
+		{
 			name: "vakt en dag med utrykning",
 			args: args{
 				satser: map[string]decimal.Decimal{
