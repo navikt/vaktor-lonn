@@ -994,7 +994,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 						WorkingDay:   "Virkedag",
 						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Salary:       decimal.NewFromInt(725000),
-						Koststed:     "855130",
+						Koststed:     "000000",
 						Formal:       "000000",
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
@@ -1010,7 +1010,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 						WorkingDay:   "Virkedag",
 						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Salary:       decimal.NewFromInt(725000),
-						Koststed:     "855130",
+						Koststed:     "000000",
 						Formal:       "000000",
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
@@ -1026,7 +1026,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 						WorkingDay:   "Virkedag",
 						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Salary:       decimal.NewFromInt(725000),
-						Koststed:     "855130",
+						Koststed:     "000000",
 						Formal:       "000000",
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
@@ -1062,7 +1062,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 						WorkingDay:   "Virkedag",
 						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Salary:       decimal.NewFromInt(725000),
-						Koststed:     "855130",
+						Koststed:     "000000",
 						Formal:       "000000",
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
@@ -1078,7 +1078,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 						WorkingDay:   "Virkedag",
 						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Salary:       decimal.NewFromInt(725000),
-						Koststed:     "855130",
+						Koststed:     "000000",
 						Formal:       "000000",
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
@@ -1094,7 +1094,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 						WorkingDay:   "Virkedag",
 						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Salary:       decimal.NewFromInt(725000),
-						Koststed:     "855130",
+						Koststed:     "000000",
 						Formal:       "000000",
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{

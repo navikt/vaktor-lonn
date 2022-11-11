@@ -72,7 +72,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -89,7 +89,7 @@ func Test_formatTimesheet(t *testing.T) {
 					FormName:     "Heltid 0800-1500 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
 					Formal:       "000000",
-					Koststed:     "855210",
+					Koststed:     "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
@@ -138,7 +138,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -174,7 +174,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -191,7 +191,7 @@ func Test_formatTimesheet(t *testing.T) {
 					FormName:     "BV Lørdag IKT",
 					Salary:       decimal.NewFromInt(500_000),
 					Formal:       "000000",
-					Koststed:     "855210",
+					Koststed:     "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
@@ -208,7 +208,7 @@ func Test_formatTimesheet(t *testing.T) {
 					FormName:     "BV Lørdag IKT",
 					Salary:       decimal.NewFromInt(500_000),
 					Formal:       "000000",
-					Koststed:     "855210",
+					Koststed:     "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
@@ -247,7 +247,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -264,7 +264,7 @@ func Test_formatTimesheet(t *testing.T) {
 					FormName:     "Heltid 0800-1545 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
 					Formal:       "000000",
-					Koststed:     "855210",
+					Koststed:     "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
@@ -314,7 +314,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -331,7 +331,7 @@ func Test_formatTimesheet(t *testing.T) {
 					FormName:     "Heltid 0800-1545 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
 					Formal:       "000000",
-					Koststed:     "855210",
+					Koststed:     "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
@@ -369,7 +369,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -386,7 +386,7 @@ func Test_formatTimesheet(t *testing.T) {
 					FormName:     "Heltid 0800-1545 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
 					Formal:       "000000",
-					Koststed:     "855210",
+					Koststed:     "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
@@ -464,7 +464,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -481,7 +481,7 @@ func Test_formatTimesheet(t *testing.T) {
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
 					Formal:       "000000",
-					Koststed:     "855210",
+					Koststed:     "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
@@ -548,7 +548,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -565,7 +565,7 @@ func Test_formatTimesheet(t *testing.T) {
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
 					Formal:       "000000",
-					Koststed:     "855210",
+					Koststed:     "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
@@ -627,7 +627,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -656,7 +656,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -673,7 +673,7 @@ func Test_formatTimesheet(t *testing.T) {
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
 					Formal:       "000000",
-					Koststed:     "855210",
+					Koststed:     "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
@@ -694,7 +694,7 @@ func Test_formatTimesheet(t *testing.T) {
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
 					Formal:       "000000",
-					Koststed:     "855210",
+					Koststed:     "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
@@ -795,7 +795,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -826,7 +826,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -843,7 +843,7 @@ func Test_formatTimesheet(t *testing.T) {
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
 					Formal:       "000000",
-					Koststed:     "855210",
+					Koststed:     "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
@@ -873,7 +873,7 @@ func Test_formatTimesheet(t *testing.T) {
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
 					Formal:       "000000",
-					Koststed:     "855210",
+					Koststed:     "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
@@ -1066,7 +1066,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -1083,7 +1083,7 @@ func Test_formatTimesheet(t *testing.T) {
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
 					Formal:       "000000",
-					Koststed:     "855210",
+					Koststed:     "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
@@ -1133,7 +1133,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -1150,7 +1150,7 @@ func Test_formatTimesheet(t *testing.T) {
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
 					Formal:       "000000",
-					Koststed:     "855210",
+					Koststed:     "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
@@ -1194,7 +1194,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -1225,7 +1225,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -1256,7 +1256,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -1272,7 +1272,7 @@ func Test_formatTimesheet(t *testing.T) {
 						Stemplinger: nil,
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -1288,7 +1288,7 @@ func Test_formatTimesheet(t *testing.T) {
 						Stemplinger: nil,
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -1319,7 +1319,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -1350,7 +1350,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -1381,7 +1381,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -1397,7 +1397,7 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(725000),
-					Koststed:     "855130",
+					Koststed:     "000000",
 					Formal:       "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
@@ -1413,7 +1413,7 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(725000),
-					Koststed:     "855130",
+					Koststed:     "000000",
 					Formal:       "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
@@ -1429,7 +1429,7 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(725000),
-					Koststed:     "855130",
+					Koststed:     "000000",
 					Formal:       "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
@@ -1444,7 +1444,7 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay: "Lørdag",
 					FormName:   "BV Lørdag IKT",
 					Salary:     decimal.NewFromInt(725000),
-					Koststed:   "855130",
+					Koststed:   "000000",
 					Formal:     "000000",
 					Aktivitet:  "000000",
 					Clockings:  []models.Clocking{},
@@ -1454,7 +1454,7 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay: "Søndag",
 					FormName:   "BV Søndag IKT",
 					Salary:     decimal.NewFromInt(725000),
-					Koststed:   "855130",
+					Koststed:   "000000",
 					Formal:     "000000",
 					Aktivitet:  "000000",
 					Clockings:  []models.Clocking{},
@@ -1465,7 +1465,7 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(725000),
-					Koststed:     "855130",
+					Koststed:     "000000",
 					Formal:       "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
@@ -1481,7 +1481,7 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(725000),
-					Koststed:     "855130",
+					Koststed:     "000000",
 					Formal:       "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
@@ -1497,7 +1497,7 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(725000),
-					Koststed:     "855130",
+					Koststed:     "000000",
 					Formal:       "000000",
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
@@ -1575,7 +1575,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 			"Vaktor.leder_nav_id": "M654321",
 			"Vaktor.leder_navn": "Kalpana, Bran",
 			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
-			"Vaktor.dager": "[{\"dato\":\"2022-07-15T00:00:00\",\"skjema_tid\":7,\"skjema_navn\":\"Heltid 0800-1500 (2018)\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-08-01T13:17:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-07-15T15:00:00\",\"Navn\":\"Inn fra fravær\",\"Type\":\"B4\",\"Fravar_kode\":210,\"Fravar_kode_navn\":\"06 Ferie\"},{\"Stempling_Tid\":\"2022-07-15T15:00:01\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855210\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"500000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":500000,\"RATE_I143\":0,\"RATE_B100\":500000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
+			"Vaktor.dager": "[{\"dato\":\"2022-07-15T00:00:00\",\"skjema_tid\":7,\"skjema_navn\":\"Heltid 0800-1500 (2018)\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-08-01T13:17:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-07-15T15:00:00\",\"Navn\":\"Inn fra fravær\",\"Type\":\"B4\",\"Fravar_kode\":210,\"Fravar_kode_navn\":\"06 Ferie\"},{\"Stempling_Tid\":\"2022-07-15T15:00:01\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"500000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":500000,\"RATE_I143\":0,\"RATE_B100\":500000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
 		}]
 	}
 }`,
@@ -1609,7 +1609,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -1632,7 +1632,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 			"Vaktor.leder_nav_id": "M654321",
 			"Vaktor.leder_navn": "Kalpana, Bran",
 			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
-			"Vaktor.dager": "[{\"dato\":\"2022-08-02T00:00:00\",\"skjema_tid\":7,\"skjema_navn\":\"Heltid 0800-1500 (2018)\",\"godkjent\":5,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-09-01T10:32:41\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-08-02T07:45:10\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-08-02T16:00:01\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-08-02T16:00:00\",\"Navn\":\"Inn fra fravær\",\"Type\":\"B4\",\"Fravar_kode\":940,\"Fravar_kode_navn\":\"36 Annet fravær med lønn\"},{\"Stempling_Tid\":\"2022-08-02T14:31:01\",\"Navn\":\"Ut på fravær\",\"Type\":\"B5\",\"Fravar_kode\":940,\"Fravar_kode_navn\":\"36 Annet fravær med lønn\"},{\"Stempling_Tid\":\"2022-08-02T14:31:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-08-02T14:30:11\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855210\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"500000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":500000,\"RATE_I143\":0,\"RATE_B100\":500000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
+			"Vaktor.dager": "[{\"dato\":\"2022-08-02T00:00:00\",\"skjema_tid\":7,\"skjema_navn\":\"Heltid 0800-1500 (2018)\",\"godkjent\":5,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-09-01T10:32:41\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-08-02T07:45:10\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-08-02T16:00:01\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-08-02T16:00:00\",\"Navn\":\"Inn fra fravær\",\"Type\":\"B4\",\"Fravar_kode\":940,\"Fravar_kode_navn\":\"36 Annet fravær med lønn\"},{\"Stempling_Tid\":\"2022-08-02T14:31:01\",\"Navn\":\"Ut på fravær\",\"Type\":\"B5\",\"Fravar_kode\":940,\"Fravar_kode_navn\":\"36 Annet fravær med lønn\"},{\"Stempling_Tid\":\"2022-08-02T14:31:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-08-02T14:30:11\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"500000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":500000,\"RATE_I143\":0,\"RATE_B100\":500000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
 		}]
 	}
 }`,
@@ -1690,7 +1690,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -1713,7 +1713,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 			"Vaktor.leder_nav_id": "M654321",
 			"Vaktor.leder_navn": "Kalpana, Bran",
 			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
-			"Vaktor.dager": "[{\"dato\":\"2022-09-24T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Lørdag IKT\",\"godkjent\":5,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-10-04T10:50:25\",\"virkedag\":\"Lørdag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-09-24T20:30:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-24T22:29:59\",\"Navn\":\"Overtid                 \",\"Type\":\"B6\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-24T22:30:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855210\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"500000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":500000,\"RATE_I143\":0,\"RATE_B100\":500000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
+			"Vaktor.dager": "[{\"dato\":\"2022-09-24T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Lørdag IKT\",\"godkjent\":5,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-10-04T10:50:25\",\"virkedag\":\"Lørdag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-09-24T20:30:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-24T22:29:59\",\"Navn\":\"Overtid                 \",\"Type\":\"B6\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-24T22:30:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"500000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":500000,\"RATE_I143\":0,\"RATE_B100\":500000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
 		}]
 	}
 }`,
@@ -1753,7 +1753,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -1776,7 +1776,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 			"Vaktor.leder_nav_id": "M654321",
 			"Vaktor.leder_navn": "Kalpana, Bran",
 			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
-			"Vaktor.dager": "[{\"dato\":\"2022-05-03T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"Heltid 0800-1545 (2018)\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-06-01T09:49:19\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-05-03T08:00:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-05-03T08:00:01\",\"Navn\":\"Ut på fravær\",\"Type\":\"B5\",\"Fravar_kode\":740,\"Fravar_kode_navn\":\"02 Kurs\/Seminar\"}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855210\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"500000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":500000,\"RATE_I143\":0,\"RATE_B100\":500000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
+			"Vaktor.dager": "[{\"dato\":\"2022-05-03T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"Heltid 0800-1545 (2018)\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-06-01T09:49:19\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-05-03T08:00:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-05-03T08:00:01\",\"Navn\":\"Ut på fravær\",\"Type\":\"B5\",\"Fravar_kode\":740,\"Fravar_kode_navn\":\"02 Kurs\/Seminar\"}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"500000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":500000,\"RATE_I143\":0,\"RATE_B100\":500000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
 		}]
 	}
 }`,
@@ -1810,7 +1810,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -1833,7 +1833,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 			"Vaktor.leder_nav_id": "M654321",
 			"Vaktor.leder_navn": "Kalpana, Bran",
 			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
-			"Vaktor.dager": "[{\"dato\":\"2022-09-15T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-10-03T12:28:15\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-09-15T08:04:08\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-15T16:26:15\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-15T23:10:27\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-15T23:31:51\",\"Navn\":\"Overtid                 \",\"Type\":\"B6\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-16T00:32:24\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"koststed\":\"855210\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"80\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":500000,\"RATE_I143\":0,\"RATE_B100\":500000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
+			"Vaktor.dager": "[{\"dato\":\"2022-09-15T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":3,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-10-03T12:28:15\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-09-15T08:04:08\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-15T16:26:15\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-15T23:10:27\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-15T23:31:51\",\"Navn\":\"Overtid                 \",\"Type\":\"B6\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"},{\"Stempling_Tid\":\"2022-09-16T00:32:24\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\"}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"80\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":500000,\"RATE_I143\":0,\"RATE_B100\":500000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
 		}]
 	}
 }`,
@@ -1885,7 +1885,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855210",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  500_000,
@@ -1908,7 +1908,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 			"Vaktor.leder_nav_id": "M654321",
 			"Vaktor.leder_navn": "Kalpana, Bran",
 			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
-			"Vaktor.dager": "[{\"dato\":\"2022-10-05T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-05T07:21:42\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-05T15:24:14\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-12T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-05T08:36:43\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-12T08:00:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-12T09:00:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-11T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-11T07:09:58\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-11T15:23:41\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-09T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Søndag IKT\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Søndag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-07T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-07T07:18:52\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-07T15:06:59\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-06T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-06T07:13:24\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-06T15:03:51\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-10T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-10T07:18:32\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-10T15:25:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-08T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Lørdag IKT\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Lørdag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855130\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
+			"Vaktor.dager": "[{\"dato\":\"2022-10-05T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-05T07:21:42\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-05T15:24:14\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-12T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-05T08:36:43\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-12T08:00:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-12T09:00:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-11T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-11T07:09:58\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-11T15:23:41\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-09T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Søndag IKT\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Søndag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-07T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-07T07:18:52\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-07T15:06:59\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-06T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-06T07:13:24\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-06T15:03:51\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-10T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Virkedag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2022-10-10T07:18:32\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2022-10-10T15:25:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-08T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Lørdag IKT\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a123456\",\"godkjent_dato\":\"2022-11-02T10:24:21\",\"virkedag\":\"Lørdag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"725000\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":725000,\"RATE_I143\":0,\"RATE_B100\":725000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
       }]
 	}
 }`,
@@ -1944,7 +1944,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -1975,7 +1975,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -2006,7 +2006,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -2022,7 +2022,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						Stemplinger: nil,
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -2038,7 +2038,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						Stemplinger: nil,
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -2069,7 +2069,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -2100,7 +2100,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -2131,7 +2131,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "855130",
+								Koststed:  "000000",
 								Formal:    "000000",
 								Aktivitet: "000000",
 								RATEK001:  725000,
@@ -2191,7 +2191,7 @@ func Test_calculateSalary(t *testing.T) {
 			args: args{
 				beredskapsvakt: gensql.Beredskapsvakt{
 					Ident:       "a123456",
-					Plan:        json.RawMessage(`{"id":"752019fc-5d21-11ed-9b6a-0242ac120002","user_id":"E123456","start_timestamp":"2022-10-05T12:00:00Z","end_timestamp":"2022-10-12T12:00:00Z","schedule":{"2022-10-05":[{"start_timestamp":"2022-10-05T12:00:00Z","end_timestamp":"2022-10-06T00:00:00Z"}],"2022-10-06":[{"start_timestamp":"2022-10-06T00:00:00Z","end_timestamp":"2022-10-07T00:00:00Z"}],"2022-10-07":[{"start_timestamp":"2022-10-07T00:00:00Z","end_timestamp":"2022-10-08T00:00:00Z"}],"2022-10-08":[{"start_timestamp":"2022-10-08T00:00:00Z","end_timestamp":"2022-10-09T00:00:00Z"}],"2022-10-09":[{"start_timestamp":"2022-10-09T00:00:00Z","end_timestamp":"2022-10-10T00:00:00Z"}],"2022-10-10":[{"start_timestamp":"2022-10-10T00:00:00Z","end_timestamp":"2022-10-11T00:00:00Z"}],"2022-10-11":[{"start_timestamp":"2022-10-11T00:00:00Z","end_timestamp":"2022-10-12T00:00:00Z"}],"2022-10-12":[{"start_timestamp":"2022-10-12T00:00:00Z","end_timestamp":"2022-10-12T12:00:00Z"}]}}`),
+					Plan:        json.RawMessage(`{"id":"b4ac8e53-9d64-4557-8ef8-d00774ab9c06","user_id":"E123456","start_timestamp":"2022-10-05T12:00:00Z","end_timestamp":"2022-10-12T12:00:00Z","schedule":{"2022-10-05":[{"start_timestamp":"2022-10-05T12:00:00Z","end_timestamp":"2022-10-06T00:00:00Z"}],"2022-10-06":[{"start_timestamp":"2022-10-06T00:00:00Z","end_timestamp":"2022-10-07T00:00:00Z"}],"2022-10-07":[{"start_timestamp":"2022-10-07T00:00:00Z","end_timestamp":"2022-10-08T00:00:00Z"}],"2022-10-08":[{"start_timestamp":"2022-10-08T00:00:00Z","end_timestamp":"2022-10-09T00:00:00Z"}],"2022-10-09":[{"start_timestamp":"2022-10-09T00:00:00Z","end_timestamp":"2022-10-10T00:00:00Z"}],"2022-10-10":[{"start_timestamp":"2022-10-10T00:00:00Z","end_timestamp":"2022-10-11T00:00:00Z"}],"2022-10-11":[{"start_timestamp":"2022-10-11T00:00:00Z","end_timestamp":"2022-10-12T00:00:00Z"}],"2022-10-12":[{"start_timestamp":"2022-10-12T00:00:00Z","end_timestamp":"2022-10-12T12:00:00Z"}]}}`),
 					PeriodBegin: time.Date(2022, 10, 5, 12, 0, 0, 0, time.UTC),
 					PeriodEnd:   time.Date(2022, 10, 12, 12, 0, 0, 0, time.UTC),
 				},
@@ -2204,14 +2204,14 @@ func Test_calculateSalary(t *testing.T) {
 			"Vaktor.leder_nav_id": "M654321",
 			"Vaktor.leder_navn": "Kalpana, Bran",
 			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
-			"Vaktor.dager": "[{\"dato\":\"2022-10-05T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Virkedag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855120\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-12T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Virkedag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855120\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-11T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Virkedag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855120\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-10T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Virkedag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855120\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-09T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Søndag IKT\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Søndag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855120\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-08T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Lørdag IKT\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Lørdag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855120\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-06T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Virkedag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855120\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-07T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Virkedag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"855120\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
+			"Vaktor.dager": "[{\"dato\":\"2022-10-05T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Virkedag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-12T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Virkedag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-11T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Virkedag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-10T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Virkedag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-09T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Søndag IKT\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Søndag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-08T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Lørdag IKT\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Lørdag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-06T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Virkedag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]},{\"dato\":\"2022-10-07T00:00:00\",\"skjema_tid\":7.75,\"skjema_navn\":\"BV 0800-1545 m\/Beredskapsvakt, start vakt kl 1600 (2018)\",\"godkjent\":4,\"ansatt_dato_godkjent_av\":\"M654321\",\"godkjent_dato\":\"2022-11-02T08:47:09\",\"virkedag\":\"Virkedag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"258\",\"parttime_pct\":100,\"post_code\":\"1364\",\"post_description\":\"Seniorrådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"79\",\"aga\":\"060501180000\",\"statskonto\":\"060501110000\",\"HTA\":\"\",\"TILL_LONN\":\"0\",\"RATE_K001\":814900,\"RATE_I143\":0,\"RATE_B100\":814900,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_KSTED\":[{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"},{\"role_id\":\"\",\"user_id\":\"\",\"domain_info\":\"\"}],\"BDM_FORMAL\":null}]}]"
 		}]
 	}
 }`,
 			},
 			want: want{
 				payroll: models.Payroll{
-					ID:           uuid.MustParse("752019fc-5d21-11ed-9b6a-0242ac120002"),
+					ID:           uuid.MustParse("b4ac8e53-9d64-4557-8ef8-d00774ab9c06"),
 					ApproverID:   "M654321",
 					ApproverName: "Kalpana, Bran",
 					TypeCodes: map[string]decimal.Decimal{
@@ -2221,7 +2221,12 @@ func Test_calculateSalary(t *testing.T) {
 						"2683": decimal.NewFromFloat(9081.34),
 					},
 					Formal:    "000000",
-					Koststed:  "855120",
+					Koststed:  "000000",
+					Aktivitet: "000000",
+				},
+				ok: false,
+			},
+		},
 
 		{
 			name: "vanlig ukesvakt",
