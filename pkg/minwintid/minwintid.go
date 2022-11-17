@@ -14,7 +14,6 @@ import (
 	"math"
 	"net/http"
 	"sort"
-	"strings"
 	"time"
 )
 
@@ -179,7 +178,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 						continue
 					}
 
-					// TODO: Det vil være en sjekk i Vaktor som sjekker om de gamle kodene er brukt
+					// TODO: All overtid blir regnet som beredskapsvakt for nå
 					// Dette er en stempling med overtid
 					if utStempling.Retning == "Overtid                 " && utStempling.Type == "B6" {
 						utOvertid := stemplinger[0]
@@ -196,8 +195,6 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 								return nil, []zap.Field{zap.Error(err)}
 							}
 
-							overtimeBecauseOfGuardDuty := strings.Contains(strings.ToLower(utStempling.OvertidBegrunnelse), "bv")
-
 							if utStemplingDate.YearDay() > innStemplingDate.YearDay() &&
 								!(utStemplingDate.Hour() == 0 && utStemplingDate.Minute() == 00) {
 								// Overtid over midnatt, flytter resten av tiden til neste dag
@@ -205,7 +202,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 								nextDay = append(nextDay, models.Clocking{
 									In:  truncateOut,
 									Out: utStemplingDate,
-									OtG: overtimeBecauseOfGuardDuty,
+									OtG: true,
 								})
 								utStemplingDate = truncateOut
 							}
@@ -213,7 +210,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 							ts.Clockings = append(ts.Clockings, models.Clocking{
 								In:  innStemplingDate,
 								Out: utStemplingDate,
-								OtG: overtimeBecauseOfGuardDuty,
+								OtG: true,
 							})
 							continue
 						}

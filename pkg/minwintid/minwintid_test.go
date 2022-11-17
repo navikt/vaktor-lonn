@@ -1010,10 +1010,12 @@ func Test_formatTimesheet(t *testing.T) {
 						{
 							In:  time.Date(2022, 10, 18, 20, 0, 0, 0, time.UTC),
 							Out: time.Date(2022, 10, 18, 21, 0, 0, 0, time.UTC),
+							OtG: true,
 						},
 						{
 							In:  time.Date(2022, 10, 18, 23, 30, 0, 0, time.UTC),
 							Out: time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
+							OtG: true,
 						},
 					},
 				},
@@ -1030,6 +1032,7 @@ func Test_formatTimesheet(t *testing.T) {
 						{
 							In:  time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
 							Out: time.Date(2022, 10, 19, 0, 30, 0, 0, time.UTC),
+							OtG: true,
 						},
 						{
 							In:  time.Date(2022, 10, 19, 8, 0, 0, 0, time.UTC),
@@ -2229,7 +2232,7 @@ func Test_calculateSalary(t *testing.T) {
 		},
 
 		{
-			name: "vanlig ukesvakt",
+			name: "vanlig ukesvakt med litt overtid",
 			args: args{
 				beredskapsvakt: gensql.Beredskapsvakt{
 					Ident:       "a123456",
@@ -2257,8 +2260,8 @@ func Test_calculateSalary(t *testing.T) {
 					ApproverID:   "M654321",
 					ApproverName: "Kalpana, Bran",
 					TypeCodes: map[string]decimal.Decimal{
-						"2680": decimal.NewFromFloat(7302.97),
-						"2681": decimal.NewFromFloat(4635.22),
+						"2680": decimal.NewFromFloat(7327.97),
+						"2681": decimal.NewFromFloat(4685.22),
 						"2682": decimal.NewFromFloat(5312.08),
 						"2683": decimal.NewFromFloat(10628.76),
 					},
@@ -2313,7 +2316,7 @@ func Test_calculateSalary(t *testing.T) {
 		},
 
 		{
-			name: "helg med overtid (ikke bv)",
+			name: "helg med overtid (ikke merket bv)",
 			args: args{
 				beredskapsvakt: gensql.Beredskapsvakt{
 					Ident:       "a123456",
@@ -2343,8 +2346,8 @@ func Test_calculateSalary(t *testing.T) {
 					TypeCodes: map[string]decimal.Decimal{
 						"2680": decimal.NewFromFloat(300),
 						"2681": decimal.NewFromFloat(200),
-						"2682": decimal.NewFromFloat(390),
-						"2683": decimal.NewFromFloat(6930.58),
+						"2682": decimal.NewFromFloat(420),
+						"2683": decimal.NewFromFloat(7060.58),
 					},
 					Formal:    "000000",
 					Koststed:  "000000",
@@ -2385,8 +2388,8 @@ func Test_calculateSalary(t *testing.T) {
 					TypeCodes: map[string]decimal.Decimal{
 						"2680": decimal.NewFromFloat(5179.95),
 						"2681": decimal.NewFromFloat(4103.96),
-						"2682": decimal.NewFromFloat(4643.70),
-						"2683": decimal.NewFromFloat(6930.58),
+						"2682": decimal.NewFromFloat(4673.70),
+						"2683": decimal.NewFromFloat(7060.58),
 					},
 					Formal:    "000000",
 					Koststed:  "000000",
