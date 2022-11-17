@@ -17,7 +17,7 @@ arbeidet tid.
 - Vaktor Lønn vil ikke følge med på om man har mer enn lovlig mengde vakt i en periode, eller om man glemmer å føre
   timer.
 - Vaktor Lønn vil hente beredskapstillegg, lønn, helligdager, og timelister fra MinWinTid.
-- Man kan ikke ha vakt samtidig som man har ferie (se kommentar til §5 i avtalen om _Beredskapsvakt utenfor
+- Man kan ikke ha vakt samtidig som man har ferie (§6 i avtalen om _Beredskapsvakt utenfor
   arbeidsstedet_).
 - Tilleggene i §15.3 og .4 utbetales i forholdet 1/5 (se §17.1 i _Hovedtariffavtalen_).
 - Ved overtid på grunn av vakt så vil MinWinTid betale prosent-overtidstillegget, mens Vaktor Lønn vil regne ut
@@ -29,7 +29,7 @@ arbeidet tid.
 sequenceDiagram
 actor Vakthaver
 actor Vaktsjef
-actor Personalleder
+actor leder as NAV IT Leder
 participant Plan as Vaktor Plan
 participant Lønn as Vaktor Lønn
 Plan-->>Plan: Endt vaktperiode
@@ -47,9 +47,8 @@ loop Every hour
   Lønn-->>Lønn: Beregner utbetaling av kronetillegg og<br/>overtidstillegg for vaktperioden
   Lønn->>Plan: Utbetaling for vaktperiode
 end
-Plan->>Personalleder: Be om godkjenning av utbetaling
-Personalleder-->>Plan: Godkjenner utbetaling av vaktperiode
-Plan->>Økonomi: Transaksjonsfil overføres via sftp
+Plan->>leder: Transaksjonsfil sendes for godkjenning via e-post
+leder-->>Økonomi: Godkjenner, og melder i fra til Økonomi
 ```
 
 ## Utvikling
