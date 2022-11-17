@@ -2473,3 +2473,55 @@ func Test_createPerfectClocking(t *testing.T) {
 		})
 	}
 }
+
+func Test_isTimesheetApproved(t *testing.T) {
+	type args struct {
+		days []Dag
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "Ingen godkjente dager",
+			args: args{
+				days: []Dag{
+					{
+						Godkjent: 0,
+					},
+				},
+			},
+			want: false,
+		},
+		{
+			name: "Godkjent av vakthaver",
+			args: args{
+				days: []Dag{
+					{
+						Godkjent: 1,
+					},
+				},
+			},
+			want: false,
+		},
+		{
+			name: "Godkjent av personalleder",
+			args: args{
+				days: []Dag{
+					{
+						Godkjent: 2,
+					},
+				},
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := isTimesheetApproved(tt.args.days); got != tt.want {
+				t.Errorf("isTimesheetApproved() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

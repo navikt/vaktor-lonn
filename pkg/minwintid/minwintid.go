@@ -74,7 +74,7 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 
 func isTimesheetApproved(days []Dag) bool {
 	for _, day := range days {
-		if day.Godkjent == 0 {
+		if day.Godkjent < 2 {
 			return false
 		}
 	}
