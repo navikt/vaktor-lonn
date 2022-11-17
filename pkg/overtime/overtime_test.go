@@ -5,14 +5,13 @@ import (
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/shopspring/decimal"
 	"testing"
-	"time"
 )
 
 func TestCalculate(t *testing.T) {
 	type args struct {
-		minutes   map[string]models.GuardDuty
-		timesheet map[string]models.TimeSheet
-		payroll   *models.Payroll
+		minutes map[string]models.GuardDuty
+		salary  decimal.Decimal
+		payroll *models.Payroll
 	}
 	tests := []struct {
 		name    string
@@ -26,28 +25,7 @@ func TestCalculate(t *testing.T) {
 				payroll: &models.Payroll{
 					TypeCodes: map[string]decimal.Decimal{},
 				},
-				timesheet: map[string]models.TimeSheet{
-					"2022-10-15": {
-						Date:       time.Date(2022, 10, 15, 0, 0, 0, 0, time.UTC),
-						WorkingDay: "Lørdag",
-						FormName:   "BV Lørdag IKT",
-						Salary:     decimal.NewFromInt(750_000),
-						Koststed:   "855130",
-						Formal:     "000000",
-						Aktivitet:  "000000",
-						Clockings:  []models.Clocking{},
-					},
-					"2022-10-16": {
-						Date:       time.Date(2022, 10, 16, 0, 0, 0, 0, time.UTC),
-						WorkingDay: "Søndag",
-						FormName:   "BV Søndag IKT",
-						Salary:     decimal.NewFromInt(750_000),
-						Koststed:   "855130",
-						Formal:     "000000",
-						Aktivitet:  "000000",
-						Clockings:  []models.Clocking{},
-					},
-				},
+				salary: decimal.NewFromInt(750_000),
 				minutes: map[string]models.GuardDuty{
 					"2022-10-15": {
 						Hvilende2000:                 360,
@@ -78,10 +56,7 @@ func TestCalculate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := Calculate(tt.args.minutes, tt.args.timesheet, tt.args.payroll); (err != nil) != tt.wantErr {
-				t.Errorf("Calculate() error = %v, wantErr %v", err, tt.wantErr)
-			}
-
+			Calculate(tt.args.minutes, tt.args.salary, tt.args.payroll)
 			if diff := cmp.Diff(tt.want, tt.args.payroll.TypeCodes); diff != "" {
 				t.Errorf("Calculate() mismatch (-want +got):\n%s", diff)
 			}

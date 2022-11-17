@@ -1,32 +1,11 @@
 package overtime
 
 import (
-	"fmt"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/shopspring/decimal"
 )
 
-func getSalary(timesheet map[string]models.TimeSheet) (decimal.Decimal, error) {
-	var salary decimal.Decimal
-	for _, period := range timesheet {
-		if salary.IsZero() {
-			salary = period.Salary
-			continue
-		}
-		if !salary.Equal(period.Salary) {
-			return decimal.Decimal{}, fmt.Errorf("salary has changed")
-		}
-	}
-
-	return salary, nil
-}
-
-func Calculate(minutes map[string]models.GuardDuty, timesheet map[string]models.TimeSheet, payroll *models.Payroll) error {
-	salary, err := getSalary(timesheet)
-	if err != nil {
-		return err
-	}
-
+func Calculate(minutes map[string]models.GuardDuty, salary decimal.Decimal, payroll *models.Payroll) {
 	overtimeWeekendOrHolidayMinutes := 0.0
 	overtimeDayMinutes := 0.0
 	overtimeEveningMinutes := 0.0
@@ -63,5 +42,4 @@ func Calculate(minutes map[string]models.GuardDuty, timesheet map[string]models.
 	overtimeWeekendOrHolidayHours := decimal.NewFromFloat(overtimeWeekendOrHolidayMinutes).DivRound(minutesInHour, 0)
 	overtimeWeekendOrHoliday := overtimeWeekendOrHolidayHours.Mul(ots100).Div(fifthOfAnHour).Round(2)
 	payroll.TypeCodes[models.ArtskodeHelg] = payroll.TypeCodes[models.ArtskodeHelg].Add(overtimeWeekendOrHoliday)
-	return nil
 }

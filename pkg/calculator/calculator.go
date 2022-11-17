@@ -231,6 +231,21 @@ func getKoststed(timesheet map[string]models.TimeSheet) (string, error) {
 	return koststed, nil
 }
 
+func getSalary(timesheet map[string]models.TimeSheet) (decimal.Decimal, error) {
+	var salary decimal.Decimal
+	for _, period := range timesheet {
+		if salary.IsZero() {
+			salary = period.Salary
+			continue
+		}
+		if !salary.Equal(period.Salary) {
+			return decimal.Decimal{}, fmt.Errorf("salary has changed")
+		}
+	}
+
+	return salary, nil
+}
+
 func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.Payroll, error) {
 	minutes, err := calculateMinutesToBeCompensated(plan.Schedule, minWinTid.Timesheet)
 	if err != nil {
@@ -248,6 +263,11 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 	}
 
 	koststed, err := getKoststed(minWinTid.Timesheet)
+	if err != nil {
+		return models.Payroll{}, err
+	}
+
+	salary, err := getSalary(minWinTid.Timesheet)
 	if err != nil {
 		return models.Payroll{}, err
 	}
@@ -270,10 +290,8 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 	}
 
 	compensation.Calculate(minutes, minWinTid.Satser, payroll)
-	err = overtime.Calculate(minutes, minWinTid.Timesheet, payroll)
-	if err != nil {
-		return models.Payroll{}, err
-	}
+	compensation.CalculateCallOut(minWinTid.Timesheet, minWinTid.Satser, payroll)
+	overtime.Calculate(minutes, salary, payroll)
 
 	return *payroll, nil
 }

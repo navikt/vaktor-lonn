@@ -1164,7 +1164,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			minutes, err := calculateMinutesToBeCompensated(tt.args.guardPeriod, tt.args.timesheet)
 			if err != nil {
-				t.Errorf("calculateMinutesToBeCompensated() error : %v", err)
+				t.Errorf("calculateMinutesToBeCompensated() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
@@ -1180,13 +1180,15 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 				},
 			}
 
-			compensation.CalculateCallOut(tt.args.timesheet, tt.args.satser, payroll)
-			compensation.Calculate(minutes, tt.args.satser, payroll)
-			err = overtime.Calculate(minutes, tt.args.timesheet, payroll)
+			salary, err := getSalary(tt.args.timesheet)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("calculateEarnings() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("getSalary() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
+
+			compensation.CalculateCallOut(tt.args.timesheet, tt.args.satser, payroll)
+			compensation.Calculate(minutes, tt.args.satser, payroll)
+			overtime.Calculate(minutes, salary, payroll)
 
 			total := decimal.Decimal{}
 			for _, typeCode := range payroll.TypeCodes {
