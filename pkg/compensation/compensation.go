@@ -22,19 +22,19 @@ func Calculate(minutes map[string]models.GuardDuty, satser map[string]decimal.De
 	fifthOfAnHour := decimal.NewFromInt(5)
 
 	compensationDay := decimal.NewFromInt(int64(compensation.Hvilende0620)).DivRound(minutesInHour, 0).Mul(satser["0620"]).Round(2)
-	payroll.TypeCodes[models.ArtskodeDag] = payroll.TypeCodes[models.ArtskodeDag].Add(compensationDay)
+	payroll.Artskoder.Dag = payroll.Artskoder.Dag.Add(compensationDay)
 
 	compensationEvening := decimal.NewFromInt(int64(compensation.Hvilende2000)).DivRound(minutesInHour, 0).Mul(satser["2006"]).Round(2)
-	payroll.TypeCodes[models.ArtskodeKveld] = payroll.TypeCodes[models.ArtskodeKveld].Add(compensationEvening)
+	payroll.Artskoder.Kveld = payroll.Artskoder.Kveld.Add(compensationEvening)
 
 	compensationMorning := decimal.NewFromInt(int64(compensation.Hvilende0006)).DivRound(minutesInHour, 0).Mul(satser["2006"]).Round(2)
-	payroll.TypeCodes[models.ArtskodeMorgen] = payroll.TypeCodes[models.ArtskodeMorgen].Add(compensationMorning)
+	payroll.Artskoder.Morgen = payroll.Artskoder.Morgen.Add(compensationMorning)
 
 	compensationWeekend := decimal.NewFromInt(int64(compensation.Helgetillegg)).DivRound(minutesInHour, 0).Mul(satser["lørsøn"]).Div(fifthOfAnHour).Round(2)
-	payroll.TypeCodes[models.ArtskodeHelg] = payroll.TypeCodes[models.ArtskodeHelg].Add(compensationWeekend)
+	payroll.Artskoder.Helg = payroll.Artskoder.Helg.Add(compensationWeekend)
 
 	compensationShift := decimal.NewFromInt(int64(compensation.Skifttillegg)).DivRound(minutesInHour, 0).Mul(satser["utvidet"]).Div(fifthOfAnHour).Round(2)
-	payroll.TypeCodes[models.ArtskodeDag] = payroll.TypeCodes[models.ArtskodeDag].Add(compensationShift)
+	payroll.Artskoder.Dag = payroll.Artskoder.Dag.Add(compensationShift)
 }
 
 func isWeekend(date time.Time) bool {
@@ -64,7 +64,7 @@ func CalculateCallOut(timesheet map[string]models.TimeSheet, satser map[string]d
 					minutesWithGuardDuty := ranges.CalculateMinutesOverlapping(workRange, *dutyRange)
 
 					compensation := decimal.NewFromInt(int64(minutesWithGuardDuty)).DivRound(minutesInHour, 0).Mul(satser["2006"]).Round(2)
-					payroll.TypeCodes[models.ArtskodeMorgen] = payroll.TypeCodes[models.ArtskodeMorgen].Add(compensation)
+					payroll.Artskoder.Morgen = payroll.Artskoder.Morgen.Add(compensation)
 				}
 
 				// 06-20
@@ -76,7 +76,7 @@ func CalculateCallOut(timesheet map[string]models.TimeSheet, satser map[string]d
 					minutesWithGuardDuty := ranges.CalculateMinutesOverlapping(workRange, *dutyRange)
 
 					compensation := decimal.NewFromInt(int64(minutesWithGuardDuty)).DivRound(minutesInHour, 0).Mul(satser["0620"]).Round(2)
-					payroll.TypeCodes[models.ArtskodeDag] = payroll.TypeCodes[models.ArtskodeDag].Add(compensation)
+					payroll.Artskoder.Dag = payroll.Artskoder.Dag.Add(compensation)
 				}
 
 				// 20-00
@@ -88,7 +88,7 @@ func CalculateCallOut(timesheet map[string]models.TimeSheet, satser map[string]d
 					minutesWithGuardDuty := ranges.CalculateMinutesOverlapping(workRange, *dutyRange)
 
 					compensation := decimal.NewFromInt(int64(minutesWithGuardDuty)).DivRound(minutesInHour, 0).Mul(satser["2006"]).Round(2)
-					payroll.TypeCodes[models.ArtskodeKveld] = payroll.TypeCodes[models.ArtskodeKveld].Add(compensation)
+					payroll.Artskoder.Kveld = payroll.Artskoder.Kveld.Add(compensation)
 				}
 
 				if isWeekend(date) {
@@ -101,7 +101,7 @@ func CalculateCallOut(timesheet map[string]models.TimeSheet, satser map[string]d
 					minutesWithGuardDuty := ranges.CalculateMinutesOverlapping(workRange, *dutyRange)
 
 					compensation := decimal.NewFromInt(int64(minutesWithGuardDuty)).DivRound(minutesInHour, 0).Mul(satser["lørsøn"]).Round(2)
-					payroll.TypeCodes[models.ArtskodeHelg] = payroll.TypeCodes[models.ArtskodeHelg].Add(compensation)
+					payroll.Artskoder.Helg = payroll.Artskoder.Helg.Add(compensation)
 				} else {
 					minutesWithGuardDuty := 0.0
 					// sjekk om man har vakt i perioden 06-07
@@ -123,7 +123,7 @@ func CalculateCallOut(timesheet map[string]models.TimeSheet, satser map[string]d
 					}
 
 					compensation := decimal.NewFromInt(int64(minutesWithGuardDuty)).DivRound(minutesInHour, 0).Mul(satser["utvidet"]).Round(2)
-					payroll.TypeCodes[models.ArtskodeDag] = payroll.TypeCodes[models.ArtskodeDag].Add(compensation)
+					payroll.Artskoder.Dag = payroll.Artskoder.Dag.Add(compensation)
 				}
 			}
 		}

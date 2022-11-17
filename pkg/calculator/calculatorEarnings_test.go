@@ -1172,12 +1172,6 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 			payroll = &models.Payroll{
 				ID:         uuid.UUID{},
 				ApproverID: "Scathan",
-				TypeCodes: map[string]decimal.Decimal{
-					models.ArtskodeMorgen: {},
-					models.ArtskodeDag:    {},
-					models.ArtskodeKveld:  {},
-					models.ArtskodeHelg:   {},
-				},
 			}
 
 			salary, err := getSalary(tt.args.timesheet)
@@ -1190,15 +1184,13 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 			compensation.Calculate(minutes, tt.args.satser, payroll)
 			overtime.Calculate(minutes, salary, payroll)
 
-			total := decimal.Decimal{}
-			for _, typeCode := range payroll.TypeCodes {
-				total = total.Add(typeCode)
-			}
+			artskoder := payroll.Artskoder
+			total := artskoder.Morgen.Add(artskoder.Kveld.Add(artskoder.Dag.Add(artskoder.Helg)))
 
 			if !total.Equal(tt.want) {
 				t.Errorf("calculateEarnings() got = %v, want %v", total, tt.want)
-				t.Errorf("Morgen: %v, Dag: %v, Kveld: %v, Helg: %v\n", payroll.TypeCodes[models.ArtskodeMorgen],
-					payroll.TypeCodes[models.ArtskodeDag], payroll.TypeCodes[models.ArtskodeKveld], payroll.TypeCodes[models.ArtskodeHelg])
+				t.Errorf("Morgen: %v, Dag: %v, Kveld: %v, Helg: %v\n", payroll.Artskoder.Morgen,
+					payroll.Artskoder.Dag, payroll.Artskoder.Kveld, payroll.Artskoder.Helg)
 			}
 		})
 	}

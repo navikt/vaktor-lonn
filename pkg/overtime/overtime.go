@@ -29,17 +29,17 @@ func Calculate(minutes map[string]models.GuardDuty, salary decimal.Decimal, payr
 
 	overtimeDayHours := decimal.NewFromFloat(overtimeDayMinutes).DivRound(minutesInHour, 0)
 	overtimeDay := overtimeDayHours.Mul(ots50).Div(fifthOfAnHour).Round(2)
-	payroll.TypeCodes[models.ArtskodeDag] = payroll.TypeCodes[models.ArtskodeDag].Add(overtimeDay)
+	payroll.Artskoder.Dag = payroll.Artskoder.Dag.Add(overtimeDay)
 
 	overtimeMorningHours := decimal.NewFromFloat(overtimeMorningMinutes).DivRound(minutesInHour, 0)
 	overtimeMorning := overtimeMorningHours.Mul(ots100).Div(fifthOfAnHour).Round(2)
-	payroll.TypeCodes[models.ArtskodeMorgen] = payroll.TypeCodes[models.ArtskodeMorgen].Add(overtimeMorning)
+	payroll.Artskoder.Morgen = payroll.Artskoder.Morgen.Add(overtimeMorning)
 
 	overtimeEveningHours := decimal.NewFromFloat(overtimeEveningMinutes).DivRound(minutesInHour, 0)
 	overtimeEvening := overtimeEveningHours.Mul(ots100).Div(fifthOfAnHour).Round(2)
-	payroll.TypeCodes[models.ArtskodeKveld] = payroll.TypeCodes[models.ArtskodeKveld].Add(overtimeEvening)
+	payroll.Artskoder.Kveld = payroll.Artskoder.Kveld.Add(overtimeEvening)
 
 	overtimeWeekendOrHolidayHours := decimal.NewFromFloat(overtimeWeekendOrHolidayMinutes).DivRound(minutesInHour, 0)
 	overtimeWeekendOrHoliday := overtimeWeekendOrHolidayHours.Mul(ots100).Div(fifthOfAnHour).Round(2)
-	payroll.TypeCodes[models.ArtskodeHelg] = payroll.TypeCodes[models.ArtskodeHelg].Add(overtimeWeekendOrHoliday)
+	payroll.Artskoder.Helg = payroll.Artskoder.Helg.Add(overtimeWeekendOrHoliday)
 }

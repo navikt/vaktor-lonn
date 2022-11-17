@@ -17,7 +17,7 @@ func TestCalculateCallOut(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want map[string]decimal.Decimal
+		want models.Artskoder
 	}{
 		{
 			name: "Utrykning i helg",
@@ -44,11 +44,9 @@ func TestCalculateCallOut(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]decimal.Decimal{
-				models.ArtskodeMorgen: {},
-				models.ArtskodeDag:    {},
-				models.ArtskodeKveld:  decimal.NewFromInt(40),
-				models.ArtskodeHelg:   decimal.NewFromInt(110),
+			want: models.Artskoder{
+				Kveld: decimal.NewFromInt(40),
+				Helg:  decimal.NewFromInt(110),
 			},
 		},
 
@@ -77,11 +75,8 @@ func TestCalculateCallOut(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]decimal.Decimal{
-				models.ArtskodeMorgen: {},
-				models.ArtskodeDag:    decimal.NewFromInt(35),
-				models.ArtskodeKveld:  {},
-				models.ArtskodeHelg:   {},
+			want: models.Artskoder{
+				Dag: decimal.NewFromInt(35),
 			},
 		},
 	}
@@ -91,21 +86,13 @@ func TestCalculateCallOut(t *testing.T) {
 		payroll = &models.Payroll{
 			ID:         uuid.UUID{},
 			ApproverID: "Scathan",
-			TypeCodes: map[string]decimal.Decimal{
-				models.ArtskodeMorgen: {},
-				models.ArtskodeDag:    {},
-				models.ArtskodeKveld:  {},
-				models.ArtskodeHelg:   {},
-			},
 		}
 
 		t.Run(tt.name, func(t *testing.T) {
 			CalculateCallOut(tt.args.timesheet, tt.args.satser, payroll)
 
-			for code, value := range payroll.TypeCodes {
-				if !value.Equal(tt.want[code]) {
-					t.Errorf("CalculateCallOut(%v) got = %v, want %v", code, value, tt.want[code])
-				}
+			if diff := cmp.Diff(tt.want, payroll.Artskoder); diff != "" {
+				t.Errorf("CalculateCallOut() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
@@ -120,14 +107,12 @@ func TestCalculate(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want map[string]decimal.Decimal
+		want models.Artskoder
 	}{
 		{
 			name: "Utrykning i helg",
 			args: args{
-				payroll: &models.Payroll{
-					TypeCodes: map[string]decimal.Decimal{},
-				},
+				payroll: &models.Payroll{},
 				satser: map[string]decimal.Decimal{
 					"lørsøn":  decimal.NewFromInt(65),
 					"0620":    decimal.NewFromInt(15),
@@ -153,11 +138,11 @@ func TestCalculate(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]decimal.Decimal{
-				models.ArtskodeMorgen: decimal.NewFromInt(700),
-				models.ArtskodeDag:    decimal.NewFromInt(120),
-				models.ArtskodeKveld:  decimal.NewFromInt(300),
-				models.ArtskodeHelg:   decimal.NewFromInt(624),
+			want: models.Artskoder{
+				Morgen: decimal.NewFromInt(700),
+				Dag:    decimal.NewFromInt(120),
+				Kveld:  decimal.NewFromInt(300),
+				Helg:   decimal.NewFromInt(624),
 			},
 		},
 	}
@@ -165,7 +150,7 @@ func TestCalculate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			Calculate(tt.args.minutes, tt.args.satser, tt.args.payroll)
 
-			if diff := cmp.Diff(tt.want, tt.args.payroll.TypeCodes); diff != "" {
+			if diff := cmp.Diff(tt.want, tt.args.payroll.Artskoder); diff != "" {
 				t.Errorf("Calculate() mismatch (-want +got):\n%s", diff)
 			}
 		})

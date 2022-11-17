@@ -277,16 +277,10 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 		ID:           plan.ID,
 		ApproverID:   minWinTid.ApproverID,
 		ApproverName: minWinTid.ApproverName,
-		TypeCodes: map[string]decimal.Decimal{
-			models.ArtskodeMorgen: {},
-			models.ArtskodeDag:    {},
-			models.ArtskodeKveld:  {},
-			models.ArtskodeHelg:   {},
-		},
-		CommitSHA: os.Getenv("NAIS_APP_IMAGE"),
-		Formal:    formal,
-		Koststed:  koststed,
-		Aktivitet: aktivitet,
+		CommitSHA:    os.Getenv("NAIS_APP_IMAGE"),
+		Formal:       formal,
+		Koststed:     koststed,
+		Aktivitet:    aktivitet,
 	}
 
 	compensation.Calculate(minutes, minWinTid.Satser, payroll)
