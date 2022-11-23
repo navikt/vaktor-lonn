@@ -422,11 +422,11 @@ func calculateSalary(log *zap.Logger, beredskapsvakt gensql.Beredskapsvakt, resp
 		ResourceID:   tiddataResult.VaktorNavId,
 		ApproverID:   tiddataResult.VaktorLederNavId,
 		ApproverName: tiddataResult.VaktorLederNavn,
-		Satser: map[string]decimal.Decimal{
-			"lørsøn":  decimal.NewFromInt(65),
-			"0620":    decimal.NewFromInt(15),
-			"2006":    decimal.NewFromInt(25),
-			"utvidet": decimal.NewFromInt(25),
+		Satser: models.Satser{
+			Helg:    decimal.NewFromInt(65),
+			Dag:     decimal.NewFromInt(15),
+			Natt:    decimal.NewFromInt(25),
+			Utvidet: decimal.NewFromInt(25),
 		},
 		Timesheet: timesheet,
 	}

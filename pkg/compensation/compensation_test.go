@@ -12,7 +12,7 @@ import (
 func TestCalculateCallOut(t *testing.T) {
 	type args struct {
 		timesheet map[string]models.TimeSheet
-		satser    map[string]decimal.Decimal
+		satser    models.Satser
 	}
 	tests := []struct {
 		name string
@@ -22,11 +22,11 @@ func TestCalculateCallOut(t *testing.T) {
 		{
 			name: "Utrykning i helg",
 			args: args{
-				satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(55),
-					"0620":    decimal.NewFromInt(10),
-					"2006":    decimal.NewFromInt(20),
-					"utvidet": decimal.NewFromInt(15),
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(55),
+					Dag:     decimal.NewFromInt(10),
+					Natt:    decimal.NewFromInt(20),
+					Utvidet: decimal.NewFromInt(15),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-10-29": {
@@ -53,11 +53,11 @@ func TestCalculateCallOut(t *testing.T) {
 		{
 			name: "Utrykning i utvidet arbeidstid",
 			args: args{
-				satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(55),
-					"0620":    decimal.NewFromInt(10),
-					"2006":    decimal.NewFromInt(20),
-					"utvidet": decimal.NewFromInt(15),
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(55),
+					Dag:     decimal.NewFromInt(10),
+					Natt:    decimal.NewFromInt(20),
+					Utvidet: decimal.NewFromInt(15),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-10-31": {
@@ -101,7 +101,7 @@ func TestCalculateCallOut(t *testing.T) {
 func TestCalculate(t *testing.T) {
 	type args struct {
 		minutes map[string]models.GuardDuty
-		satser  map[string]decimal.Decimal
+		satser  models.Satser
 		payroll *models.Payroll
 	}
 	tests := []struct {
@@ -113,11 +113,11 @@ func TestCalculate(t *testing.T) {
 			name: "Utrykning i helg",
 			args: args{
 				payroll: &models.Payroll{},
-				satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(65),
-					"0620":    decimal.NewFromInt(15),
-					"2006":    decimal.NewFromInt(25),
-					"utvidet": decimal.NewFromInt(25),
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
 				},
 				minutes: map[string]models.GuardDuty{
 					"2022-10-15": {

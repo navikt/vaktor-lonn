@@ -12,7 +12,7 @@ import (
 
 func TestCalculateEarningsComparedToExcel(t *testing.T) {
 	type args struct {
-		satser      map[string]decimal.Decimal
+		satser      models.Satser
 		timesheet   map[string]models.TimeSheet
 		guardPeriod map[string][]models.Period
 	}
@@ -25,11 +25,11 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 		{
 			name: "døgnvakt",
 			args: args{
-				satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(55),
-					"0620":    decimal.NewFromInt(10),
-					"2006":    decimal.NewFromInt(20),
-					"utvidet": decimal.NewFromInt(15),
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-03-14": {
@@ -152,17 +152,17 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(15_412.86),
+			want: decimal.NewFromFloat(16_178.86),
 		},
 
 		{
 			name: "døgnvakt uten stemplinger",
 			args: args{
-				satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(65),
-					"0620":    decimal.NewFromInt(15),
-					"2006":    decimal.NewFromInt(25),
-					"utvidet": decimal.NewFromInt(25),
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-03-14": {
@@ -266,11 +266,11 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 		{
 			name: "døgnvakt med perfekt stempling",
 			args: args{
-				satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(65),
-					"0620":    decimal.NewFromInt(15),
-					"2006":    decimal.NewFromInt(25),
-					"utvidet": decimal.NewFromInt(25),
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-03-14": {
@@ -399,11 +399,11 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 		{
 			name: "Utvidet beredskap",
 			args: args{
-				satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(55),
-					"0620":    decimal.NewFromInt(10),
-					"2006":    decimal.NewFromInt(20),
-					"utvidet": decimal.NewFromInt(15),
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-07-04": {
@@ -657,17 +657,17 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(14_018.76),
+			want: decimal.NewFromFloat(14_577.76),
 		},
 
 		{
 			name: "Vakt ved spesielle hendelser",
 			args: args{
-				satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(55),
-					"0620":    decimal.NewFromInt(10),
-					"2006":    decimal.NewFromInt(20),
-					"utvidet": decimal.NewFromInt(15),
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-07-16": {
@@ -753,17 +753,17 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(15_294.65),
+			want: decimal.NewFromFloat(15_825.65),
 		},
 
 		{
 			name: "Vakt når klokka stilles til sommertid",
 			args: args{
-				satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(55),
-					"0620":    decimal.NewFromInt(10),
-					"2006":    decimal.NewFromInt(20),
-					"utvidet": decimal.NewFromInt(15),
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-03-27": {
@@ -783,17 +783,17 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(3_059.49),
+			want: decimal.NewFromFloat(3_220.49),
 		},
 
 		{
 			name: "Vakt når klokka stilles til normaltid",
 			args: args{
-				satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(55),
-					"0620":    decimal.NewFromInt(10),
-					"2006":    decimal.NewFromInt(20),
-					"utvidet": decimal.NewFromInt(15),
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-10-30": {
@@ -813,17 +813,17 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(3_337.70),
+			want: decimal.NewFromFloat(3_512.70),
 		},
 
 		{
 			name: "Utvidet åpningstid dagen klokka stilles til normaltid",
 			args: args{
-				satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(55),
-					"0620":    decimal.NewFromInt(10),
-					"2006":    decimal.NewFromInt(20),
-					"utvidet": decimal.NewFromInt(15),
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-10-30": {
@@ -843,17 +843,17 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(774.65),
+			want: decimal.NewFromFloat(816.65),
 		},
 
 		{
 			name: "Helgevakt med utrykning",
 			args: args{
-				satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(55),
-					"0620":    decimal.NewFromInt(10),
-					"2006":    decimal.NewFromInt(20),
-					"utvidet": decimal.NewFromInt(15),
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-09-24": {
@@ -891,17 +891,17 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(6_268.97),
+			want: decimal.NewFromFloat(6_620.97),
 		},
 
 		{
 			name: "Helgevakt uten utrykning",
 			args: args{
-				satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(65),
-					"0620":    decimal.NewFromInt(15),
-					"2006":    decimal.NewFromInt(25),
-					"utvidet": decimal.NewFromInt(25),
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-09-24": {
@@ -941,11 +941,11 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 		{
 			name: "vakt en dag med utrykning",
 			args: args{
-				satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(55),
-					"0620":    decimal.NewFromInt(10),
-					"2006":    decimal.NewFromInt(20),
-					"utvidet": decimal.NewFromInt(15),
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-03-14": {
@@ -975,17 +975,17 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(1_623.36),
+			want: decimal.NewFromFloat(1_711.36),
 		},
 
 		{
 			name: "En tilfeldig døgnkontinuerlig vaktuke",
 			args: args{
-				satser: map[string]decimal.Decimal{
-					"lørsøn":  decimal.NewFromInt(65),
-					"0620":    decimal.NewFromInt(15),
-					"2006":    decimal.NewFromInt(25),
-					"utvidet": decimal.NewFromInt(25),
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-10-05": {

@@ -29,5 +29,5 @@ type MinWinTid struct {
 	ApproverID   string
 	ApproverName string
 	Timesheet    map[string]TimeSheet
-	Satser       map[string]decimal.Decimal
+	Satser       Satser
 }
