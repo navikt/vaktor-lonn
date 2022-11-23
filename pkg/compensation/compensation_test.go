@@ -23,10 +23,10 @@ func TestCalculateCallOut(t *testing.T) {
 			name: "Utrykning i helg",
 			args: args{
 				satser: models.Satser{
-					Helg:    decimal.NewFromInt(55),
-					Dag:     decimal.NewFromInt(10),
-					Natt:    decimal.NewFromInt(20),
-					Utvidet: decimal.NewFromInt(15),
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-10-29": {
@@ -45,8 +45,102 @@ func TestCalculateCallOut(t *testing.T) {
 				},
 			},
 			want: models.Artskoder{
-				Kveld: decimal.NewFromInt(40),
-				Helg:  decimal.NewFromInt(110),
+				Kveld: decimal.NewFromInt(50),
+				Helg:  decimal.NewFromInt(130),
+			},
+		},
+
+		{
+			name: "Korte utrykninger på lørdag",
+			args: args{
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2022-10-29": {
+						Date:         time.Date(2022, 10, 29, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Lørdag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 29, 10, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 29, 10, 20, 0, 0, time.UTC),
+								OtG: true,
+							},
+							{
+								In:  time.Date(2022, 10, 29, 20, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 29, 20, 40, 0, 0, time.UTC),
+								OtG: true,
+							},
+						},
+					},
+				},
+			},
+			want: models.Artskoder{
+				Dag:   decimal.NewFromInt(0),
+				Kveld: decimal.NewFromInt(25),
+				Helg:  decimal.NewFromInt(65),
+			},
+		},
+
+		{
+			name: "Korte utrykninger over flere dager",
+			args: args{
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2022-10-26": {
+						Date:         time.Date(2022, 10, 26, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 26, 20, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 26, 20, 20, 0, 0, time.UTC),
+								OtG: true,
+							},
+						},
+					},
+					"2022-10-27": {
+						Date:         time.Date(2022, 10, 27, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 27, 20, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 27, 20, 20, 0, 0, time.UTC),
+								OtG: true,
+							},
+						},
+					},
+					"2022-10-28": {
+						Date:         time.Date(2022, 10, 28, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Virkedag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 28, 5, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 28, 5, 20, 0, 0, time.UTC),
+								OtG: true,
+							},
+						},
+					},
+				},
+			},
+			want: models.Artskoder{
+				Morgen: decimal.NewFromInt(0),
+				Kveld:  decimal.NewFromInt(25),
 			},
 		},
 
@@ -54,10 +148,10 @@ func TestCalculateCallOut(t *testing.T) {
 			name: "Utrykning i utvidet arbeidstid",
 			args: args{
 				satser: models.Satser{
-					Helg:    decimal.NewFromInt(55),
-					Dag:     decimal.NewFromInt(10),
-					Natt:    decimal.NewFromInt(20),
-					Utvidet: decimal.NewFromInt(15),
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-10-31": {
@@ -76,7 +170,7 @@ func TestCalculateCallOut(t *testing.T) {
 				},
 			},
 			want: models.Artskoder{
-				Dag: decimal.NewFromInt(35),
+				Dag: decimal.NewFromInt(55),
 			},
 		},
 	}

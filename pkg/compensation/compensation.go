@@ -44,6 +44,7 @@ func isWeekend(date time.Time) bool {
 func CalculateCallOut(timesheet map[string]models.TimeSheet, satser models.Satser, payroll *models.Payroll) {
 	// TODO: Validering av at man har vakt i perioden man har overtid med kommentaren BV (for eks. i kjernetid)
 	minutesInHour := decimal.NewFromInt(60)
+	guardMinutes := models.GuardDuty{}
 
 	for _, sheet := range timesheet {
 		date := sheet.Date
@@ -62,9 +63,7 @@ func CalculateCallOut(timesheet map[string]models.TimeSheet, satser models.Satse
 				})
 				if dutyRange != nil {
 					minutesWithGuardDuty := ranges.CalculateMinutesOverlapping(workRange, *dutyRange)
-
-					compensation := decimal.NewFromInt(int64(minutesWithGuardDuty)).DivRound(minutesInHour, 0).Mul(satser.Natt).Round(2)
-					payroll.Artskoder.Morgen = payroll.Artskoder.Morgen.Add(compensation)
+					guardMinutes.Hvilende0006 += minutesWithGuardDuty
 				}
 
 				// 06-20
@@ -74,9 +73,7 @@ func CalculateCallOut(timesheet map[string]models.TimeSheet, satser models.Satse
 				})
 				if dutyRange != nil {
 					minutesWithGuardDuty := ranges.CalculateMinutesOverlapping(workRange, *dutyRange)
-
-					compensation := decimal.NewFromInt(int64(minutesWithGuardDuty)).DivRound(minutesInHour, 0).Mul(satser.Dag).Round(2)
-					payroll.Artskoder.Dag = payroll.Artskoder.Dag.Add(compensation)
+					guardMinutes.Hvilende0620 += minutesWithGuardDuty
 				}
 
 				// 20-00
@@ -86,9 +83,7 @@ func CalculateCallOut(timesheet map[string]models.TimeSheet, satser models.Satse
 				})
 				if dutyRange != nil {
 					minutesWithGuardDuty := ranges.CalculateMinutesOverlapping(workRange, *dutyRange)
-
-					compensation := decimal.NewFromInt(int64(minutesWithGuardDuty)).DivRound(minutesInHour, 0).Mul(satser.Natt).Round(2)
-					payroll.Artskoder.Kveld = payroll.Artskoder.Kveld.Add(compensation)
+					guardMinutes.Hvilende2000 += minutesWithGuardDuty
 				}
 
 				if isWeekend(date) {
@@ -99,9 +94,7 @@ func CalculateCallOut(timesheet map[string]models.TimeSheet, satser models.Satse
 					})
 
 					minutesWithGuardDuty := ranges.CalculateMinutesOverlapping(workRange, *dutyRange)
-
-					compensation := decimal.NewFromInt(int64(minutesWithGuardDuty)).DivRound(minutesInHour, 0).Mul(satser.Helg).Round(2)
-					payroll.Artskoder.Helg = payroll.Artskoder.Helg.Add(compensation)
+					guardMinutes.Helgetillegg += minutesWithGuardDuty
 				} else {
 					minutesWithGuardDuty := 0.0
 					// sjekk om man har vakt i perioden 06-07
@@ -111,6 +104,7 @@ func CalculateCallOut(timesheet map[string]models.TimeSheet, satser models.Satse
 					})
 					if dutyRange != nil {
 						minutesWithGuardDuty = ranges.CalculateMinutesOverlapping(workRange, *dutyRange)
+						guardMinutes.Skifttillegg += minutesWithGuardDuty
 					}
 
 					// sjekk om man har vakt i perioden 17-20
@@ -120,12 +114,25 @@ func CalculateCallOut(timesheet map[string]models.TimeSheet, satser models.Satse
 					})
 					if dutyRange != nil {
 						minutesWithGuardDuty += ranges.CalculateMinutesOverlapping(workRange, *dutyRange)
+						guardMinutes.Skifttillegg += minutesWithGuardDuty
 					}
-
-					compensation := decimal.NewFromInt(int64(minutesWithGuardDuty)).DivRound(minutesInHour, 0).Mul(satser.Utvidet).Round(2)
-					payroll.Artskoder.Dag = payroll.Artskoder.Dag.Add(compensation)
 				}
 			}
 		}
 	}
+
+	compensation := decimal.NewFromInt(int64(guardMinutes.Hvilende0006)).DivRound(minutesInHour, 0).Mul(satser.Natt).Round(2)
+	payroll.Artskoder.Morgen = payroll.Artskoder.Morgen.Add(compensation)
+
+	compensation = decimal.NewFromInt(int64(guardMinutes.Hvilende0620)).DivRound(minutesInHour, 0).Mul(satser.Dag).Round(2)
+	payroll.Artskoder.Dag = payroll.Artskoder.Dag.Add(compensation)
+
+	compensation = decimal.NewFromInt(int64(guardMinutes.Hvilende2000)).DivRound(minutesInHour, 0).Mul(satser.Natt).Round(2)
+	payroll.Artskoder.Kveld = payroll.Artskoder.Kveld.Add(compensation)
+
+	compensation = decimal.NewFromInt(int64(guardMinutes.Helgetillegg)).DivRound(minutesInHour, 0).Mul(satser.Helg).Round(2)
+	payroll.Artskoder.Helg = payroll.Artskoder.Helg.Add(compensation)
+
+	compensation = decimal.NewFromInt(int64(guardMinutes.Skifttillegg)).DivRound(minutesInHour, 0).Mul(satser.Utvidet).Round(2)
+	payroll.Artskoder.Dag = payroll.Artskoder.Dag.Add(compensation)
 }
