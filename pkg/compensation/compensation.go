@@ -21,20 +21,28 @@ func Calculate(minutes map[string]models.GuardDuty, satser models.Satser, payrol
 	minutesInHour := decimal.NewFromInt(60)
 	fifthOfAnHour := decimal.NewFromInt(5)
 
-	compensationDay := decimal.NewFromInt(int64(compensation.Hvilende0620)).DivRound(minutesInHour, 0).Mul(satser.Dag).Round(2)
-	payroll.Artskoder.Dag = payroll.Artskoder.Dag.Add(compensationDay)
+	compensationDayHours := decimal.NewFromInt(int64(compensation.Hvilende0620)).DivRound(minutesInHour, 0)
+	payroll.Artskoder.Dag.Hours = compensationDayHours.IntPart()
+	compensationDay := compensationDayHours.Mul(satser.Dag).Round(2)
+	payroll.Artskoder.Dag.Sum = payroll.Artskoder.Dag.Sum.Add(compensationDay)
 
-	compensationEvening := decimal.NewFromInt(int64(compensation.Hvilende2000)).DivRound(minutesInHour, 0).Mul(satser.Natt).Round(2)
-	payroll.Artskoder.Kveld = payroll.Artskoder.Kveld.Add(compensationEvening)
+	compensationEveningHours := decimal.NewFromInt(int64(compensation.Hvilende2000)).DivRound(minutesInHour, 0)
+	payroll.Artskoder.Kveld.Hours = compensationEveningHours.IntPart()
+	compensationEvening := compensationEveningHours.Mul(satser.Natt).Round(2)
+	payroll.Artskoder.Kveld.Sum = payroll.Artskoder.Kveld.Sum.Add(compensationEvening)
 
-	compensationMorning := decimal.NewFromInt(int64(compensation.Hvilende0006)).DivRound(minutesInHour, 0).Mul(satser.Natt).Round(2)
-	payroll.Artskoder.Morgen = payroll.Artskoder.Morgen.Add(compensationMorning)
+	compensationMorningHours := decimal.NewFromInt(int64(compensation.Hvilende0006)).DivRound(minutesInHour, 0)
+	payroll.Artskoder.Morgen.Hours = compensationMorningHours.IntPart()
+	compensationMorning := compensationMorningHours.Mul(satser.Natt).Round(2)
+	payroll.Artskoder.Morgen.Sum = payroll.Artskoder.Morgen.Sum.Add(compensationMorning)
 
-	compensationWeekend := decimal.NewFromInt(int64(compensation.Helgetillegg)).DivRound(minutesInHour, 0).Mul(satser.Helg).Div(fifthOfAnHour).Round(2)
-	payroll.Artskoder.Helg = payroll.Artskoder.Helg.Add(compensationWeekend)
+	compensationWeekendHours := decimal.NewFromInt(int64(compensation.Helgetillegg)).DivRound(minutesInHour, 0)
+	compensationWeekend := compensationWeekendHours.Mul(satser.Helg).Div(fifthOfAnHour).Round(2)
+	payroll.Artskoder.Helg.Sum = payroll.Artskoder.Helg.Sum.Add(compensationWeekend)
 
-	compensationShift := decimal.NewFromInt(int64(compensation.Skifttillegg)).DivRound(minutesInHour, 0).Mul(satser.Utvidet).Div(fifthOfAnHour).Round(2)
-	payroll.Artskoder.Dag = payroll.Artskoder.Dag.Add(compensationShift)
+	compensationShiftHours := decimal.NewFromInt(int64(compensation.Skifttillegg)).DivRound(minutesInHour, 0)
+	compensationShift := compensationShiftHours.Mul(satser.Utvidet).Div(fifthOfAnHour).Round(2)
+	payroll.Artskoder.Skift.Sum = payroll.Artskoder.Skift.Sum.Add(compensationShift)
 }
 
 func isWeekend(date time.Time) bool {
@@ -121,18 +129,26 @@ func CalculateCallOut(timesheet map[string]models.TimeSheet, satser models.Satse
 		}
 	}
 
-	compensation := decimal.NewFromInt(int64(guardMinutes.Hvilende0006)).DivRound(minutesInHour, 0).Mul(satser.Natt).Round(2)
-	payroll.Artskoder.Morgen = payroll.Artskoder.Morgen.Add(compensation)
+	hours := decimal.NewFromInt(int64(guardMinutes.Hvilende0006)).DivRound(minutesInHour, 0)
+	payroll.Artskoder.Utrykning.Hours += hours.IntPart()
+	compensation := hours.Mul(satser.Natt).Round(2)
+	payroll.Artskoder.Utrykning.Sum = payroll.Artskoder.Utrykning.Sum.Add(compensation)
 
-	compensation = decimal.NewFromInt(int64(guardMinutes.Hvilende0620)).DivRound(minutesInHour, 0).Mul(satser.Dag).Round(2)
-	payroll.Artskoder.Dag = payroll.Artskoder.Dag.Add(compensation)
+	hours = decimal.NewFromInt(int64(guardMinutes.Hvilende0620)).DivRound(minutesInHour, 0)
+	payroll.Artskoder.Utrykning.Hours += hours.IntPart()
+	compensation = hours.Mul(satser.Dag).Round(2)
+	payroll.Artskoder.Utrykning.Sum = payroll.Artskoder.Utrykning.Sum.Add(compensation)
 
-	compensation = decimal.NewFromInt(int64(guardMinutes.Hvilende2000)).DivRound(minutesInHour, 0).Mul(satser.Natt).Round(2)
-	payroll.Artskoder.Kveld = payroll.Artskoder.Kveld.Add(compensation)
+	hours = decimal.NewFromInt(int64(guardMinutes.Hvilende2000)).DivRound(minutesInHour, 0)
+	payroll.Artskoder.Utrykning.Hours += hours.IntPart()
+	compensation = hours.Mul(satser.Natt).Round(2)
+	payroll.Artskoder.Utrykning.Sum = payroll.Artskoder.Utrykning.Sum.Add(compensation)
 
-	compensation = decimal.NewFromInt(int64(guardMinutes.Helgetillegg)).DivRound(minutesInHour, 0).Mul(satser.Helg).Round(2)
-	payroll.Artskoder.Helg = payroll.Artskoder.Helg.Add(compensation)
+	hours = decimal.NewFromInt(int64(guardMinutes.Helgetillegg)).DivRound(minutesInHour, 0)
+	compensation = hours.Mul(satser.Helg).Round(2)
+	payroll.Artskoder.Utrykning.Sum = payroll.Artskoder.Utrykning.Sum.Add(compensation)
 
-	compensation = decimal.NewFromInt(int64(guardMinutes.Skifttillegg)).DivRound(minutesInHour, 0).Mul(satser.Utvidet).Round(2)
-	payroll.Artskoder.Dag = payroll.Artskoder.Dag.Add(compensation)
+	hours = decimal.NewFromInt(int64(guardMinutes.Skifttillegg)).DivRound(minutesInHour, 0)
+	compensation = hours.Mul(satser.Utvidet).Round(2)
+	payroll.Artskoder.Utrykning.Sum = payroll.Artskoder.Utrykning.Sum.Add(compensation)
 }

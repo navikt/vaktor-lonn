@@ -12,11 +12,18 @@ type Satser struct {
 	Utvidet decimal.Decimal `json:"skift"`
 }
 
+type Artskode struct {
+	Sum   decimal.Decimal `json:"sum"`
+	Hours int64           `json:"hours"`
+}
+
 type Artskoder struct {
-	Morgen decimal.Decimal `json:"2680"`
-	Kveld  decimal.Decimal `json:"2681"`
-	Dag    decimal.Decimal `json:"2682"`
-	Helg   decimal.Decimal `json:"2683"`
+	Morgen    Artskode `json:"2680"`
+	Kveld     Artskode `json:"2681"`
+	Dag       Artskode `json:"2682"`
+	Helg      Artskode `json:"2683"`
+	Skift     Artskode `json:"2684"`
+	Utrykning Artskode `json:"2684"`
 }
 
 type Payroll struct {

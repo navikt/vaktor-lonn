@@ -1185,7 +1185,12 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 			overtime.Calculate(minutes, salary, payroll)
 
 			artskoder := payroll.Artskoder
-			total := artskoder.Morgen.Add(artskoder.Kveld.Add(artskoder.Dag.Add(artskoder.Helg)))
+			total := artskoder.Morgen.Sum.
+				Add(artskoder.Kveld.Sum.
+					Add(artskoder.Dag.Sum.
+						Add(artskoder.Helg.Sum.
+							Add(artskoder.Skift.Sum.
+								Add(artskoder.Utrykning.Sum)))))
 
 			if !total.Equal(tt.want) {
 				t.Errorf("calculateEarnings() got = %v, want %v", total, tt.want)

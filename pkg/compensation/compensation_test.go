@@ -45,8 +45,10 @@ func TestCalculateCallOut(t *testing.T) {
 				},
 			},
 			want: models.Artskoder{
-				Kveld: decimal.NewFromInt(50),
-				Helg:  decimal.NewFromInt(130),
+				Utrykning: models.Artskode{
+					Sum:   decimal.NewFromInt(180),
+					Hours: 2,
+				},
 			},
 		},
 
@@ -81,9 +83,10 @@ func TestCalculateCallOut(t *testing.T) {
 				},
 			},
 			want: models.Artskoder{
-				Dag:   decimal.NewFromInt(0),
-				Kveld: decimal.NewFromInt(25),
-				Helg:  decimal.NewFromInt(65),
+				Utrykning: models.Artskode{
+					Sum:   decimal.NewFromInt(90),
+					Hours: 1,
+				},
 			},
 		},
 
@@ -139,8 +142,10 @@ func TestCalculateCallOut(t *testing.T) {
 				},
 			},
 			want: models.Artskoder{
-				Morgen: decimal.NewFromInt(0),
-				Kveld:  decimal.NewFromInt(25),
+				Utrykning: models.Artskode{
+					Sum:   decimal.NewFromInt(25),
+					Hours: 1,
+				},
 			},
 		},
 
@@ -170,7 +175,10 @@ func TestCalculateCallOut(t *testing.T) {
 				},
 			},
 			want: models.Artskoder{
-				Dag: decimal.NewFromInt(55),
+				Utrykning: models.Artskode{
+					Sum:   decimal.NewFromInt(55),
+					Hours: 2,
+				},
 			},
 		},
 	}
@@ -233,10 +241,26 @@ func TestCalculate(t *testing.T) {
 				},
 			},
 			want: models.Artskoder{
-				Morgen: decimal.NewFromInt(700),
-				Dag:    decimal.NewFromInt(120),
-				Kveld:  decimal.NewFromInt(300),
-				Helg:   decimal.NewFromInt(624),
+				Morgen: models.Artskode{
+					Sum:   decimal.NewFromInt(700),
+					Hours: 28,
+				},
+				Dag: models.Artskode{
+					Sum:   decimal.NewFromInt(120),
+					Hours: 8,
+				},
+				Kveld: models.Artskode{
+					Sum:   decimal.NewFromInt(300),
+					Hours: 12,
+				},
+				Helg: models.Artskode{
+					Sum:   decimal.NewFromInt(624),
+					Hours: 0,
+				},
+				Skift: models.Artskode{
+					Sum:   decimal.Decimal{},
+					Hours: 0,
+				},
 			},
 		},
 	}

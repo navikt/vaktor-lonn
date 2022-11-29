@@ -20,7 +20,7 @@ func TestCalculate(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Utrykning i helg",
+			name: "Beredskapsvakt helg",
 			args: args{
 				payroll: &models.Payroll{},
 				salary:  decimal.NewFromInt(750_000),
@@ -44,10 +44,22 @@ func TestCalculate(t *testing.T) {
 				},
 			},
 			want: models.Artskoder{
-				Morgen: decimal.NewFromInt(0),
-				Dag:    decimal.NewFromInt(0),
-				Kveld:  decimal.NewFromInt(0),
-				Helg:   decimal.NewFromFloat(7_783.78),
+				Morgen: models.Artskode{
+					Sum:   decimal.NewFromInt(0),
+					Hours: 0,
+				},
+				Dag: models.Artskode{
+					Sum:   decimal.NewFromInt(0),
+					Hours: 0,
+				},
+				Kveld: models.Artskode{
+					Sum:   decimal.NewFromInt(0),
+					Hours: 0,
+				},
+				Helg: models.Artskode{
+					Sum:   decimal.NewFromFloat(7_783.78),
+					Hours: 48,
+				},
 			},
 			wantErr: false,
 		},
