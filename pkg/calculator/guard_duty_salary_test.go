@@ -2,15 +2,13 @@ package calculator
 
 import (
 	"github.com/google/uuid"
-	"github.com/navikt/vaktor-lonn/pkg/compensation"
 	"github.com/navikt/vaktor-lonn/pkg/models"
-	"github.com/navikt/vaktor-lonn/pkg/overtime"
 	"github.com/shopspring/decimal"
 	"testing"
 	"time"
 )
 
-func TestCalculateEarningsComparedToExcel(t *testing.T) {
+func TestGuarddutySalary(t *testing.T) {
 	type args struct {
 		satser      models.Satser
 		timesheet   map[string]models.TimeSheet
@@ -1041,7 +1039,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 						WorkingDay: "Lørdag",
 						FormName:   "BV Lørdag IKT",
 						Salary:     decimal.NewFromInt(725000),
-						Koststed:   "855130",
+						Koststed:   "000000",
 						Formal:     "000000",
 						Aktivitet:  "000000",
 						Clockings:  []models.Clocking{},
@@ -1051,7 +1049,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 						WorkingDay: "Søndag",
 						FormName:   "BV Søndag IKT",
 						Salary:     decimal.NewFromInt(725000),
-						Koststed:   "855130",
+						Koststed:   "000000",
 						Formal:     "000000",
 						Aktivitet:  "000000",
 						Clockings:  []models.Clocking{},
@@ -1162,27 +1160,26 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			minutes, err := calculateMinutesToBeCompensated(tt.args.guardPeriod, tt.args.timesheet)
-			if err != nil {
-				t.Errorf("calculateMinutesToBeCompensated() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			vaktplan := models.Vaktplan{
+				ID:       uuid.UUID{},
+				Ident:    "A123456",
+				Schedule: tt.args.guardPeriod,
 			}
 
-			var payroll *models.Payroll
-			payroll = &models.Payroll{
-				ID:         uuid.UUID{},
-				ApproverID: "Scathan",
+			minWinTid := models.MinWinTid{
+				Ident:        "A123456",
+				ResourceID:   "123456",
+				ApproverID:   "M654321",
+				ApproverName: "Kalpana, Bran",
+				Timesheet:    tt.args.timesheet,
+				Satser:       tt.args.satser,
 			}
 
-			salary, err := getSalary(tt.args.timesheet)
+			payroll, err := GuarddutySalary(vaktplan, minWinTid)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("getSalary() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("GuarddutySalary() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-
-			compensation.CalculateCallOut(tt.args.timesheet, tt.args.satser, payroll)
-			compensation.Calculate(minutes, tt.args.satser, payroll)
-			overtime.Calculate(minutes, salary, payroll)
 
 			artskoder := payroll.Artskoder
 			total := artskoder.Morgen.Sum.
@@ -1193,7 +1190,7 @@ func TestCalculateEarningsComparedToExcel(t *testing.T) {
 								Add(artskoder.Utrykning.Sum)))))
 
 			if !total.Equal(tt.want) {
-				t.Errorf("calculateEarnings() got = %v, want %v", total, tt.want)
+				t.Errorf("GuarddutySalary() got = %v, want %v", total, tt.want)
 				t.Errorf("Morgen: %v, Dag: %v, Kveld: %v, Helg: %v\n", payroll.Artskoder.Morgen,
 					payroll.Artskoder.Dag, payroll.Artskoder.Kveld, payroll.Artskoder.Helg)
 			}
