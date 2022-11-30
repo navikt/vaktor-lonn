@@ -2,7 +2,9 @@ package calculator
 
 import (
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/uuid"
 	"github.com/navikt/vaktor-lonn/pkg/models"
+	"github.com/shopspring/decimal"
 	"testing"
 	"time"
 )
@@ -334,6 +336,545 @@ func Test_calculateGuardDutyInKjernetid(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := calculateGuardDutyInKjernetid(tt.args.currentDay, tt.args.date, tt.args.period); got != tt.want {
 				t.Errorf("calculateGuardDutyInKjernetid() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_calculateMinutesToBeCompensated(t *testing.T) {
+	type args struct {
+		schedule  map[string][]models.Period
+		timesheet map[string]models.TimeSheet
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    map[string]models.GuardDuty
+		wantErr bool
+	}{
+		{
+			name: "Julaften på en lørdag",
+			args: args{
+				schedule: map[string][]models.Period{
+					"2022-12-24": {
+						{
+							Begin: time.Date(2022, 12, 24, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 12, 25, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2022-12-24": {
+						Date:         time.Date(2022, 12, 24, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Lørdag",
+						FormName:     "Julaften 0800-1200 *",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    nil,
+					},
+				},
+			},
+			want: map[string]models.GuardDuty{
+				"2022-12-24": {
+					Hvilende2000:        240,
+					Hvilende0006:        360,
+					Hvilende0620:        840,
+					Helgetillegg:        1440,
+					Skifttillegg:        0,
+					WeekendCompensation: true,
+					HolidayCompensation: false,
+				},
+			},
+		},
+
+		{
+			name: "2. juledag på en mandag",
+			args: args{
+				schedule: map[string][]models.Period{
+					"2022-12-26": {
+						{
+							Begin: time.Date(2022, 12, 26, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 12, 27, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2022-12-26": {
+						Date:         time.Date(2022, 12, 26, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "2. Juledag",
+						FormName:     "Helligdag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    nil,
+					},
+				},
+			},
+			want: map[string]models.GuardDuty{
+				"2022-12-26": {
+					Hvilende2000:        240,
+					Hvilende0006:        360,
+					Hvilende0620:        840,
+					Helgetillegg:        0,
+					Skifttillegg:        240,
+					WeekendCompensation: false,
+					HolidayCompensation: true,
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := calculateMinutesToBeCompensated(tt.args.schedule, tt.args.timesheet)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("calculateMinutesToBeCompensated() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("calculateMinutesToBeCompensated() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+// TestHoursGuarddutySalary tester kun summering av timer. For tester av lønn se filen guard_duty_salary_test.go
+func TestHoursGuarddutySalary(t *testing.T) {
+	type args struct {
+		timesheet   map[string]models.TimeSheet
+		guardPeriod map[string][]models.Period
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    models.Artskoder
+		wantErr bool
+	}{
+		{
+			name: "En døgnkontinuerlig vaktuke (vintertid)",
+			args: args{
+				timesheet: map[string]models.TimeSheet{
+					"2022-10-12": {
+						Date:         time.Date(2022, 10, 12, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 12, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 12, 15, 45, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-13": {
+						Date:         time.Date(2022, 10, 13, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 13, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 13, 15, 45, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-14": {
+						Date:         time.Date(2022, 10, 14, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 14, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 14, 15, 45, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-15": {
+						Date:         time.Date(2022, 10, 15, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Lørdag",
+						FormName:     "BV Lørdag IKT",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings:    []models.Clocking{},
+					},
+					"2022-10-16": {
+						Date:         time.Date(2022, 10, 16, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Søndag",
+						FormName:     "BV Søndag IKT",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings:    []models.Clocking{},
+					},
+					"2022-10-17": {
+						Date:         time.Date(2022, 10, 17, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 17, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 17, 15, 45, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-18": {
+						Date:         time.Date(2022, 10, 18, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 18, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 18, 15, 45, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-19": {
+						Date:         time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 19, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 19, 15, 45, 0, 0, time.UTC),
+							},
+						},
+					},
+				},
+				guardPeriod: map[string][]models.Period{
+					"2022-10-12": {
+						{
+							Begin: time.Date(2022, 10, 12, 12, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 13, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-13": {
+						{
+							Begin: time.Date(2022, 10, 13, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 14, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-14": {
+						{
+							Begin: time.Date(2022, 10, 14, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 15, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-15": {
+						{
+							Begin: time.Date(2022, 10, 15, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 16, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-16": {
+						{
+							Begin: time.Date(2022, 10, 16, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 17, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-17": {
+						{
+							Begin: time.Date(2022, 10, 17, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 18, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-18": {
+						{
+							Begin: time.Date(2022, 10, 18, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-19": {
+						{
+							Begin: time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 19, 12, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			want: models.Artskoder{
+				Morgen: models.Artskode{
+					Sum:   decimal.NewFromFloat(5_914.86),
+					Hours: 72,
+				},
+				Kveld: models.Artskode{
+					Sum:   decimal.NewFromFloat(3943.24),
+					Hours: 48,
+				},
+				Dag: models.Artskode{
+					Sum:   decimal.NewFromFloat(4655.27),
+					Hours: 90,
+				},
+				Helg: models.Artskode{
+					Sum:   decimal.NewFromFloat(8407.78),
+					Hours: 96,
+				},
+				Skift: models.Artskode{
+					Sum:   decimal.NewFromFloat(100),
+					Hours: 20,
+				},
+			},
+		},
+
+		{
+			name: "En døgnkontinuerlig vaktuke (normaltid)",
+			args: args{
+				timesheet: map[string]models.TimeSheet{
+					"2022-10-12": {
+						Date:         time.Date(2022, 10, 12, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.5,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 12, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 12, 15, 30, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-13": {
+						Date:         time.Date(2022, 10, 13, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.5,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 13, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 13, 15, 30, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-14": {
+						Date:         time.Date(2022, 10, 14, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.5,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 14, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 14, 15, 30, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-15": {
+						Date:         time.Date(2022, 10, 15, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Lørdag",
+						FormName:     "BV Lørdag IKT",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings:    []models.Clocking{},
+					},
+					"2022-10-16": {
+						Date:         time.Date(2022, 10, 16, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Søndag",
+						FormName:     "BV Søndag IKT",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings:    []models.Clocking{},
+					},
+					"2022-10-17": {
+						Date:         time.Date(2022, 10, 17, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.5,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 17, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 17, 15, 30, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-18": {
+						Date:         time.Date(2022, 10, 18, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.5,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 18, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 18, 15, 30, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-19": {
+						Date:         time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.5,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(750_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 19, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 19, 15, 30, 0, 0, time.UTC),
+							},
+						},
+					},
+				},
+				guardPeriod: map[string][]models.Period{
+					"2022-10-12": {
+						{
+							Begin: time.Date(2022, 10, 12, 12, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 13, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-13": {
+						{
+							Begin: time.Date(2022, 10, 13, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 14, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-14": {
+						{
+							Begin: time.Date(2022, 10, 14, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 15, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-15": {
+						{
+							Begin: time.Date(2022, 10, 15, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 16, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-16": {
+						{
+							Begin: time.Date(2022, 10, 16, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 17, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-17": {
+						{
+							Begin: time.Date(2022, 10, 17, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 18, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-18": {
+						{
+							Begin: time.Date(2022, 10, 18, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-19": {
+						{
+							Begin: time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 19, 12, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			want: models.Artskoder{
+				Morgen: models.Artskode{
+					Sum:   decimal.NewFromFloat(5_914.86),
+					Hours: 72,
+				},
+				Kveld: models.Artskode{
+					Sum:   decimal.NewFromFloat(3943.24),
+					Hours: 48,
+				},
+				Dag: models.Artskode{
+					Sum:   decimal.NewFromFloat(4928.51),
+					Hours: 94,
+				},
+				Helg: models.Artskode{
+					Sum:   decimal.NewFromFloat(8407.78),
+					Hours: 96,
+				},
+				Skift: models.Artskode{
+					Sum:   decimal.NewFromFloat(100),
+					Hours: 20,
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			vaktplan := models.Vaktplan{
+				ID:       uuid.UUID{},
+				Ident:    "A123456",
+				Schedule: tt.args.guardPeriod,
+			}
+
+			minWinTid := models.MinWinTid{
+				Ident:        "A123456",
+				ResourceID:   "123456",
+				ApproverID:   "M654321",
+				ApproverName: "Kalpana, Bran",
+				Timesheet:    tt.args.timesheet,
+				Satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
+				},
+			}
+
+			got, err := GuarddutySalary(vaktplan, minWinTid)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GuarddutySalary() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if diff := cmp.Diff(tt.want, got.Artskoder); diff != "" {
+				t.Errorf("GuarddutySalary() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}

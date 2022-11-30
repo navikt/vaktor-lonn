@@ -24,4 +24,5 @@ type GuardDuty struct {
 	Helgetillegg        float64
 	Skifttillegg        float64
 	WeekendCompensation bool
+	HolidayCompensation bool
 }

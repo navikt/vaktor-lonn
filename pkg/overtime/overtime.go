@@ -7,6 +7,7 @@ import (
 
 func Calculate(minutes map[string]models.GuardDuty, salary decimal.Decimal, payroll *models.Payroll) {
 	overtimeWeekendMinutes := 0.0
+	overtimeHolidayMinutes := 0.0
 	overtimeDayMinutes := 0.0
 	overtimeEveningMinutes := 0.0
 	overtimeMorningMinutes := 0.0
@@ -14,6 +15,10 @@ func Calculate(minutes map[string]models.GuardDuty, salary decimal.Decimal, payr
 	for _, duty := range minutes {
 		if duty.WeekendCompensation {
 			overtimeWeekendMinutes += duty.Helgetillegg
+		} else if duty.HolidayCompensation {
+			overtimeHolidayMinutes += duty.Hvilende0620
+			overtimeEveningMinutes += duty.Hvilende2000
+			overtimeMorningMinutes += duty.Hvilende0006
 		} else {
 			overtimeDayMinutes += duty.Hvilende0620
 			overtimeEveningMinutes += duty.Hvilende2000
@@ -46,4 +51,9 @@ func Calculate(minutes map[string]models.GuardDuty, salary decimal.Decimal, payr
 	payroll.Artskoder.Helg.Hours += overtimeWeekendHours.IntPart()
 	overtimeWeekend := overtimeWeekendHours.Mul(ots100).Div(fifthOfAnHour).Round(2)
 	payroll.Artskoder.Helg.Sum = payroll.Artskoder.Helg.Sum.Add(overtimeWeekend)
+
+	overtimeHolidayHours := decimal.NewFromFloat(overtimeHolidayMinutes).DivRound(minutesInHour, 0)
+	payroll.Artskoder.Dag.Hours += overtimeHolidayHours.IntPart()
+	overtimeHoliday := overtimeHolidayHours.Mul(ots100).Div(fifthOfAnHour).Round(2)
+	payroll.Artskoder.Dag.Sum = payroll.Artskoder.Dag.Sum.Add(overtimeHoliday)
 }
