@@ -212,7 +212,108 @@ func TestCalculate(t *testing.T) {
 		want models.Artskoder
 	}{
 		{
-			name: "Utrykning i helg",
+			name: "Beredskapsvakt en uke",
+			args: args{
+				payroll: &models.Payroll{},
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
+				},
+				minutes: map[string]models.GuardDuty{
+					"2022-10-12": {
+						Hvilende2000:        240,
+						Hvilende0006:        0,
+						Hvilende0620:        255,
+						Helgetillegg:        0,
+						Skifttillegg:        180,
+						WeekendCompensation: false,
+					},
+					"2022-10-13": {
+						Hvilende2000:        240,
+						Hvilende0006:        360,
+						Hvilende0620:        375,
+						Helgetillegg:        0,
+						Skifttillegg:        240,
+						WeekendCompensation: false,
+					},
+					"2022-10-14": {
+						Hvilende2000:        240,
+						Hvilende0006:        360,
+						Hvilende0620:        375,
+						Helgetillegg:        0,
+						Skifttillegg:        240,
+						WeekendCompensation: false,
+					},
+					"2022-10-15": {
+						Hvilende2000:        240,
+						Hvilende0006:        360,
+						Hvilende0620:        840,
+						Helgetillegg:        1440,
+						Skifttillegg:        0,
+						WeekendCompensation: true,
+					},
+					"2022-10-16": {
+						Hvilende2000:        240,
+						Hvilende0006:        360,
+						Hvilende0620:        840,
+						Helgetillegg:        1440,
+						Skifttillegg:        0,
+						WeekendCompensation: true,
+					},
+					"2022-10-17": {
+						Hvilende2000:        240,
+						Hvilende0006:        360,
+						Hvilende0620:        375,
+						Helgetillegg:        0,
+						Skifttillegg:        240,
+						WeekendCompensation: false,
+					},
+					"2022-10-18": {
+						Hvilende2000:        240,
+						Hvilende0006:        360,
+						Hvilende0620:        375,
+						Helgetillegg:        0,
+						Skifttillegg:        240,
+						WeekendCompensation: false,
+					},
+					"2022-10-19": {
+						Hvilende2000:        0,
+						Hvilende0006:        360,
+						Hvilende0620:        120,
+						Helgetillegg:        0,
+						Skifttillegg:        60,
+						WeekendCompensation: false,
+					},
+				},
+			},
+			want: models.Artskoder{
+				Morgen: models.Artskode{
+					Sum:   decimal.NewFromInt(1050),
+					Hours: 42,
+				},
+				Dag: models.Artskode{
+					Sum:   decimal.NewFromInt(885),
+					Hours: 59,
+				},
+				Kveld: models.Artskode{
+					Sum:   decimal.NewFromInt(700),
+					Hours: 28,
+				},
+				Helg: models.Artskode{
+					Sum:   decimal.NewFromInt(624),
+					Hours: 48,
+				},
+				Skift: models.Artskode{
+					Sum:   decimal.NewFromInt(100),
+					Hours: 20,
+				},
+			},
+		},
+
+		{
+			name: "Utrykning i helg (søndag)",
 			args: args{
 				payroll: &models.Payroll{},
 				satser: models.Satser{
@@ -223,43 +324,39 @@ func TestCalculate(t *testing.T) {
 				},
 				minutes: map[string]models.GuardDuty{
 					"2022-10-15": {
-						Hvilende2000:                 360,
-						Hvilende0006:                 840,
-						Hvilende0620:                 240,
-						Helgetillegg:                 1440,
-						Skifttillegg:                 0,
-						WeekendOrHolidayCompensation: true,
+						Hvilende2000:        240,
+						Hvilende0006:        360,
+						Hvilende0620:        840,
+						Helgetillegg:        1440,
+						Skifttillegg:        0,
+						WeekendCompensation: true,
 					},
 					"2022-10-16": {
-						Hvilende2000:                 360,
-						Hvilende0006:                 840,
-						Hvilende0620:                 240,
-						Helgetillegg:                 1440,
-						Skifttillegg:                 0,
-						WeekendOrHolidayCompensation: true,
+						Hvilende2000:        120,
+						Hvilende0006:        360,
+						Hvilende0620:        840,
+						Helgetillegg:        1320,
+						Skifttillegg:        0,
+						WeekendCompensation: true,
 					},
 				},
 			},
 			want: models.Artskoder{
 				Morgen: models.Artskode{
-					Sum:   decimal.NewFromInt(700),
-					Hours: 28,
-				},
-				Dag: models.Artskode{
-					Sum:   decimal.NewFromInt(120),
-					Hours: 8,
-				},
-				Kveld: models.Artskode{
 					Sum:   decimal.NewFromInt(300),
 					Hours: 12,
 				},
-				Helg: models.Artskode{
-					Sum:   decimal.NewFromInt(624),
-					Hours: 0,
+				Dag: models.Artskode{
+					Sum:   decimal.NewFromInt(420),
+					Hours: 28,
 				},
-				Skift: models.Artskode{
-					Sum:   decimal.Decimal{},
-					Hours: 0,
+				Kveld: models.Artskode{
+					Sum:   decimal.NewFromInt(150),
+					Hours: 6,
+				},
+				Helg: models.Artskode{
+					Sum:   decimal.NewFromInt(598),
+					Hours: 46,
 				},
 			},
 		},

@@ -2218,10 +2218,26 @@ func Test_calculateSalary(t *testing.T) {
 					ApproverID:   "M654321",
 					ApproverName: "Kalpana, Bran",
 					Artskoder: models.Artskoder{
-						Morgen: decimal.NewFromFloat(6335.84),
-						Kveld:  decimal.NewFromFloat(4223.89),
-						Dag:    decimal.NewFromFloat(5081.52),
-						Helg:   decimal.NewFromFloat(9081.34),
+						Morgen: models.Artskode{
+							Sum:   decimal.NewFromFloat(6335.84),
+							Hours: 72,
+						},
+						Kveld: models.Artskode{
+							Sum:   decimal.NewFromFloat(4223.89),
+							Hours: 48,
+						},
+						Dag: models.Artskode{
+							Sum:   decimal.NewFromFloat(4981.52),
+							Hours: 90,
+						},
+						Helg: models.Artskode{
+							Sum:   decimal.NewFromFloat(9081.34),
+							Hours: 96,
+						},
+						Skift: models.Artskode{
+							Sum:   decimal.NewFromFloat(100),
+							Hours: 20,
+						},
 					},
 					Formal:    "000000",
 					Koststed:  "000000",
@@ -2260,10 +2276,30 @@ func Test_calculateSalary(t *testing.T) {
 					ApproverID:   "M654321",
 					ApproverName: "Kalpana, Bran",
 					Artskoder: models.Artskoder{
-						Morgen: decimal.NewFromFloat(7327.97),
-						Kveld:  decimal.NewFromFloat(4685.22),
-						Dag:    decimal.NewFromFloat(5312.08),
-						Helg:   decimal.NewFromFloat(10628.76),
+						Morgen: models.Artskode{
+							Sum:   decimal.NewFromFloat(7302.97),
+							Hours: 72,
+						},
+						Kveld: models.Artskode{
+							Sum:   decimal.NewFromFloat(4635.22),
+							Hours: 46,
+						},
+						Dag: models.Artskode{
+							Sum:   decimal.NewFromFloat(5217.08),
+							Hours: 84,
+						},
+						Helg: models.Artskode{
+							Sum:   decimal.NewFromFloat(10628.76),
+							Hours: 96,
+						},
+						Skift: models.Artskode{
+							Sum:   decimal.NewFromFloat(95),
+							Hours: 19,
+						},
+						Utrykning: models.Artskode{
+							Sum:   decimal.NewFromFloat(75),
+							Hours: 3,
+						},
 					},
 					Formal:    "000000",
 					Koststed:  "000000",
@@ -2302,10 +2338,26 @@ func Test_calculateSalary(t *testing.T) {
 					ApproverID:   "M654321",
 					ApproverName: "Kalpana, Bran",
 					Artskoder: models.Artskoder{
-						Morgen: decimal.NewFromFloat(4083.11),
-						Kveld:  decimal.NewFromFloat(3540.54),
-						Dag:    decimal.NewFromFloat(3704.59),
-						Helg:   decimal.NewFromFloat(9642.41),
+						Morgen: models.Artskode{
+							Sum:   decimal.NewFromFloat(4083.11),
+							Hours: 49,
+						},
+						Kveld: models.Artskode{
+							Sum:   decimal.NewFromFloat(3540.54),
+							Hours: 40,
+						},
+						Dag: models.Artskode{
+							Sum:   decimal.NewFromFloat(3629.59),
+							Hours: 70,
+						},
+						Helg: models.Artskode{
+							Sum:   decimal.NewFromFloat(9642.41),
+							Hours: 98,
+						},
+						Skift: models.Artskode{
+							Sum:   decimal.NewFromFloat(75),
+							Hours: 15,
+						},
 					},
 					Formal:    "000000",
 					Koststed:  "000000",
@@ -2344,10 +2396,26 @@ func Test_calculateSalary(t *testing.T) {
 					ApproverID:   "M654321",
 					ApproverName: "Kalpana, Bran",
 					Artskoder: models.Artskoder{
-						Morgen: decimal.NewFromFloat(300),
-						Kveld:  decimal.NewFromFloat(200),
-						Dag:    decimal.NewFromFloat(420),
-						Helg:   decimal.NewFromFloat(7060.58),
+						Morgen: models.Artskode{
+							Sum:   decimal.NewFromFloat(300),
+							Hours: 12,
+						},
+						Kveld: models.Artskode{
+							Sum:   decimal.NewFromFloat(200),
+							Hours: 8,
+						},
+						Dag: models.Artskode{
+							Sum:   decimal.NewFromFloat(390),
+							Hours: 26,
+						},
+						Helg: models.Artskode{
+							Sum:   decimal.NewFromFloat(6930.58),
+							Hours: 92,
+						},
+						Utrykning: models.Artskode{
+							Sum:   decimal.NewFromFloat(160),
+							Hours: 2,
+						},
 					},
 					Formal:    "000000",
 					Koststed:  "000000",
@@ -2386,10 +2454,30 @@ func Test_calculateSalary(t *testing.T) {
 					ApproverID:   "M654321",
 					ApproverName: "Kalpana, Bran",
 					Artskoder: models.Artskoder{
-						Morgen: decimal.NewFromFloat(5179.95),
-						Kveld:  decimal.NewFromFloat(4103.96),
-						Dag:    decimal.NewFromFloat(4673.70),
-						Helg:   decimal.NewFromFloat(7060.58),
+						Morgen: models.Artskode{
+							Sum:   decimal.NewFromFloat(5179.95),
+							Hours: 72,
+						},
+						Kveld: models.Artskode{
+							Sum:   decimal.NewFromFloat(4103.96),
+							Hours: 56,
+						},
+						Dag: models.Artskode{
+							Sum:   decimal.NewFromFloat(4528.7),
+							Hours: 96,
+						},
+						Helg: models.Artskode{
+							Sum:   decimal.NewFromFloat(6930.58),
+							Hours: 92,
+						},
+						Skift: models.Artskode{
+							Sum:   decimal.NewFromFloat(115),
+							Hours: 23,
+						},
+						Utrykning: models.Artskode{
+							Sum:   decimal.NewFromFloat(160),
+							Hours: 2,
+						},
 					},
 					Formal:    "000000",
 					Koststed:  "000000",

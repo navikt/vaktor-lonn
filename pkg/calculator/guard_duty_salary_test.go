@@ -1191,8 +1191,9 @@ func TestGuarddutySalary(t *testing.T) {
 
 			if !total.Equal(tt.want) {
 				t.Errorf("GuarddutySalary() got = %v, want %v", total, tt.want)
-				t.Errorf("Morgen: %v, Dag: %v, Kveld: %v, Helg: %v\n", payroll.Artskoder.Morgen,
-					payroll.Artskoder.Dag, payroll.Artskoder.Kveld, payroll.Artskoder.Helg)
+				t.Errorf("Morgen: %v, Dag: %v, Kveld: %v, Helg: %v, Skift: %v, Utrykning: %v\n", payroll.Artskoder.Morgen,
+					payroll.Artskoder.Dag, payroll.Artskoder.Kveld, payroll.Artskoder.Helg, payroll.Artskoder.Skift,
+					payroll.Artskoder.Utrykning)
 			}
 		})
 	}
