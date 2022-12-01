@@ -93,7 +93,7 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 
 // calculateMaxGuardDutyTime fjerner minutter som overstiger lovlig antall tid med vakt man kan gå per dag.
 func calculateMaxGuardDutyTime(currentDay models.TimeSheet, totalGuardDutyInADayInMinutes float64) float64 {
-	if isWeekendOrHoliday(currentDay.WorkingDay, currentDay.FormName) {
+	if isWorkingDayWeekendOrHoliday(currentDay.WorkingDay) {
 		return 0
 	}
 
@@ -105,8 +105,8 @@ func calculateMaxGuardDutyTime(currentDay models.TimeSheet, totalGuardDutyInADay
 	return 0
 }
 
-func isWeekendOrHoliday(day, formName string) bool {
-	return isWeekend(day) || isHoliday(formName)
+func isWorkingDayWeekendOrHoliday(day string) bool {
+	return isWeekend(day) || day == "Helligdag"
 }
 
 func isWeekend(day string) bool {
@@ -127,7 +127,7 @@ func isHoliday(formName string) bool {
 // calculateGuardDutyInKjernetid sjekker om man hadde vakt i kjernetiden. Man vil ikke kunne få vakttillegg i
 // kjernetiden, da andre skal være på jobb til å ta seg av uforutsette hendelser.
 func calculateGuardDutyInKjernetid(currentDay models.TimeSheet, date time.Time, period models.Period) float64 {
-	if isWeekendOrHoliday(currentDay.WorkingDay, currentDay.FormName) {
+	if isWorkingDayWeekendOrHoliday(currentDay.WorkingDay) {
 		return 0
 	}
 

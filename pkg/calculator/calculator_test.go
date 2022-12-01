@@ -3,7 +3,9 @@ package calculator
 import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
+	"github.com/navikt/vaktor-lonn/pkg/compensation"
 	"github.com/navikt/vaktor-lonn/pkg/models"
+	"github.com/navikt/vaktor-lonn/pkg/overtime"
 	"github.com/shopspring/decimal"
 	"testing"
 	"time"
@@ -246,6 +248,17 @@ func Test_createKjernetid(t *testing.T) {
 				End:   time.Date(2022, 11, 6, 14, 30, 0, 0, time.UTC),
 			},
 		},
+		{
+			name: "Kjernetid for julaften",
+			args: args{
+				date:     time.Date(2021, 12, 24, 0, 0, 0, 0, time.UTC),
+				formName: "Julaften 0800-1200 *",
+			},
+			want: models.Period{
+				Begin: time.Date(2021, 12, 24, 8, 0, 0, 0, time.UTC),
+				End:   time.Date(2021, 12, 24, 12, 0, 0, 0, time.UTC),
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -331,6 +344,45 @@ func Test_calculateGuardDutyInKjernetid(t *testing.T) {
 			},
 			want: 60,
 		},
+
+		{
+			name: "Julaften på en lørdag",
+			args: args{
+				currentDay: models.TimeSheet{
+					WorkingDay: "Helligdag",
+					FormName:   "Julaften 0800-1200 *",
+					Clockings:  []models.Clocking{},
+				},
+				date: time.Date(2022, 12, 24, 0, 0, 0, 0, time.UTC),
+				period: models.Period{
+					Begin: time.Date(2022, 12, 24, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 12, 25, 0, 0, 0, 0, time.UTC),
+				},
+			},
+			want: 0,
+		},
+
+		{
+			name: "Julaften på en fredag (litt sen klokking)",
+			args: args{
+				currentDay: models.TimeSheet{
+					WorkingDay: "Virkedag",
+					FormName:   "Julaften 0800-1200 *",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2021, 12, 24, 9, 0, 0, 0, time.UTC),
+							Out: time.Date(2021, 12, 24, 14, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+				date: time.Date(2021, 12, 24, 0, 0, 0, 0, time.UTC),
+				period: models.Period{
+					Begin: time.Date(2021, 12, 24, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2021, 12, 25, 0, 0, 0, 0, time.UTC),
+				},
+			},
+			want: 60,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -383,6 +435,40 @@ func Test_calculateMinutesToBeCompensated(t *testing.T) {
 					Skifttillegg:        0,
 					WeekendCompensation: true,
 					HolidayCompensation: false,
+				},
+			},
+		},
+
+		{
+			name: "Julaften på en fredag",
+			args: args{
+				schedule: map[string][]models.Period{
+					"2021-12-24": {
+						{
+							Begin: time.Date(2021, 12, 24, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2021, 12, 25, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2021-12-24": {
+						Date:         time.Date(2021, 12, 24, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Virkedag",
+						FormName:     "Julaften 0800-1200 *",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    nil,
+					},
+				},
+			},
+			want: map[string]models.GuardDuty{
+				"2021-12-24": {
+					Hvilende2000:        240,
+					Hvilende0006:        360,
+					Hvilende0620:        600,
+					Helgetillegg:        0,
+					Skifttillegg:        240,
+					HolidayCompensation: true,
 				},
 			},
 		},
@@ -877,5 +963,92 @@ func TestHoursGuarddutySalary(t *testing.T) {
 				t.Errorf("GuarddutySalary() mismatch (-want +got):\n%s", diff)
 			}
 		})
+	}
+}
+
+func TestCalculateIsEqualForHolidayOnSaturdayAndRegularSaturday(t *testing.T) {
+	salary := decimal.NewFromInt(500_000)
+	satser := models.Satser{
+		Helg:    decimal.NewFromInt(65),
+		Dag:     decimal.NewFromInt(15),
+		Natt:    decimal.NewFromInt(25),
+		Utvidet: decimal.NewFromInt(25),
+	}
+
+	holidayPayroll := &models.Payroll{}
+	holidayMinutes := map[string]models.GuardDuty{
+		"2022-10-15": {
+			Hvilende2000:        240,
+			Hvilende0006:        360,
+			Hvilende0620:        840,
+			Helgetillegg:        1440,
+			Skifttillegg:        0,
+			WeekendCompensation: true,
+			HolidayCompensation: true,
+		},
+	}
+	compensation.Calculate(holidayMinutes, satser, holidayPayroll)
+	overtime.Calculate(holidayMinutes, salary, holidayPayroll)
+
+	regularPayroll := &models.Payroll{}
+	regularMinutes := map[string]models.GuardDuty{
+		"2022-10-15": {
+			Hvilende2000:        240,
+			Hvilende0006:        360,
+			Hvilende0620:        840,
+			Helgetillegg:        1440,
+			Skifttillegg:        0,
+			WeekendCompensation: true,
+		},
+	}
+	compensation.Calculate(regularMinutes, satser, regularPayroll)
+	overtime.Calculate(regularMinutes, salary, regularPayroll)
+
+	if diff := cmp.Diff(holidayPayroll.Artskoder, regularPayroll.Artskoder); diff != "" {
+		t.Errorf("Calculate() mismatch (-want +got):\n%s", diff)
+	}
+}
+
+// TestCalculateIsEqualForHolidayOnMondayAndRegularMonday tester at man ikke får den samme lønnen for en vanlig arbeidsdag
+// uten arbeid og en arbeidsdag som er helligdag.
+func TestCalculateIsEqualForHolidayOnMondayAndRegularMonday(t *testing.T) {
+	salary := decimal.NewFromInt(500_000)
+	satser := models.Satser{
+		Helg:    decimal.NewFromInt(65),
+		Dag:     decimal.NewFromInt(15),
+		Natt:    decimal.NewFromInt(25),
+		Utvidet: decimal.NewFromInt(25),
+	}
+
+	holidayPayroll := &models.Payroll{}
+	holidayMinutes := map[string]models.GuardDuty{
+		"2022-10-17": {
+			Hvilende2000:        240,
+			Hvilende0006:        360,
+			Hvilende0620:        840,
+			Helgetillegg:        0,
+			Skifttillegg:        240,
+			HolidayCompensation: true,
+		},
+	}
+	compensation.Calculate(holidayMinutes, satser, holidayPayroll)
+	overtime.Calculate(holidayMinutes, salary, holidayPayroll)
+
+	regularPayroll := &models.Payroll{}
+	regularMinutes := map[string]models.GuardDuty{
+		"2022-10-17": {
+			Hvilende2000: 240,
+			Hvilende0006: 360,
+			Hvilende0620: 840,
+			Helgetillegg: 0,
+			Skifttillegg: 240,
+		},
+	}
+	compensation.Calculate(regularMinutes, satser, regularPayroll)
+	overtime.Calculate(regularMinutes, salary, regularPayroll)
+
+	if diff := cmp.Diff(holidayPayroll.Artskoder, regularPayroll.Artskoder); diff == "" {
+		t.Errorf("Calculate() holiday on monday returns the same as a normal monday")
+		t.Errorf("Calculate() mismatch (-want +got):\n%s", diff)
 	}
 }
