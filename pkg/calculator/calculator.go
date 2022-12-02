@@ -82,7 +82,7 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 			dutyHours.WeekendCompensation = isWeekend(currentDay.WorkingDay)
 			if !dutyHours.WeekendCompensation {
 				// Det er ingen økonomiske fordeler med helligdager i helg, kun i ukedagene.
-				dutyHours.HolidayCompensation = isHoliday(currentDay.FormName)
+				dutyHours.HolidayCompensation = isAHoliday(currentDay.FormName)
 			}
 		}
 		guardHours[day] = dutyHours
@@ -93,7 +93,7 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 
 // calculateMaxGuardDutyTime fjerner minutter som overstiger lovlig antall tid med vakt man kan gå per dag.
 func calculateMaxGuardDutyTime(currentDay models.TimeSheet, totalGuardDutyInADayInMinutes float64) float64 {
-	if isWorkingDayWeekendOrHoliday(currentDay.WorkingDay) {
+	if isWeekendOrHoliday(currentDay.WorkingDay, currentDay.FormName) {
 		return 0
 	}
 
@@ -105,15 +105,15 @@ func calculateMaxGuardDutyTime(currentDay models.TimeSheet, totalGuardDutyInADay
 	return 0
 }
 
-func isWorkingDayWeekendOrHoliday(day string) bool {
-	return isWeekend(day) || day == "Helligdag"
+func isWeekendOrHoliday(day, formName string) bool {
+	return isWeekend(day) || formName == "Helligdag"
 }
 
 func isWeekend(day string) bool {
 	return day == "Lørdag" || day == "Søndag"
 }
 
-func isHoliday(formName string) bool {
+func isAHoliday(formName string) bool {
 	holidays := []string{"Helligdag", "Julaften 0800-1200 *", "Onsdag før Påske 0800-1200 *", "Nyttårsaften 1000-1200 *"}
 	for _, holiday := range holidays {
 		if formName == holiday {
@@ -127,7 +127,7 @@ func isHoliday(formName string) bool {
 // calculateGuardDutyInKjernetid sjekker om man hadde vakt i kjernetiden. Man vil ikke kunne få vakttillegg i
 // kjernetiden, da andre skal være på jobb til å ta seg av uforutsette hendelser.
 func calculateGuardDutyInKjernetid(currentDay models.TimeSheet, date time.Time, period models.Period) float64 {
-	if isWorkingDayWeekendOrHoliday(currentDay.WorkingDay) {
+	if isWeekend(currentDay.WorkingDay) || currentDay.FormName == "Helligdag" {
 		return 0
 	}
 

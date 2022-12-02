@@ -349,7 +349,7 @@ func Test_calculateGuardDutyInKjernetid(t *testing.T) {
 			name: "Julaften på en lørdag",
 			args: args{
 				currentDay: models.TimeSheet{
-					WorkingDay: "Helligdag",
+					WorkingDay: "Lørdag",
 					FormName:   "Julaften 0800-1200 *",
 					Clockings:  []models.Clocking{},
 				},
