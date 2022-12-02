@@ -711,20 +711,20 @@ func TestHoursGuarddutySalary(t *testing.T) {
 			},
 			want: models.Artskoder{
 				Morgen: models.Artskode{
-					Sum:   decimal.NewFromFloat(5_914.86),
-					Hours: 72,
+					Sum:   decimal.NewFromFloat(5614.86),
+					Hours: 30,
 				},
 				Kveld: models.Artskode{
-					Sum:   decimal.NewFromFloat(3943.24),
-					Hours: 48,
+					Sum:   decimal.NewFromFloat(3743.24),
+					Hours: 20,
 				},
 				Dag: models.Artskode{
-					Sum:   decimal.NewFromFloat(4655.27),
-					Hours: 90,
+					Sum:   decimal.NewFromFloat(4235.27),
+					Hours: 31,
 				},
 				Helg: models.Artskode{
-					Sum:   decimal.NewFromFloat(8407.78),
-					Hours: 96,
+					Sum:   decimal.NewFromFloat(9327.78),
+					Hours: 48,
 				},
 				Skift: models.Artskode{
 					Sum:   decimal.NewFromFloat(100),
@@ -909,20 +909,20 @@ func TestHoursGuarddutySalary(t *testing.T) {
 			},
 			want: models.Artskoder{
 				Morgen: models.Artskode{
-					Sum:   decimal.NewFromFloat(5_914.86),
-					Hours: 72,
+					Sum:   decimal.NewFromFloat(5614.86),
+					Hours: 30,
 				},
 				Kveld: models.Artskode{
-					Sum:   decimal.NewFromFloat(3943.24),
-					Hours: 48,
+					Sum:   decimal.NewFromFloat(3743.24),
+					Hours: 20,
 				},
 				Dag: models.Artskode{
-					Sum:   decimal.NewFromFloat(4928.51),
-					Hours: 94,
+					Sum:   decimal.NewFromFloat(4508.51),
+					Hours: 33,
 				},
 				Helg: models.Artskode{
-					Sum:   decimal.NewFromFloat(8407.78),
-					Hours: 96,
+					Sum:   decimal.NewFromFloat(9327.78),
+					Hours: 48,
 				},
 				Skift: models.Artskode{
 					Sum:   decimal.NewFromFloat(100),
