@@ -23,7 +23,7 @@ type Artskoder struct {
 	Dag       Artskode `json:"2682"`
 	Helg      Artskode `json:"2683"`
 	Skift     Artskode `json:"2684"`
-	Utrykning Artskode `json:"2684"`
+	Utrykning Artskode `json:"2685"`
 }
 
 type Payroll struct {
