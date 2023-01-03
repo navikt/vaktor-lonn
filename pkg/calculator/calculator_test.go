@@ -414,13 +414,41 @@ func Test_calculateMinutesToBeCompensated(t *testing.T) {
 							End:   time.Date(2022, 12, 25, 0, 0, 0, 0, time.UTC),
 						},
 					},
+					"2022-12-25": {
+						{
+							Begin: time.Date(2022, 12, 25, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 12, 26, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-12-26": {
+						{
+							Begin: time.Date(2022, 12, 26, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 12, 27, 0, 0, 0, 0, time.UTC),
+						},
+					},
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-12-24": {
 						Date:         time.Date(2022, 12, 24, 0, 0, 0, 0, time.UTC),
 						WorkingHours: 0,
 						WorkingDay:   "Lørdag",
-						FormName:     "Julaften 0800-1200 *",
+						FormName:     "BV Lørdag IKT",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    nil,
+					},
+					"2022-12-25": {
+						Date:         time.Date(2022, 12, 25, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "1. Juledag",
+						FormName:     "Helligdag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    nil,
+					},
+					"2022-12-26": {
+						Date:         time.Date(2022, 12, 26, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "2. Juledag",
+						FormName:     "Helligdag",
 						Salary:       decimal.NewFromInt(500_000),
 						Clockings:    nil,
 					},
@@ -436,6 +464,24 @@ func Test_calculateMinutesToBeCompensated(t *testing.T) {
 					WeekendCompensation: true,
 					HolidayCompensation: false,
 				},
+				"2022-12-25": {
+					Hvilende2000:        240,
+					Hvilende0006:        360,
+					Hvilende0620:        840,
+					Helgetillegg:        1440,
+					Skifttillegg:        0,
+					WeekendCompensation: true,
+					HolidayCompensation: false,
+				},
+				"2022-12-26": {
+					Hvilende2000:        240,
+					Hvilende0006:        360,
+					Hvilende0620:        840,
+					Helgetillegg:        0,
+					Skifttillegg:        240,
+					WeekendCompensation: false,
+					HolidayCompensation: true,
+				},
 			},
 		},
 
@@ -449,6 +495,18 @@ func Test_calculateMinutesToBeCompensated(t *testing.T) {
 							End:   time.Date(2021, 12, 25, 0, 0, 0, 0, time.UTC),
 						},
 					},
+					"2021-12-25": {
+						{
+							Begin: time.Date(2021, 12, 25, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2021, 12, 26, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2021-12-26": {
+						{
+							Begin: time.Date(2021, 12, 26, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2021, 12, 27, 0, 0, 0, 0, time.UTC),
+						},
+					},
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2021-12-24": {
@@ -456,6 +514,22 @@ func Test_calculateMinutesToBeCompensated(t *testing.T) {
 						WorkingHours: 0,
 						WorkingDay:   "Virkedag",
 						FormName:     "Julaften 0800-1200 *",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    nil,
+					},
+					"2021-12-25": {
+						Date:         time.Date(2021, 12, 25, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "1. Juledag",
+						FormName:     "Helligdag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    nil,
+					},
+					"2021-12-26": {
+						Date:         time.Date(2021, 12, 26, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "2. Juledag",
+						FormName:     "Helligdag",
 						Salary:       decimal.NewFromInt(500_000),
 						Clockings:    nil,
 					},
@@ -470,40 +544,23 @@ func Test_calculateMinutesToBeCompensated(t *testing.T) {
 					Skifttillegg:        240,
 					HolidayCompensation: true,
 				},
-			},
-		},
-
-		{
-			name: "2. juledag på en mandag",
-			args: args{
-				schedule: map[string][]models.Period{
-					"2022-12-26": {
-						{
-							Begin: time.Date(2022, 12, 26, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 12, 27, 0, 0, 0, 0, time.UTC),
-						},
-					},
-				},
-				timesheet: map[string]models.TimeSheet{
-					"2022-12-26": {
-						Date:         time.Date(2022, 12, 26, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "2. Juledag",
-						FormName:     "Helligdag",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings:    nil,
-					},
-				},
-			},
-			want: map[string]models.GuardDuty{
-				"2022-12-26": {
+				"2021-12-25": {
 					Hvilende2000:        240,
 					Hvilende0006:        360,
 					Hvilende0620:        840,
-					Helgetillegg:        0,
-					Skifttillegg:        240,
-					WeekendCompensation: false,
-					HolidayCompensation: true,
+					Helgetillegg:        1440,
+					Skifttillegg:        0,
+					WeekendCompensation: true,
+					HolidayCompensation: false,
+				},
+				"2021-12-26": {
+					Hvilende2000:        240,
+					Hvilende0006:        360,
+					Hvilende0620:        840,
+					Helgetillegg:        1440,
+					Skifttillegg:        0,
+					WeekendCompensation: true,
+					HolidayCompensation: false,
 				},
 			},
 		},
