@@ -386,7 +386,7 @@ func Test_calculateGuardDutyInKjernetid(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := calculateGuardDutyInKjernetid(tt.args.currentDay, tt.args.date, tt.args.period); got != tt.want {
+			if got := calculateGuardDutyInKjernetid(tt.args.currentDay, tt.args.period); got != tt.want {
 				t.Errorf("calculateGuardDutyInKjernetid() = %v, want %v", got, tt.want)
 			}
 		})

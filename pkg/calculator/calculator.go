@@ -52,7 +52,7 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 			dutyHours.Hvilende0620 += minutesWithGuardDuty
 
 			// TODO: Disse modifiers burde begge trekkes fra, tungvindt å legge til et negativt tall
-			kjernetidModifier := calculateGuardDutyInKjernetid(currentDay, date, period)
+			kjernetidModifier := calculateGuardDutyInKjernetid(currentDay, period)
 			dutyHours.Hvilende0620 -= kjernetidModifier
 
 			// TODO: Lag en skikkelig test av denne
@@ -126,12 +126,12 @@ func isAHoliday(formName string) bool {
 
 // calculateGuardDutyInKjernetid sjekker om man hadde vakt i kjernetiden. Man vil ikke kunne få vakttillegg i
 // kjernetiden, da andre skal være på jobb til å ta seg av uforutsette hendelser.
-func calculateGuardDutyInKjernetid(currentDay models.TimeSheet, date time.Time, period models.Period) float64 {
 	if isWeekend(currentDay.WorkingDay) || currentDay.FormName == "Helligdag" {
+func calculateGuardDutyInKjernetid(currentDay models.TimeSheet, period models.Period) float64 {
 		return 0
 	}
 
-	kjernetid := createKjernetid(date, currentDay.FormName)
+	kjernetid := createKjernetid(currentDay.Date, currentDay.FormName)
 	return calculateMinutesWithGuardDutyInPeriod(period, kjernetid, currentDay.Clockings)
 }
 
