@@ -273,7 +273,6 @@ func Test_createKjernetid(t *testing.T) {
 func Test_calculateGuardDutyInKjernetid(t *testing.T) {
 	type args struct {
 		currentDay models.TimeSheet
-		date       time.Time
 		period     models.Period
 	}
 	tests := []struct {
@@ -285,19 +284,20 @@ func Test_calculateGuardDutyInKjernetid(t *testing.T) {
 			name: "Vanlig arbeid i kjernetid",
 			args: args{
 				currentDay: models.TimeSheet{
-					WorkingDay: "Virkedag",
-					FormName:   "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Date:         time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Clockings: []models.Clocking{
 						{
-							In:  time.Date(2022, 11, 6, 8, 0, 0, 0, time.UTC),
-							Out: time.Date(2022, 11, 6, 15, 45, 0, 0, time.UTC),
+							In:  time.Date(2022, 11, 7, 8, 0, 0, 0, time.UTC),
+							Out: time.Date(2022, 11, 7, 15, 45, 0, 0, time.UTC),
 						},
 					},
 				},
-				date: time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
 				period: models.Period{
-					Begin: time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
+					Begin: time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 11, 8, 0, 0, 0, 0, time.UTC),
 				},
 			},
 			want: 0,
@@ -306,19 +306,20 @@ func Test_calculateGuardDutyInKjernetid(t *testing.T) {
 			name: "Ingen arbeid i kjernetid",
 			args: args{
 				currentDay: models.TimeSheet{
-					WorkingDay: "Virkedag",
-					FormName:   "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Date:         time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Clockings: []models.Clocking{
 						{
-							In:  time.Date(2022, 11, 6, 15, 0, 0, 0, time.UTC),
-							Out: time.Date(2022, 11, 6, 20, 45, 0, 0, time.UTC),
+							In:  time.Date(2022, 11, 7, 15, 0, 0, 0, time.UTC),
+							Out: time.Date(2022, 11, 7, 20, 45, 0, 0, time.UTC),
 						},
 					},
 				},
-				date: time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
 				period: models.Period{
-					Begin: time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
+					Begin: time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 11, 8, 0, 0, 0, 0, time.UTC),
 				},
 			},
 			want: 330,
@@ -327,19 +328,20 @@ func Test_calculateGuardDutyInKjernetid(t *testing.T) {
 			name: "Kom sent på jobb",
 			args: args{
 				currentDay: models.TimeSheet{
-					WorkingDay: "Virkedag",
-					FormName:   "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+					Date:         time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Clockings: []models.Clocking{
 						{
-							In:  time.Date(2022, 11, 6, 10, 0, 0, 0, time.UTC),
-							Out: time.Date(2022, 11, 6, 17, 45, 0, 0, time.UTC),
+							In:  time.Date(2022, 11, 7, 10, 0, 0, 0, time.UTC),
+							Out: time.Date(2022, 11, 7, 17, 45, 0, 0, time.UTC),
 						},
 					},
 				},
-				date: time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
 				period: models.Period{
-					Begin: time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
+					Begin: time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 11, 8, 0, 0, 0, 0, time.UTC),
 				},
 			},
 			want: 60,
@@ -349,11 +351,11 @@ func Test_calculateGuardDutyInKjernetid(t *testing.T) {
 			name: "Julaften på en lørdag",
 			args: args{
 				currentDay: models.TimeSheet{
+					Date:       time.Date(2022, 12, 24, 0, 0, 0, 0, time.UTC),
 					WorkingDay: "Lørdag",
-					FormName:   "Julaften 0800-1200 *",
+					FormName:   "BV Lørdag IKT",
 					Clockings:  []models.Clocking{},
 				},
-				date: time.Date(2022, 12, 24, 0, 0, 0, 0, time.UTC),
 				period: models.Period{
 					Begin: time.Date(2022, 12, 24, 0, 0, 0, 0, time.UTC),
 					End:   time.Date(2022, 12, 25, 0, 0, 0, 0, time.UTC),
@@ -366,8 +368,10 @@ func Test_calculateGuardDutyInKjernetid(t *testing.T) {
 			name: "Julaften på en fredag (litt sen klokking)",
 			args: args{
 				currentDay: models.TimeSheet{
-					WorkingDay: "Virkedag",
-					FormName:   "Julaften 0800-1200 *",
+					Date:         time.Date(2021, 12, 24, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 5.75,
+					WorkingDay:   "Virkedag",
+					FormName:     "Julaften 0800-1200 *",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2021, 12, 24, 9, 0, 0, 0, time.UTC),
@@ -375,7 +379,6 @@ func Test_calculateGuardDutyInKjernetid(t *testing.T) {
 						},
 					},
 				},
-				date: time.Date(2021, 12, 24, 0, 0, 0, 0, time.UTC),
 				period: models.Period{
 					Begin: time.Date(2021, 12, 24, 0, 0, 0, 0, time.UTC),
 					End:   time.Date(2021, 12, 25, 0, 0, 0, 0, time.UTC),
