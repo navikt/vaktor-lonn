@@ -2314,7 +2314,7 @@ func Test_calculateSalary(t *testing.T) {
 			args: args{
 				beredskapsvakt: gensql.Beredskapsvakt{
 					Ident:       "a123456",
-					Plan:        json.RawMessage(`{"id":"b4ac8e53-9d64-4557-8ef8-d00774ab9c06","user_id":"A133321","start_timestamp":"2022-10-26T12:00:00Z","end_timestamp":"2022-11-01T00:00:00Z","schedule":{"2022-10-26":[{"start_timestamp":"2022-10-26T12:00:00Z","end_timestamp":"2022-10-27T00:00:00Z"}],"2022-10-27":[{"start_timestamp":"2022-10-27T00:00:00Z","end_timestamp":"2022-10-28T00:00:00Z"}],"2022-10-28":[{"start_timestamp":"2022-10-28T00:00:00Z","end_timestamp":"2022-10-29T00:00:00Z"}],"2022-10-29":[{"start_timestamp":"2022-10-29T00:00:00Z","end_timestamp":"2022-10-30T00:00:00Z"}],"2022-10-30":[{"start_timestamp":"2022-10-30T00:00:00Z","end_timestamp":"2022-10-31T00:00:00Z"}],"2022-10-31":[{"start_timestamp":"2022-10-31T00:00:00Z","end_timestamp":"2022-11-01T00:00:00Z"}]}}`),
+					Plan:        json.RawMessage(`{"id":"b4ac8e53-9d64-4557-8ef8-d00774ab9c06","user_id":"E123456","start_timestamp":"2022-10-26T12:00:00Z","end_timestamp":"2022-11-01T00:00:00Z","schedule":{"2022-10-26":[{"start_timestamp":"2022-10-26T12:00:00Z","end_timestamp":"2022-10-27T00:00:00Z"}],"2022-10-27":[{"start_timestamp":"2022-10-27T00:00:00Z","end_timestamp":"2022-10-28T00:00:00Z"}],"2022-10-28":[{"start_timestamp":"2022-10-28T00:00:00Z","end_timestamp":"2022-10-29T00:00:00Z"}],"2022-10-29":[{"start_timestamp":"2022-10-29T00:00:00Z","end_timestamp":"2022-10-30T00:00:00Z"}],"2022-10-30":[{"start_timestamp":"2022-10-30T00:00:00Z","end_timestamp":"2022-10-31T00:00:00Z"}],"2022-10-31":[{"start_timestamp":"2022-10-31T00:00:00Z","end_timestamp":"2022-11-01T00:00:00Z"}]}}`),
 					PeriodBegin: time.Date(2022, 10, 26, 12, 0, 0, 0, time.UTC),
 					PeriodEnd:   time.Date(2022, 11, 1, 0, 0, 0, 0, time.UTC),
 				},
@@ -2372,7 +2372,7 @@ func Test_calculateSalary(t *testing.T) {
 			args: args{
 				beredskapsvakt: gensql.Beredskapsvakt{
 					Ident:       "a123456",
-					Plan:        json.RawMessage(`{"id":"b4ac8e53-9d64-4557-8ef8-d00774ab9c06","user_id":"A133321","start_timestamp":"2022-10-15T00:00:00Z","end_timestamp":"2022-10-16T00:00:00Z","schedule":{"2022-10-15":[{"start_timestamp":"2022-10-15T00:00:00Z","end_timestamp":"2022-10-16T00:00:00Z"}],"2022-10-16":[{"start_timestamp":"2022-10-16T00:00:00Z","end_timestamp":"2022-10-17T00:00:00Z"}]}}`),
+					Plan:        json.RawMessage(`{"id":"b4ac8e53-9d64-4557-8ef8-d00774ab9c06","user_id":"E123456","start_timestamp":"2022-10-15T00:00:00Z","end_timestamp":"2022-10-16T00:00:00Z","schedule":{"2022-10-15":[{"start_timestamp":"2022-10-15T00:00:00Z","end_timestamp":"2022-10-16T00:00:00Z"}],"2022-10-16":[{"start_timestamp":"2022-10-16T00:00:00Z","end_timestamp":"2022-10-17T00:00:00Z"}]}}`),
 					PeriodBegin: time.Date(2022, 10, 15, 0, 0, 0, 0, time.UTC),
 					PeriodEnd:   time.Date(2022, 10, 16, 0, 0, 0, 0, time.UTC),
 				},
@@ -2430,7 +2430,7 @@ func Test_calculateSalary(t *testing.T) {
 			args: args{
 				beredskapsvakt: gensql.Beredskapsvakt{
 					Ident:       "a123456",
-					Plan:        json.RawMessage(`{"id":"b4ac8e53-9d64-4557-8ef8-d00774ab9c06","user_id":"A133321","start_timestamp":"2022-10-15T00:00:00Z","end_timestamp":"2022-10-16T00:00:00Z","schedule":{"2022-10-10":[{"start_timestamp":"2022-10-10T12:00:00Z","end_timestamp":"2022-10-11T00:00:00Z"}],"2022-10-11":[{"start_timestamp":"2022-10-11T00:00:00Z","end_timestamp":"2022-10-12T00:00:00Z"}],"2022-10-12":[{"start_timestamp":"2022-10-12T00:00:00Z","end_timestamp":"2022-10-13T00:00:00Z"}],"2022-10-13":[{"start_timestamp":"2022-10-13T00:00:00Z","end_timestamp":"2022-10-14T00:00:00Z"}],"2022-10-14":[{"start_timestamp":"2022-10-14T00:00:00Z","end_timestamp":"2022-10-15T00:00:00Z"}],"2022-10-15":[{"start_timestamp":"2022-10-15T00:00:00Z","end_timestamp":"2022-10-16T00:00:00Z"}],"2022-10-16":[{"start_timestamp":"2022-10-16T00:00:00Z","end_timestamp":"2022-10-17T00:00:00Z"}],"2022-10-17":[{"start_timestamp":"2022-10-17T00:00:00Z","end_timestamp":"2022-10-18T12:00:00Z"}]}}`),
+					Plan:        json.RawMessage(`{"id":"b4ac8e53-9d64-4557-8ef8-d00774ab9c06","user_id":"E123456","start_timestamp":"2022-10-15T00:00:00Z","end_timestamp":"2022-10-16T00:00:00Z","schedule":{"2022-10-10":[{"start_timestamp":"2022-10-10T12:00:00Z","end_timestamp":"2022-10-11T00:00:00Z"}],"2022-10-11":[{"start_timestamp":"2022-10-11T00:00:00Z","end_timestamp":"2022-10-12T00:00:00Z"}],"2022-10-12":[{"start_timestamp":"2022-10-12T00:00:00Z","end_timestamp":"2022-10-13T00:00:00Z"}],"2022-10-13":[{"start_timestamp":"2022-10-13T00:00:00Z","end_timestamp":"2022-10-14T00:00:00Z"}],"2022-10-14":[{"start_timestamp":"2022-10-14T00:00:00Z","end_timestamp":"2022-10-15T00:00:00Z"}],"2022-10-15":[{"start_timestamp":"2022-10-15T00:00:00Z","end_timestamp":"2022-10-16T00:00:00Z"}],"2022-10-16":[{"start_timestamp":"2022-10-16T00:00:00Z","end_timestamp":"2022-10-17T00:00:00Z"}],"2022-10-17":[{"start_timestamp":"2022-10-17T00:00:00Z","end_timestamp":"2022-10-18T12:00:00Z"}]}}`),
 					PeriodBegin: time.Date(2022, 10, 10, 0, 0, 0, 0, time.UTC),
 					PeriodEnd:   time.Date(2022, 10, 17, 0, 0, 0, 0, time.UTC),
 				},
