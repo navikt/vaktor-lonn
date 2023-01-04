@@ -303,6 +303,48 @@ func Test_createRangeForPeriod(t *testing.T) {
 			},
 			want: &Range{Begin: 1200, End: 1440},
 		},
+		{
+			name: "work at end of year 20-00 (torsdag-fredag)",
+			args: args{
+				period: models.Period{
+					Begin: time.Date(1987, 12, 31, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(1988, 1, 1, 0, 0, 0, 0, time.UTC),
+				},
+				threshold: models.Period{
+					Begin: time.Date(1987, 12, 31, 20, 0, 0, 0, time.UTC),
+					End:   time.Date(1988, 1, 1, 0, 0, 0, 0, time.UTC),
+				},
+			},
+			want: &Range{Begin: 1200, End: 1440},
+		},
+		{
+			name: "work at end of year 20-00 (lørdag til søndag)",
+			args: args{
+				period: models.Period{
+					Begin: time.Date(2022, 12, 31, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
+				},
+				threshold: models.Period{
+					Begin: time.Date(2022, 12, 31, 20, 0, 0, 0, time.UTC),
+					End:   time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
+				},
+			},
+			want: &Range{Begin: 1200, End: 1440},
+		},
+		{
+			name: "work at end of year 00-00 (lørdag til søndag)",
+			args: args{
+				period: models.Period{
+					Begin: time.Date(1987, 12, 31, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(1988, 1, 1, 0, 0, 0, 0, time.UTC),
+				},
+				threshold: models.Period{
+					Begin: time.Date(1987, 12, 31, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(1988, 1, 1, 0, 0, 0, 0, time.UTC),
+				},
+			},
+			want: &Range{Begin: 0, End: 1440},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

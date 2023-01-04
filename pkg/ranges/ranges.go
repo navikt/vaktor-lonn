@@ -82,7 +82,10 @@ func CreateForPeriod(period, threshold models.Period) *Range {
 		Begin: threshold.Begin.Hour()*60 + threshold.Begin.Minute(),
 		End:   threshold.End.Hour()*60 + threshold.End.Minute(),
 	}
+
 	if threshold.End.YearDay() > threshold.Begin.YearDay() {
+		periodeRange.End = 24*60 + threshold.End.Minute()
+	} else if (threshold.Begin.Month() == 12 && threshold.Begin.Day() == 31) && threshold.End.YearDay() == 1 {
 		periodeRange.End = 24*60 + threshold.End.Minute()
 	}
 
@@ -90,6 +93,7 @@ func CreateForPeriod(period, threshold models.Period) *Range {
 	if period.Begin.After(threshold.Begin) {
 		periodeRange.Begin = period.Begin.Hour()*60 + period.Begin.Minute()
 	}
+
 	// sjekk om vakt slutter før "normalen"
 	if period.End.Before(threshold.End) {
 		if period.End.YearDay() > period.Begin.YearDay() {

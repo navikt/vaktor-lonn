@@ -143,6 +143,36 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 			},
 			want: 190,
 		},
+		{
+			name: "Døgnvakt ved månedskifte",
+			args: args{
+				dutyPeriod: models.Period{
+					Begin: time.Date(2022, 7, 31, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 8, 1, 0, 0, 0, 0, time.UTC),
+				},
+				compPeriod: models.Period{
+					Begin: time.Date(2022, 7, 31, 20, 0, 0, 0, time.UTC),
+					End:   time.Date(2022, 8, 1, 0, 0, 0, 0, time.UTC),
+				},
+				timesheet: []models.Clocking{},
+			},
+			want: 240,
+		},
+		{
+			name: "Døgnvakt ved årskifte",
+			args: args{
+				dutyPeriod: models.Period{
+					Begin: time.Date(2022, 12, 31, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
+				},
+				compPeriod: models.Period{
+					Begin: time.Date(2022, 12, 31, 20, 0, 0, 0, time.UTC),
+					End:   time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
+				},
+				timesheet: []models.Clocking{},
+			},
+			want: 240,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -484,6 +514,41 @@ func Test_calculateMinutesToBeCompensated(t *testing.T) {
 					Skifttillegg:        240,
 					WeekendCompensation: false,
 					HolidayCompensation: true,
+				},
+			},
+		},
+
+		{
+			name: "Nyttårsaften på en lørdag",
+			args: args{
+				schedule: map[string][]models.Period{
+					"2022-12-31": {
+						{
+							Begin: time.Date(2022, 12, 31, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2022-12-31": {
+						Date:         time.Date(2022, 12, 31, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Lørdag",
+						FormName:     "BV Lørdag IKT",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings:    nil,
+					},
+				},
+			},
+			want: map[string]models.GuardDuty{
+				"2022-12-31": {
+					Hvilende2000:        240,
+					Hvilende0006:        360,
+					Hvilende0620:        840,
+					Helgetillegg:        1440,
+					Skifttillegg:        0,
+					WeekendCompensation: true,
+					HolidayCompensation: false,
 				},
 			},
 		},

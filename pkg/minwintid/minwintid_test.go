@@ -2486,6 +2486,48 @@ func Test_calculateSalary(t *testing.T) {
 				ok: false,
 			},
 		},
+
+		{
+			name: "vakt på nyttårsaften",
+			args: args{
+				beredskapsvakt: gensql.Beredskapsvakt{
+					Ident:       "a123456",
+					Plan:        json.RawMessage(`{"id":"b4ac8e53-9d64-4557-8ef8-d00774ab9c06","user_id":"E123456","start_timestamp":"2022-12-31T00:00:00Z","end_timestamp":"2023-01-01T00:00:00Z","schedule":{"2022-12-31":[{"start_timestamp":"2022-12-10T00:00:00Z","end_timestamp":"2023-01-01T00:00:00Z"}]}}`),
+					PeriodBegin: time.Date(2022, 12, 31, 0, 0, 0, 0, time.UTC),
+					PeriodEnd:   time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
+				},
+				body: `{
+	"Vaktor.Vaktor_TiddataResponse": {
+		"Vaktor.Vaktor_TiddataResult": [{
+			"Vaktor.nav_id": "123456",
+			"Vaktor.resource_id": "E123456",
+			"Vaktor.leder_resource_id": "654321",
+			"Vaktor.leder_nav_id": "M654321",
+			"Vaktor.leder_navn": "Kalpana, Bran",
+			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
+			"Vaktor.dager": "[{\"dato\":\"2022-12-31T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Lørdag IKT\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"f102546\",\"godkjent_dato\":\"2023-01-03T14:06:39\",\"virkedag\":\"Lørdag\",\"Stemplinger\":null,\"Stillinger\":[{\"post_id\":\"265\",\"parttime_pct\":100,\"post_code\":\"1434\",\"post_description\":\"Rådgiver\",\"parttime_pct\":100,\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"scale_id\":\"68\",\"aga\":\"000000\",\"statskonto\":\"000000\",\"HTA\":\"LO_YS\",\"TILL_LONN\":\"0\",\"RATE_K001\":500000,\"RATE_I143\":0,\"RATE_B100\":500000,\"RATE_K170\":35,\"RATE_K171\":10,\"RATE_K172\":20,\"RATE_K160\":15,\"RATE_K161\":55,\"RATE_G014\":33.33,\"BDM_FORMAL\":null}]}]"
+		}]
+	}
+}`,
+			},
+			want: want{
+				payroll: models.Payroll{
+					ID:           uuid.MustParse("b4ac8e53-9d64-4557-8ef8-d00774ab9c06"),
+					ApproverID:   "M654321",
+					ApproverName: "Kalpana, Bran",
+					Artskoder: models.Artskoder{
+						Helg: models.Artskode{
+							Sum:   decimal.NewFromFloat(3366.59),
+							Hours: 24,
+						},
+					},
+					Formal:    "000000",
+					Koststed:  "000000",
+					Aktivitet: "000000",
+				},
+				ok: false,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
