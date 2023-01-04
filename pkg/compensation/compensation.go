@@ -114,7 +114,7 @@ func CalculateCallOut(timesheet map[string]models.TimeSheet, satser models.Satse
 				// 20-00
 				dutyRange = ranges.CreateForPeriod(guardDutyPeriod, models.Period{
 					Begin: time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
-					End:   time.Date(date.Year(), date.Month(), date.Day()+1, 0, 0, 0, 0, time.UTC),
+					End:   time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC).Add(24 * time.Hour),
 				})
 				if dutyRange != nil {
 					minutesWithGuardDuty := ranges.CalculateMinutesOverlapping(workRange, *dutyRange)
@@ -125,7 +125,7 @@ func CalculateCallOut(timesheet map[string]models.TimeSheet, satser models.Satse
 					// sjekk om man har vakt i perioden 00-24
 					dutyRange = ranges.CreateForPeriod(guardDutyPeriod, models.Period{
 						Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
-						End:   time.Date(date.Year(), date.Month(), date.Day()+1, 0, 0, 0, 0, time.UTC),
+						End:   time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC).Add(24 * time.Hour),
 					})
 
 					minutesWithGuardDuty := ranges.CalculateMinutesOverlapping(workRange, *dutyRange)
