@@ -14,6 +14,7 @@ import (
 	"math"
 	"net/http"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -178,11 +179,12 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 						continue
 					}
 
-					// TODO: All overtid blir regnet som beredskapsvakt for nå
 					// Dette er en stempling med overtid
 					if utStempling.Retning == "Overtid                 " && utStempling.Type == "B6" {
 						utOvertid := stemplinger[0]
 						stemplinger = stemplinger[1:]
+
+						overtimeBecauseOfGuardDuty := strings.Contains(strings.ToLower(utStempling.OvertidBegrunnelse), "bv")
 
 						if utOvertid.Retning == "Ut" && utOvertid.Type == "B2" {
 							innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
@@ -202,7 +204,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 								nextDay = append(nextDay, models.Clocking{
 									In:  truncateOut,
 									Out: utStemplingDate,
-									OtG: true,
+									OtG: overtimeBecauseOfGuardDuty,
 								})
 								utStemplingDate = truncateOut
 							}
@@ -210,7 +212,7 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 							ts.Clockings = append(ts.Clockings, models.Clocking{
 								In:  innStemplingDate,
 								Out: utStemplingDate,
-								OtG: true,
+								OtG: overtimeBecauseOfGuardDuty,
 							})
 							continue
 						}
