@@ -72,9 +72,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -88,9 +85,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "Heltid 0800-1500 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 8, 2, 7, 45, 10, 0, time.UTC),
@@ -138,9 +132,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -174,9 +165,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -190,9 +178,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Lørdag",
 					FormName:     "BV Lørdag IKT",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 9, 17, 20, 30, 0, 0, time.UTC),
@@ -207,9 +192,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Lørdag",
 					FormName:     "BV Lørdag IKT",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 9, 24, 20, 30, 0, 0, time.UTC),
@@ -247,9 +229,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -263,9 +242,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "Heltid 0800-1545 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 5, 3, 8, 0, 0, 0, time.UTC),
@@ -314,9 +290,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -330,9 +303,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "Heltid 0800-1545 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 10, 17, 8, 0, 0, 0, time.UTC),
@@ -369,9 +339,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -385,9 +352,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "Heltid 0800-1545 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 10, 20, 11, 12, 10, 0, time.UTC),
@@ -464,9 +428,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -480,9 +441,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 9, 15, 0, 34, 21, 0, time.UTC),
@@ -548,9 +506,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -564,9 +519,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 9, 15, 8, 4, 0, 0, time.UTC),
@@ -627,9 +579,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -656,9 +605,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -672,9 +618,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 9, 15, 8, 4, 0, 0, time.UTC),
@@ -693,9 +636,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 9, 16, 0, 0, 0, 0, time.UTC),
@@ -795,9 +735,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -826,9 +763,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -842,9 +776,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 10, 25, 0, 34, 21, 0, time.UTC),
@@ -872,9 +803,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 10, 26, 0, 0, 0, 0, time.UTC),
@@ -954,9 +882,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -983,9 +908,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -999,9 +921,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 10, 18, 8, 30, 0, 0, time.UTC),
@@ -1025,9 +944,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
@@ -1069,9 +985,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -1085,9 +998,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 1, 20, 8, 9, 0, 0, time.UTC),
@@ -1136,9 +1046,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -1152,9 +1059,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(500_000),
-					Formal:       "000000",
-					Koststed:     "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 1, 24, 8, 27, 0, 0, time.UTC),
@@ -1197,9 +1101,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -1228,9 +1129,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -1259,9 +1157,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -1275,9 +1170,6 @@ func Test_formatTimesheet(t *testing.T) {
 						Stemplinger: nil,
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -1291,9 +1183,6 @@ func Test_formatTimesheet(t *testing.T) {
 						Stemplinger: nil,
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -1322,9 +1211,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -1353,9 +1239,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -1384,9 +1267,6 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -1400,9 +1280,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(725000),
-					Koststed:     "000000",
-					Formal:       "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 10, 05, 07, 21, 42, 0, time.UTC),
@@ -1416,9 +1293,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(725000),
-					Koststed:     "000000",
-					Formal:       "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 10, 06, 07, 13, 24, 0, time.UTC),
@@ -1432,9 +1306,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(725000),
-					Koststed:     "000000",
-					Formal:       "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 10, 07, 07, 18, 52, 0, time.UTC),
@@ -1447,9 +1318,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay: "Lørdag",
 					FormName:   "BV Lørdag IKT",
 					Salary:     decimal.NewFromInt(725000),
-					Koststed:   "000000",
-					Formal:     "000000",
-					Aktivitet:  "000000",
 					Clockings:  []models.Clocking{},
 				},
 				"2022-10-09": {
@@ -1457,9 +1325,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay: "Søndag",
 					FormName:   "BV Søndag IKT",
 					Salary:     decimal.NewFromInt(725000),
-					Koststed:   "000000",
-					Formal:     "000000",
-					Aktivitet:  "000000",
 					Clockings:  []models.Clocking{},
 				},
 				"2022-10-10": {
@@ -1468,9 +1333,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(725000),
-					Koststed:     "000000",
-					Formal:       "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 10, 10, 07, 18, 32, 0, time.UTC),
@@ -1484,9 +1346,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(725000),
-					Koststed:     "000000",
-					Formal:       "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 10, 11, 7, 9, 58, 0, time.UTC),
@@ -1500,9 +1359,6 @@ func Test_formatTimesheet(t *testing.T) {
 					WorkingDay:   "Virkedag",
 					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 					Salary:       decimal.NewFromInt(725000),
-					Koststed:     "000000",
-					Formal:       "000000",
-					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 10, 12, 8, 0, 0, 0, time.UTC),
@@ -1612,9 +1468,6 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -1693,9 +1546,6 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -1756,9 +1606,6 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -1813,9 +1660,6 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -1888,9 +1732,6 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  500_000,
 							},
 						},
@@ -1947,9 +1788,6 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -1978,9 +1816,6 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -2009,9 +1844,6 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -2025,9 +1857,6 @@ func Test_decodeMinWinTid(t *testing.T) {
 						Stemplinger: nil,
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -2041,9 +1870,6 @@ func Test_decodeMinWinTid(t *testing.T) {
 						Stemplinger: nil,
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -2072,9 +1898,6 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -2103,9 +1926,6 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -2134,9 +1954,6 @@ func Test_decodeMinWinTid(t *testing.T) {
 						},
 						Stillinger: []Stilling{
 							{
-								Koststed:  "000000",
-								Formal:    "000000",
-								Aktivitet: "000000",
 								RATEK001:  725000,
 							},
 						},
@@ -2239,9 +2056,6 @@ func Test_calculateSalary(t *testing.T) {
 							Hours: 20,
 						},
 					},
-					Formal:    "000000",
-					Koststed:  "000000",
-					Aktivitet: "000000",
 				},
 				ok: false,
 			},
@@ -2301,9 +2115,6 @@ func Test_calculateSalary(t *testing.T) {
 							Hours: 3,
 						},
 					},
-					Formal:    "000000",
-					Koststed:  "000000",
-					Aktivitet: "000000",
 				},
 				ok: false,
 			},
@@ -2359,9 +2170,6 @@ func Test_calculateSalary(t *testing.T) {
 							Hours: 15,
 						},
 					},
-					Formal:    "000000",
-					Koststed:  "000000",
-					Aktivitet: "000000",
 				},
 				ok: false,
 			},
@@ -2417,9 +2225,6 @@ func Test_calculateSalary(t *testing.T) {
 							Hours: 0,
 						},
 					},
-					Formal:    "000000",
-					Koststed:  "000000",
-					Aktivitet: "000000",
 				},
 				ok: false,
 			},
@@ -2479,9 +2284,6 @@ func Test_calculateSalary(t *testing.T) {
 							Hours: 0,
 						},
 					},
-					Formal:    "000000",
-					Koststed:  "000000",
-					Aktivitet: "000000",
 				},
 				ok: false,
 			},
@@ -2521,9 +2323,6 @@ func Test_calculateSalary(t *testing.T) {
 							Hours: 24,
 						},
 					},
-					Formal:    "000000",
-					Koststed:  "000000",
-					Aktivitet: "000000",
 				},
 				ok: false,
 			},

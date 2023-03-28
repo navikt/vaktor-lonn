@@ -32,7 +32,4 @@ type Payroll struct {
 	ApproverName string    `json:"approver_name"`
 	Artskoder    Artskoder `json:"artskoder"`
 	CommitSHA    string    `json:"commit_sha"`
-	Formal       string    `json:"formal"`
-	Koststed     string    `json:"koststed"`
-	Aktivitet    string    `json:"aktivitet"`
 }
