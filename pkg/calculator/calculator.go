@@ -196,6 +196,51 @@ func calculateMinutesWithGuardDutyInPeriod(vaktPeriod models.Period, compPeriod 
 	return minutesWithGuardDuty
 }
 
+func getFormal(timesheet map[string]models.TimeSheet) (string, error) {
+	var formal string
+	for _, period := range timesheet {
+		if formal == "" {
+			formal = period.Formal
+			continue
+		}
+		if formal != period.Formal {
+			return "", fmt.Errorf("formål has changed")
+		}
+	}
+
+	return formal, nil
+}
+
+func getAktivitet(timesheet map[string]models.TimeSheet) (string, error) {
+	var aktivitet string
+	for _, period := range timesheet {
+		if aktivitet == "" {
+			aktivitet = period.Aktivitet
+			continue
+		}
+		if aktivitet != period.Aktivitet {
+			return "", fmt.Errorf("aktivitet has changed")
+		}
+	}
+
+	return aktivitet, nil
+}
+
+func getKoststed(timesheet map[string]models.TimeSheet) (string, error) {
+	var koststed string
+	for _, period := range timesheet {
+		if koststed == "" {
+			koststed = period.Koststed
+			continue
+		}
+		if koststed != period.Koststed {
+			return "", fmt.Errorf("koststed has changed")
+		}
+	}
+
+	return koststed, nil
+}
+
 func getSalary(timesheet map[string]models.TimeSheet) (decimal.Decimal, error) {
 	var salary decimal.Decimal
 	for _, period := range timesheet {
@@ -217,6 +262,21 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 		return models.Payroll{}, err
 	}
 
+	formal, err := getFormal(minWinTid.Timesheet)
+	if err != nil {
+		return models.Payroll{}, err
+	}
+
+	aktivitet, err := getAktivitet(minWinTid.Timesheet)
+	if err != nil {
+		return models.Payroll{}, err
+	}
+
+	koststed, err := getKoststed(minWinTid.Timesheet)
+	if err != nil {
+		return models.Payroll{}, err
+	}
+
 	salary, err := getSalary(minWinTid.Timesheet)
 	if err != nil {
 		return models.Payroll{}, err
@@ -228,6 +288,9 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 		ApproverID:   minWinTid.ApproverID,
 		ApproverName: minWinTid.ApproverName,
 		CommitSHA:    os.Getenv("NAIS_APP_IMAGE"),
+		Formal:       formal,
+		Koststed:     koststed,
+		Aktivitet:    aktivitet,
 	}
 
 	compensation.Calculate(minutes, minWinTid.Satser, payroll)

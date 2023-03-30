@@ -9,7 +9,10 @@ type Stempling struct {
 }
 
 type Stilling struct {
-	RATEK001 int `json:"RATE_K001"`
+	Koststed  string `json:"koststed"`
+	Formal    string `json:"formal"`
+	Aktivitet string `json:"aktivitet"`
+	RATEK001  int    `json:"RATE_K001"`
 }
 
 type Dag struct {

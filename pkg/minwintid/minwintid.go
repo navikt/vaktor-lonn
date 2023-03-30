@@ -134,6 +134,9 @@ func formatTimesheet(days []Dag) (map[string]models.TimeSheet, []zap.Field) {
 			WorkingDay:   day.Virkedag,
 			FormName:     day.SkjemaNavn,
 			Salary:       decimal.NewFromInt(int64(stillig.RATEK001)),
+			Koststed:     stillig.Koststed,
+			Formal:       stillig.Formal,
+			Aktivitet:    stillig.Aktivitet,
 			Clockings:    []models.Clocking{},
 		}
 

@@ -992,6 +992,9 @@ func TestGuarddutySalary(t *testing.T) {
 						WorkingDay:   "Virkedag",
 						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Salary:       decimal.NewFromInt(725000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 10, 05, 07, 21, 42, 0, time.UTC),
@@ -1005,6 +1008,9 @@ func TestGuarddutySalary(t *testing.T) {
 						WorkingDay:   "Virkedag",
 						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Salary:       decimal.NewFromInt(725000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 10, 06, 07, 13, 24, 0, time.UTC),
@@ -1018,6 +1024,9 @@ func TestGuarddutySalary(t *testing.T) {
 						WorkingDay:   "Virkedag",
 						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Salary:       decimal.NewFromInt(725000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 10, 07, 07, 18, 52, 0, time.UTC),
@@ -1030,6 +1039,9 @@ func TestGuarddutySalary(t *testing.T) {
 						WorkingDay: "Lørdag",
 						FormName:   "BV Lørdag IKT",
 						Salary:     decimal.NewFromInt(725000),
+						Koststed:   "000000",
+						Formal:     "000000",
+						Aktivitet:  "000000",
 						Clockings:  []models.Clocking{},
 					},
 					"2022-10-09": {
@@ -1037,6 +1049,9 @@ func TestGuarddutySalary(t *testing.T) {
 						WorkingDay: "Søndag",
 						FormName:   "BV Søndag IKT",
 						Salary:     decimal.NewFromInt(725000),
+						Koststed:   "000000",
+						Formal:     "000000",
+						Aktivitet:  "000000",
 						Clockings:  []models.Clocking{},
 					},
 					"2022-10-10": {
@@ -1045,6 +1060,9 @@ func TestGuarddutySalary(t *testing.T) {
 						WorkingDay:   "Virkedag",
 						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Salary:       decimal.NewFromInt(725000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 10, 10, 07, 18, 32, 0, time.UTC),
@@ -1058,6 +1076,9 @@ func TestGuarddutySalary(t *testing.T) {
 						WorkingDay:   "Virkedag",
 						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Salary:       decimal.NewFromInt(725000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 10, 11, 7, 9, 58, 0, time.UTC),
@@ -1071,6 +1092,9 @@ func TestGuarddutySalary(t *testing.T) {
 						WorkingDay:   "Virkedag",
 						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Salary:       decimal.NewFromInt(725000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 10, 12, 8, 0, 0, 0, time.UTC),

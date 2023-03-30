@@ -17,6 +17,9 @@ type TimeSheet struct {
 	WorkingDay   string
 	FormName     string
 	Salary       decimal.Decimal
+	Formal       string
+	Koststed     string
+	Aktivitet    string
 	Clockings    []Clocking
 }
 
