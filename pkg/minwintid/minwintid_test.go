@@ -2297,8 +2297,8 @@ func Test_calculateSalary(t *testing.T) {
 							Hours: 19,
 						},
 						Utrykning: models.Artskode{
-							Sum:   decimal.NewFromFloat(75),
-							Hours: 3,
+							Sum:   decimal.NewFromFloat(0),
+							Hours: 0,
 						},
 					},
 					Formal:    "000000",

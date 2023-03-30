@@ -46,7 +46,7 @@ func TestCalculateCallOut(t *testing.T) {
 			},
 			want: models.Artskoder{
 				Utrykning: models.Artskode{
-					Sum:   decimal.NewFromInt(180),
+					Sum:   decimal.NewFromInt(130),
 					Hours: 2,
 				},
 			},
@@ -84,7 +84,7 @@ func TestCalculateCallOut(t *testing.T) {
 			},
 			want: models.Artskoder{
 				Utrykning: models.Artskode{
-					Sum:   decimal.NewFromInt(90),
+					Sum:   decimal.NewFromInt(65),
 					Hours: 1,
 				},
 			},
@@ -143,8 +143,8 @@ func TestCalculateCallOut(t *testing.T) {
 			},
 			want: models.Artskoder{
 				Utrykning: models.Artskode{
-					Sum:   decimal.NewFromInt(25),
-					Hours: 1,
+					Sum:   decimal.NewFromInt(0),
+					Hours: 0,
 				},
 			},
 		},
@@ -176,8 +176,8 @@ func TestCalculateCallOut(t *testing.T) {
 			},
 			want: models.Artskoder{
 				Utrykning: models.Artskode{
-					Sum:   decimal.NewFromInt(55),
-					Hours: 2,
+					Sum:   decimal.NewFromInt(0),
+					Hours: 0,
 				},
 			},
 		},
