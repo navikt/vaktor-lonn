@@ -149,6 +149,47 @@ func TestCalculate(t *testing.T) {
 				},
 			},
 		},
+
+		{
+			name: "Beredskapsvakt en bevegelig hellig dag",
+			args: args{
+				payroll: &models.Payroll{},
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
+				},
+				minutes: map[string]models.GuardDuty{
+					"2022-10-12": {
+						Hvilende2000:        240,
+						Hvilende0006:        360,
+						Hvilende0620:        840,
+						Helgetillegg:        0,
+						Skifttillegg:        180,
+						HolidayCompensation: true,
+					},
+				},
+			},
+			want: models.Artskoder{
+				Morgen: models.Artskode{
+					Sum:   decimal.NewFromInt(150),
+					Hours: 6,
+				},
+				Kveld: models.Artskode{
+					Sum:   decimal.NewFromInt(100),
+					Hours: 4,
+				},
+				Dag: models.Artskode{
+					Sum:   decimal.NewFromInt(210),
+					Hours: 14,
+				},
+				Skift: models.Artskode{
+					Sum:   decimal.NewFromInt(15),
+					Hours: 3,
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
