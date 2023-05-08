@@ -2,6 +2,7 @@ package calculator
 
 import (
 	"fmt"
+	"github.com/navikt/vaktor-lonn/pkg/callout"
 	"github.com/navikt/vaktor-lonn/pkg/ranges"
 	"os"
 	"time"
@@ -294,7 +295,7 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 	}
 
 	compensation.Calculate(minutes, minWinTid.Satser, payroll)
-	compensation.CalculateCallOut(minWinTid.Timesheet, minWinTid.Satser, payroll)
+	callout.Calculate(minWinTid.Timesheet, minWinTid.Satser, payroll)
 	overtime.Calculate(minutes, salary, payroll)
 
 	return *payroll, nil
