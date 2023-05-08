@@ -53,7 +53,7 @@ func TestCalculate(t *testing.T) {
 		},
 
 		{
-			name: "Korte utrykninger på lørdag",
+			name: "Flere korte utrykninger på en lørdag",
 			args: args{
 				satser: models.Satser{
 					Helg:    decimal.NewFromInt(65),
@@ -75,7 +75,7 @@ func TestCalculate(t *testing.T) {
 							},
 							{
 								In:  time.Date(2022, 10, 29, 20, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 29, 20, 40, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 29, 20, 20, 0, 0, time.UTC),
 								OtG: true,
 							},
 						},
@@ -91,7 +91,40 @@ func TestCalculate(t *testing.T) {
 		},
 
 		{
-			name: "Korte utrykninger over flere dager",
+			name: "For kort utrykninger på en lørdag blir rundet ned",
+			args: args{
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2022-10-29": {
+						Date:         time.Date(2022, 10, 29, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Lørdag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 29, 10, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 29, 10, 20, 0, 0, time.UTC),
+								OtG: true,
+							},
+						},
+					},
+				},
+			},
+			want: models.Artskoder{
+				Utrykning: models.Artskode{
+					Sum:   decimal.NewFromInt(0),
+					Hours: 0,
+				},
+			},
+		},
+
+		{
+			name: "Utrykning i ukedag gir ingen kompensasjon",
 			args: args{
 				satser: models.Satser{
 					Helg:    decimal.NewFromInt(65),
@@ -108,66 +141,7 @@ func TestCalculate(t *testing.T) {
 						Clockings: []models.Clocking{
 							{
 								In:  time.Date(2022, 10, 26, 20, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 26, 20, 20, 0, 0, time.UTC),
-								OtG: true,
-							},
-						},
-					},
-					"2022-10-27": {
-						Date:         time.Date(2022, 10, 27, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Virkedag",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 27, 20, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 27, 20, 20, 0, 0, time.UTC),
-								OtG: true,
-							},
-						},
-					},
-					"2022-10-28": {
-						Date:         time.Date(2022, 10, 28, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Virkedag",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 28, 5, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 28, 5, 20, 0, 0, time.UTC),
-								OtG: true,
-							},
-						},
-					},
-				},
-			},
-			want: models.Artskoder{
-				Utrykning: models.Artskode{
-					Sum:   decimal.NewFromInt(0),
-					Hours: 0,
-				},
-			},
-		},
-
-		{
-			name: "Utrykning i utvidet arbeidstid",
-			args: args{
-				satser: models.Satser{
-					Helg:    decimal.NewFromInt(65),
-					Dag:     decimal.NewFromInt(15),
-					Natt:    decimal.NewFromInt(25),
-					Utvidet: decimal.NewFromInt(25),
-				},
-				timesheet: map[string]models.TimeSheet{
-					"2022-10-31": {
-						Date:         time.Date(2022, 10, 31, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 7.75,
-						WorkingDay:   "Virkedag",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 31, 6, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 31, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 26, 22, 0, 0, 0, time.UTC),
 								OtG: true,
 							},
 						},
