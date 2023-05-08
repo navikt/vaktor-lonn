@@ -81,9 +81,30 @@ func calculateMinutesToBePaid(schedule map[string][]models.Period, timesheet map
 			}
 
 			dutyHours.WeekendCompensation = isWeekend(currentDay.Date)
-			if !dutyHours.WeekendCompensation {
-				// Det er ingen økonomiske fordeler med helligdager i helg, kun i ukedagene.
-				dutyHours.HolidayCompensation = isAHoliday(currentDay.FormName)
+
+			// Det er ingen økonomiske fordeler med helligdager i helg, kun i ukedagene.
+			// Derfor bryr vi oss ikke om helligdager i helgene.
+			if !dutyHours.WeekendCompensation && isHoliday(currentDay.FormName) {
+				if currentDay.FormName == "Helligdag" {
+					dutyHours.Helligdag0620 = dutyHours.Hvilende0620
+					dutyHours.Hvilende0620 = 0
+				} else {
+					// Tre dager i året er det kun helligdag etter kl12, så de må spesialhåndteres
+					// det er kun tiden før kjernetid som er relevant for helligdager som starter kl12.
+					if currentDay.FormName == "Nyttårsaften 1000-1200 *" {
+						// Nyttårsaften har kjernetid fra kl10 til kl12
+						minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
+							Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
+							End:   time.Date(date.Year(), date.Month(), date.Day(), 10, 0, 0, 0, time.UTC)}, currentDay.Clockings)
+					} else {
+						// Julaften og onsdag før påske har kjernetid fra kl08 til kl12
+						minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
+							Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
+							End:   time.Date(date.Year(), date.Month(), date.Day(), 8, 0, 0, 0, time.UTC)}, currentDay.Clockings)
+					}
+					dutyHours.Helligdag0620 = dutyHours.Hvilende0620 - minutesWithGuardDuty
+					dutyHours.Hvilende0620 = minutesWithGuardDuty
+				}
 			}
 		}
 		guardHours[day] = dutyHours
@@ -110,7 +131,7 @@ func isWeekend(day time.Time) bool {
 	return day.Weekday() == time.Saturday || day.Weekday() == time.Sunday
 }
 
-func isAHoliday(formName string) bool {
+func isHoliday(formName string) bool {
 	holidays := []string{"Helligdag", "Julaften 0800-1200 *", "Onsdag før Påske 0800-1200 *", "Nyttårsaften 1000-1200 *"}
 	for _, holiday := range holidays {
 		if formName == holiday {

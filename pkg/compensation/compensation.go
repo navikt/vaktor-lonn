@@ -18,11 +18,11 @@ func Calculate(minutes map[string]models.GuardDuty, satser models.Satser, payrol
 	for _, duty := range minutes {
 		if duty.WeekendCompensation {
 			compensationWeekendMinutes += duty.Helgetillegg
-			compensationWeekendDayMinutes += duty.Hvilende0620
+			compensationWeekendDayMinutes += duty.Hvilende0620 + duty.Helligdag0620
 			compensationWeekendMorningMinutes += duty.Hvilende0006
 			compensationWeekendEveningMinutes += duty.Hvilende2000
 		} else {
-			compensationDayMinutes += duty.Hvilende0620
+			compensationDayMinutes += duty.Hvilende0620 + duty.Helligdag0620
 			compensationEveningMinutes += duty.Hvilende2000
 			compensationMorningMinutes += duty.Hvilende0006
 			compensationShiftMinutes += duty.Skifttillegg

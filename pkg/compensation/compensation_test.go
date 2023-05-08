@@ -152,12 +152,12 @@ func TestCalculate(t *testing.T) {
 				},
 				minutes: map[string]models.GuardDuty{
 					"2022-10-12": {
-						Hvilende2000:        240,
-						Hvilende0006:        360,
-						Hvilende0620:        840,
-						Helgetillegg:        0,
-						Skifttillegg:        240,
-						HolidayCompensation: true,
+						Hvilende2000:  240,
+						Hvilende0006:  360,
+						Helligdag0620: 840,
+						Hvilende0620:  0,
+						Helgetillegg:  0,
+						Skifttillegg:  240,
 					},
 				},
 			},
