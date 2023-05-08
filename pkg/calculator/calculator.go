@@ -17,8 +17,8 @@ const (
 	VaktorDateFormat = "2006-01-02"
 )
 
-// calculateMinutesToBeCompensated returns an object with the minutes you have been having guard duty each day in a given periode
-func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesheet map[string]models.TimeSheet) (map[string]models.GuardDuty, error) {
+// calculateMinutesToBePaid returns an object with the minutes you have been having guard duty each day in a given periode
+func calculateMinutesToBePaid(schedule map[string][]models.Period, timesheet map[string]models.TimeSheet) (map[string]models.GuardDuty, error) {
 	guardHours := map[string]models.GuardDuty{}
 
 	for day, periods := range schedule {
@@ -258,7 +258,7 @@ func getSalary(timesheet map[string]models.TimeSheet) (decimal.Decimal, error) {
 }
 
 func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.Payroll, error) {
-	minutes, err := calculateMinutesToBeCompensated(plan.Schedule, minWinTid.Timesheet)
+	minutes, err := calculateMinutesToBePaid(plan.Schedule, minWinTid.Timesheet)
 	if err != nil {
 		return models.Payroll{}, err
 	}
