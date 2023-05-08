@@ -92,7 +92,7 @@ func CalculateCallOut(timesheet map[string]models.TimeSheet, satser models.Satse
 				workRange := ranges.FromTime(clocking.In, clocking.Out)
 
 				if isWeekend(date) {
-					// sjekk om man har vakt i perioden 00-24
+					// sjekk om man har vakt i perioden 00-24 i helgen
 					dutyRange := ranges.CreateForPeriod(guardDutyPeriod, models.Period{
 						Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
 						End:   time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC).Add(24 * time.Hour),
