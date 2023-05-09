@@ -10,6 +10,7 @@ import (
 func Calculate(timesheet map[string]models.TimeSheet, satser models.Satser, payroll *models.Payroll) {
 	// TODO: Validering av at man har vakt i perioden man har overtid med kommentaren BV (for eks. i kjernetid)
 	minutesInHour := decimal.NewFromInt(60)
+	fourFifthOfAnHour := decimal.NewFromFloat(0.8)
 	guardMinutes := models.GuardDuty{}
 
 	for _, sheet := range timesheet {
@@ -38,6 +39,6 @@ func Calculate(timesheet map[string]models.TimeSheet, satser models.Satser, payr
 
 	hours := decimal.NewFromInt(int64(guardMinutes.Helgetillegg)).DivRound(minutesInHour, 0)
 	payroll.Artskoder.Utrykning.Hours = hours.IntPart()
-	compensation := hours.Mul(satser.Helg).Round(2)
+	compensation := hours.Mul(satser.Helg).Mul(fourFifthOfAnHour).Round(2)
 	payroll.Artskoder.Utrykning.Sum = payroll.Artskoder.Utrykning.Sum.Add(compensation)
 }

@@ -2280,8 +2280,8 @@ func Test_calculateSalary(t *testing.T) {
 							Hours: 30,
 						},
 						Kveld: models.Artskode{
-							Sum:   decimal.NewFromFloat(4435.22),
-							Hours: 19,
+							Sum:   decimal.NewFromFloat(4668.65),
+							Hours: 20,
 						},
 						Dag: models.Artskode{
 							Sum:   decimal.NewFromFloat(4797.08),

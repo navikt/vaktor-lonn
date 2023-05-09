@@ -208,6 +208,11 @@ func calculateMinutesWithGuardDutyInPeriod(vaktPeriod models.Period, compPeriod 
 
 	if dutyRange != nil {
 		for _, workHours := range timesheet {
+			if workHours.OtG {
+				// Overtid ved utrykning regnes ikke som arbeidstid
+				continue
+			}
+
 			workRange := ranges.FromTime(workHours.In, workHours.Out)
 			minutesWithGuardDuty += ranges.CalculateMinutesOverlapping(workRange, *dutyRange)
 		}

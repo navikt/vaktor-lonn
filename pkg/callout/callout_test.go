@@ -46,7 +46,7 @@ func TestCalculate(t *testing.T) {
 			},
 			want: models.Artskoder{
 				Utrykning: models.Artskode{
-					Sum:   decimal.NewFromInt(130),
+					Sum:   decimal.NewFromInt(104),
 					Hours: 2,
 				},
 			},
@@ -84,7 +84,7 @@ func TestCalculate(t *testing.T) {
 			},
 			want: models.Artskoder{
 				Utrykning: models.Artskode{
-					Sum:   decimal.NewFromInt(65),
+					Sum:   decimal.NewFromInt(52),
 					Hours: 1,
 				},
 			},
