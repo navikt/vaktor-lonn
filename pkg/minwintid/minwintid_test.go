@@ -2181,8 +2181,8 @@ func Test_calculateSalary(t *testing.T) {
 		body           string
 	}
 	type want struct {
-		payroll models.Payroll
-		ok      bool
+		payroll *models.Payroll
+		error   bool
 	}
 	tests := []struct {
 		name string
@@ -2213,7 +2213,7 @@ func Test_calculateSalary(t *testing.T) {
 }`,
 			},
 			want: want{
-				payroll: models.Payroll{
+				payroll: &models.Payroll{
 					ID:           uuid.MustParse("b4ac8e53-9d64-4557-8ef8-d00774ab9c06"),
 					ApproverID:   "M654321",
 					ApproverName: "Kalpana, Bran",
@@ -2243,7 +2243,6 @@ func Test_calculateSalary(t *testing.T) {
 					Koststed:  "000000",
 					Aktivitet: "000000",
 				},
-				ok: false,
 			},
 		},
 
@@ -2271,7 +2270,7 @@ func Test_calculateSalary(t *testing.T) {
 }`,
 			},
 			want: want{
-				payroll: models.Payroll{
+				payroll: &models.Payroll{
 					ID:           uuid.MustParse("b4ac8e53-9d64-4557-8ef8-d00774ab9c06"),
 					ApproverID:   "M654321",
 					ApproverName: "Kalpana, Bran",
@@ -2305,7 +2304,6 @@ func Test_calculateSalary(t *testing.T) {
 					Koststed:  "000000",
 					Aktivitet: "000000",
 				},
-				ok: false,
 			},
 		},
 
@@ -2333,7 +2331,7 @@ func Test_calculateSalary(t *testing.T) {
 }`,
 			},
 			want: want{
-				payroll: models.Payroll{
+				payroll: &models.Payroll{
 					ID:           uuid.MustParse("b4ac8e53-9d64-4557-8ef8-d00774ab9c06"),
 					ApproverID:   "M654321",
 					ApproverName: "Kalpana, Bran",
@@ -2363,7 +2361,6 @@ func Test_calculateSalary(t *testing.T) {
 					Koststed:  "000000",
 					Aktivitet: "000000",
 				},
-				ok: false,
 			},
 		},
 
@@ -2391,7 +2388,7 @@ func Test_calculateSalary(t *testing.T) {
 }`,
 			},
 			want: want{
-				payroll: models.Payroll{
+				payroll: &models.Payroll{
 					ID:           uuid.MustParse("b4ac8e53-9d64-4557-8ef8-d00774ab9c06"),
 					ApproverID:   "M654321",
 					ApproverName: "Kalpana, Bran",
@@ -2421,7 +2418,6 @@ func Test_calculateSalary(t *testing.T) {
 					Koststed:  "000000",
 					Aktivitet: "000000",
 				},
-				ok: false,
 			},
 		},
 
@@ -2449,7 +2445,7 @@ func Test_calculateSalary(t *testing.T) {
 }`,
 			},
 			want: want{
-				payroll: models.Payroll{
+				payroll: &models.Payroll{
 					ID:           uuid.MustParse("b4ac8e53-9d64-4557-8ef8-d00774ab9c06"),
 					ApproverID:   "M654321",
 					ApproverName: "Kalpana, Bran",
@@ -2483,7 +2479,6 @@ func Test_calculateSalary(t *testing.T) {
 					Koststed:  "000000",
 					Aktivitet: "000000",
 				},
-				ok: false,
 			},
 		},
 
@@ -2511,7 +2506,7 @@ func Test_calculateSalary(t *testing.T) {
 }`,
 			},
 			want: want{
-				payroll: models.Payroll{
+				payroll: &models.Payroll{
 					ID:           uuid.MustParse("b4ac8e53-9d64-4557-8ef8-d00774ab9c06"),
 					ApproverID:   "M654321",
 					ApproverName: "Kalpana, Bran",
@@ -2525,7 +2520,6 @@ func Test_calculateSalary(t *testing.T) {
 					Koststed:  "000000",
 					Aktivitet: "000000",
 				},
-				ok: false,
 			},
 		},
 	}
@@ -2538,9 +2532,9 @@ func Test_calculateSalary(t *testing.T) {
 				return
 			}
 
-			got, ok := calculateSalary(log, tt.args.beredskapsvakt, response)
-			if (!ok) != tt.want.ok {
-				t.Errorf("calculateSalary() ok = %v, want.ok %v", ok, tt.want.ok)
+			got := calculateSalary(log, tt.args.beredskapsvakt, response)
+			if (got == nil) != tt.want.error {
+				t.Errorf("calculateSalary() error = %v, want.error %v", got == nil, tt.want.error)
 				return
 			}
 			if diff := cmp.Diff(tt.want.payroll, got); diff != "" {
@@ -2609,9 +2603,9 @@ func Test_isTimesheetApproved(t *testing.T) {
 		days []Dag
 	}
 	tests := []struct {
-		name string
-		args args
-		want bool
+		name  string
+		args  args
+		error bool
 	}{
 		{
 			name: "Ingen godkjente dager",
@@ -2622,7 +2616,7 @@ func Test_isTimesheetApproved(t *testing.T) {
 					},
 				},
 			},
-			want: false,
+			error: true,
 		},
 		{
 			name: "Godkjent av vakthaver",
@@ -2633,7 +2627,7 @@ func Test_isTimesheetApproved(t *testing.T) {
 					},
 				},
 			},
-			want: false,
+			error: true,
 		},
 		{
 			name: "Godkjent av personalleder",
@@ -2644,13 +2638,12 @@ func Test_isTimesheetApproved(t *testing.T) {
 					},
 				},
 			},
-			want: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := isTimesheetApproved(tt.args.days); got != tt.want {
-				t.Errorf("isTimesheetApproved() = %v, want %v", got, tt.want)
+			if err := isTimesheetApproved(tt.args.days); (err != nil) != tt.error {
+				t.Errorf("isTimesheetApproved() = %v, want error %v", err, tt.error)
 			}
 		})
 	}
