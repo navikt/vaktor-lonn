@@ -1,4 +1,4 @@
-package minwintid
+package service
 
 import (
 	"encoding/json"

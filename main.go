@@ -10,8 +10,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/navikt/vaktor-lonn/pkg/endpoints"
-	"github.com/navikt/vaktor-lonn/pkg/minwintid"
+	"github.com/navikt/vaktor-lonn/pkg/service"
 	"github.com/pressly/goose/v3"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
@@ -21,7 +20,7 @@ import (
 //go:embed pkg/sql/migrations/*.sql
 var embedMigrations embed.FS
 
-func onStart(logger *zap.Logger) (endpoints.Handler, error) {
+func onStart(logger *zap.Logger) (service.Handler, error) {
 	dbString := getEnv("DB_URL", "postgres://postgres:postgres@127.0.0.1:5432/vaktor")
 	azureClientId := os.Getenv("AZURE_APP_CLIENT_ID")
 	azureClientSecret := os.Getenv("AZURE_APP_CLIENT_SECRET")
@@ -32,18 +31,18 @@ func onStart(logger *zap.Logger) (endpoints.Handler, error) {
 	minWinTidInterval := getEnv("MINWINTID_INTERVAL", "60m")
 	vaktorPlanEndpoint := os.Getenv("VAKTOR_PLAN_ENDPOINT")
 
-	handler, err := endpoints.NewHandler(logger, dbString, vaktorPlanEndpoint,
+	handler, err := service.NewHandler(logger, dbString, vaktorPlanEndpoint,
 		azureClientId, azureClientSecret, azureOpenIdTokenEndpoint,
 		minWinTidUsername, minWinTidPassword, minWinTidEndpoint, minWinTidInterval)
 	if err != nil {
-		return endpoints.Handler{}, err
+		return service.Handler{}, err
 	}
 
 	goose.SetBaseFS(embedMigrations)
 
 	err = goose.SetDialect("postgres")
 	if err != nil {
-		return endpoints.Handler{}, err
+		return service.Handler{}, err
 	}
 
 	err = goose.Up(handler.DB, "pkg/sql/migrations")
@@ -79,7 +78,7 @@ func main() {
 	defer cancel()
 	handler.Context = context
 
-	go minwintid.Run(handler)
+	go service.Run(handler)
 
 	defer func(DB *sql.DB) {
 		err := DB.Close()

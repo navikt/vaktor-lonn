@@ -1,11 +1,10 @@
-package minwintid
+package service
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/navikt/vaktor-lonn/pkg/calculator"
-	"github.com/navikt/vaktor-lonn/pkg/endpoints"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
 	"github.com/shopspring/decimal"
@@ -24,7 +23,7 @@ const (
 	vaktplanId      = "vaktplanId"
 )
 
-func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd time.Time, handler endpoints.Handler) (models.MWTResponse, error) {
+func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd time.Time, handler Handler) (models.MWTResponse, error) {
 	config := handler.MinWinTidConfig
 	req, err := http.NewRequest(http.MethodGet, config.Endpoint, nil)
 	if err != nil {
@@ -324,7 +323,7 @@ func createPerfectClocking(tid float64, date time.Time) models.Clocking {
 	}
 }
 
-func postToVaktorPlan(handler endpoints.Handler, payroll models.Payroll, bearerToken string) error {
+func postToVaktorPlan(handler Handler, payroll models.Payroll, bearerToken string) error {
 	bufferBody, err := json.Marshal(payroll)
 	if err != nil {
 		return err
@@ -444,7 +443,7 @@ func calculateSalary(log *zap.Logger, beredskapsvakt gensql.Beredskapsvakt, resp
 	return &payroll
 }
 
-func handleTransaction(handler endpoints.Handler, beredskapsvakt gensql.Beredskapsvakt, bearerToken string) {
+func handleTransaction(handler Handler, beredskapsvakt gensql.Beredskapsvakt, bearerToken string) {
 	response, err := getTimesheetFromMinWinTid(beredskapsvakt.Ident, beredskapsvakt.PeriodBegin, beredskapsvakt.PeriodEnd, handler)
 	if err != nil {
 		handler.Log.Error("Failed while retrieving data from MinWinTid", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
@@ -469,7 +468,7 @@ func handleTransaction(handler endpoints.Handler, beredskapsvakt gensql.Beredska
 	}
 }
 
-func handleTransactions(handler endpoints.Handler) error {
+func handleTransactions(handler Handler) error {
 	bearerToken, err := handler.BearerClient.GenerateBearerToken()
 	if err != nil {
 		handler.Log.Error("Problem generating bearer token", zap.Error(err))
@@ -487,7 +486,7 @@ func handleTransactions(handler endpoints.Handler) error {
 	return nil
 }
 
-func Run(handler endpoints.Handler) {
+func Run(handler Handler) {
 	ticker := time.NewTicker(handler.MinWinTidConfig.TickerInterval)
 	defer ticker.Stop()
 

@@ -1,4 +1,4 @@
-package endpoints
+package service
 
 import (
 	"encoding/json"
@@ -11,11 +11,6 @@ import (
 	"net/http"
 	"sort"
 	"time"
-)
-
-const (
-	// TODO: Kopiert fra minwintid.go
-	vaktplanId = "vaktplanId"
 )
 
 func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
