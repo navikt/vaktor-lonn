@@ -175,7 +175,7 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := CalculateMinutesOverlapping(tt.args.work, tt.args.period); got != tt.want {
-				t.Errorf("CalculateMinutesOverlappingInPeriods() = %v, want %v", got, tt.want)
+				t.Errorf("CalculateMinutesOverlapping() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -351,7 +351,7 @@ func Test_createRangeForPeriod(t *testing.T) {
 			got := CreateForPeriod(tt.args.period, tt.args.threshold)
 
 			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Errorf("CreateRangeForPeriod() mismatch (-want +got):\n%s", diff)
+				t.Errorf("CreateForPeriod() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}

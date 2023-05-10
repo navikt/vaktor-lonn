@@ -426,7 +426,7 @@ func Test_calculateGuardDutyInKjernetid(t *testing.T) {
 	}
 }
 
-func Test_calculateMinutesToBeCompensated(t *testing.T) {
+func Test_calculateMinutesToBePaid(t *testing.T) {
 	type args struct {
 		schedule  map[string][]models.Period
 		timesheet map[string]models.TimeSheet
@@ -495,7 +495,6 @@ func Test_calculateMinutesToBeCompensated(t *testing.T) {
 					Helgetillegg:        1440,
 					Skifttillegg:        0,
 					WeekendCompensation: true,
-					HolidayCompensation: false,
 				},
 				"2022-12-25": {
 					Hvilende2000:        240,
@@ -504,16 +503,14 @@ func Test_calculateMinutesToBeCompensated(t *testing.T) {
 					Helgetillegg:        1440,
 					Skifttillegg:        0,
 					WeekendCompensation: true,
-					HolidayCompensation: false,
 				},
 				"2022-12-26": {
 					Hvilende2000:        240,
 					Hvilende0006:        360,
-					Hvilende0620:        840,
+					Helligdag0620:       840,
 					Helgetillegg:        0,
 					Skifttillegg:        240,
 					WeekendCompensation: false,
-					HolidayCompensation: true,
 				},
 			},
 		},
@@ -548,7 +545,6 @@ func Test_calculateMinutesToBeCompensated(t *testing.T) {
 					Helgetillegg:        1440,
 					Skifttillegg:        0,
 					WeekendCompensation: true,
-					HolidayCompensation: false,
 				},
 			},
 		},
@@ -605,12 +601,12 @@ func Test_calculateMinutesToBeCompensated(t *testing.T) {
 			},
 			want: map[string]models.GuardDuty{
 				"2021-12-24": {
-					Hvilende2000:        240,
-					Hvilende0006:        360,
-					Hvilende0620:        600,
-					Helgetillegg:        0,
-					Skifttillegg:        240,
-					HolidayCompensation: true,
+					Hvilende2000:  240,
+					Hvilende0006:  360,
+					Helligdag0620: 480,
+					Hvilende0620:  120,
+					Helgetillegg:  0,
+					Skifttillegg:  240,
 				},
 				"2021-12-25": {
 					Hvilende2000:        240,
@@ -619,7 +615,6 @@ func Test_calculateMinutesToBeCompensated(t *testing.T) {
 					Helgetillegg:        1440,
 					Skifttillegg:        0,
 					WeekendCompensation: true,
-					HolidayCompensation: false,
 				},
 				"2021-12-26": {
 					Hvilende2000:        240,
@@ -628,7 +623,6 @@ func Test_calculateMinutesToBeCompensated(t *testing.T) {
 					Helgetillegg:        1440,
 					Skifttillegg:        0,
 					WeekendCompensation: true,
-					HolidayCompensation: false,
 				},
 			},
 		},
@@ -636,13 +630,13 @@ func Test_calculateMinutesToBeCompensated(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := calculateMinutesToBeCompensated(tt.args.schedule, tt.args.timesheet)
+			got, err := calculateMinutesToBePaid(tt.args.schedule, tt.args.timesheet)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("calculateMinutesToBeCompensated() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("calculateMinutesToBePaid() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Errorf("calculateMinutesToBeCompensated() mismatch (-want +got):\n%s", diff)
+				t.Errorf("calculateMinutesToBePaid() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
@@ -1109,7 +1103,6 @@ func TestCalculateIsEqualForHolidayOnSaturdayAndRegularSaturday(t *testing.T) {
 			Helgetillegg:        1440,
 			Skifttillegg:        0,
 			WeekendCompensation: true,
-			HolidayCompensation: true,
 		},
 	}
 	compensation.Calculate(holidayMinutes, satser, holidayPayroll)
@@ -1130,13 +1123,14 @@ func TestCalculateIsEqualForHolidayOnSaturdayAndRegularSaturday(t *testing.T) {
 	overtime.Calculate(regularMinutes, salary, regularPayroll)
 
 	if diff := cmp.Diff(holidayPayroll.Artskoder, regularPayroll.Artskoder); diff != "" {
+		t.Errorf("Calculate() holiday on saturday did not return the same as a normal saturday")
 		t.Errorf("Calculate() mismatch (-want +got):\n%s", diff)
 	}
 }
 
-// TestCalculateIsEqualForHolidayOnMondayAndRegularMonday tester at man ikke får den samme lønnen for en vanlig arbeidsdag
-// uten arbeid og en arbeidsdag som er helligdag.
-func TestCalculateIsEqualForHolidayOnMondayAndRegularMonday(t *testing.T) {
+// TestCalculateIsNotEqualForHolidayOnMondayAndRegularMonday tester at man ikke får den samme lønnen for en vanlig arbeidsdag
+// uten arbeid og en arbeidsdag som er en helligdag.
+func TestCalculateIsNotEqualForHolidayOnMondayAndRegularMonday(t *testing.T) {
 	salary := decimal.NewFromInt(500_000)
 	satser := models.Satser{
 		Helg:    decimal.NewFromInt(65),
@@ -1148,12 +1142,11 @@ func TestCalculateIsEqualForHolidayOnMondayAndRegularMonday(t *testing.T) {
 	holidayPayroll := &models.Payroll{}
 	holidayMinutes := map[string]models.GuardDuty{
 		"2022-10-17": {
-			Hvilende2000:        240,
-			Hvilende0006:        360,
-			Hvilende0620:        840,
-			Helgetillegg:        0,
-			Skifttillegg:        240,
-			HolidayCompensation: true,
+			Hvilende2000:  240,
+			Hvilende0006:  360,
+			Helligdag0620: 840,
+			Helgetillegg:  0,
+			Skifttillegg:  240,
 		},
 	}
 	compensation.Calculate(holidayMinutes, satser, holidayPayroll)
@@ -1164,7 +1157,7 @@ func TestCalculateIsEqualForHolidayOnMondayAndRegularMonday(t *testing.T) {
 		"2022-10-17": {
 			Hvilende2000: 240,
 			Hvilende0006: 360,
-			Hvilende0620: 840,
+			Hvilende0620: 840, // this is not a legal work day with guard duty
 			Helgetillegg: 0,
 			Skifttillegg: 240,
 		},

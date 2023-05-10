@@ -2,203 +2,10 @@ package compensation
 
 import (
 	"github.com/google/go-cmp/cmp"
-	"github.com/google/uuid"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/shopspring/decimal"
 	"testing"
-	"time"
 )
-
-func TestCalculateCallOut(t *testing.T) {
-	type args struct {
-		timesheet map[string]models.TimeSheet
-		satser    models.Satser
-	}
-	tests := []struct {
-		name string
-		args args
-		want models.Artskoder
-	}{
-		{
-			name: "Utrykning i helg",
-			args: args{
-				satser: models.Satser{
-					Helg:    decimal.NewFromInt(65),
-					Dag:     decimal.NewFromInt(15),
-					Natt:    decimal.NewFromInt(25),
-					Utvidet: decimal.NewFromInt(25),
-				},
-				timesheet: map[string]models.TimeSheet{
-					"2022-10-29": {
-						Date:         time.Date(2022, 10, 29, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Lørdag",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 29, 20, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 29, 22, 0, 0, 0, time.UTC),
-								OtG: true,
-							},
-						},
-					},
-				},
-			},
-			want: models.Artskoder{
-				Utrykning: models.Artskode{
-					Sum:   decimal.NewFromInt(180),
-					Hours: 2,
-				},
-			},
-		},
-
-		{
-			name: "Korte utrykninger på lørdag",
-			args: args{
-				satser: models.Satser{
-					Helg:    decimal.NewFromInt(65),
-					Dag:     decimal.NewFromInt(15),
-					Natt:    decimal.NewFromInt(25),
-					Utvidet: decimal.NewFromInt(25),
-				},
-				timesheet: map[string]models.TimeSheet{
-					"2022-10-29": {
-						Date:         time.Date(2022, 10, 29, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Lørdag",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 29, 10, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 29, 10, 20, 0, 0, time.UTC),
-								OtG: true,
-							},
-							{
-								In:  time.Date(2022, 10, 29, 20, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 29, 20, 40, 0, 0, time.UTC),
-								OtG: true,
-							},
-						},
-					},
-				},
-			},
-			want: models.Artskoder{
-				Utrykning: models.Artskode{
-					Sum:   decimal.NewFromInt(90),
-					Hours: 1,
-				},
-			},
-		},
-
-		{
-			name: "Korte utrykninger over flere dager",
-			args: args{
-				satser: models.Satser{
-					Helg:    decimal.NewFromInt(65),
-					Dag:     decimal.NewFromInt(15),
-					Natt:    decimal.NewFromInt(25),
-					Utvidet: decimal.NewFromInt(25),
-				},
-				timesheet: map[string]models.TimeSheet{
-					"2022-10-26": {
-						Date:         time.Date(2022, 10, 26, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Virkedag",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 26, 20, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 26, 20, 20, 0, 0, time.UTC),
-								OtG: true,
-							},
-						},
-					},
-					"2022-10-27": {
-						Date:         time.Date(2022, 10, 27, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Virkedag",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 27, 20, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 27, 20, 20, 0, 0, time.UTC),
-								OtG: true,
-							},
-						},
-					},
-					"2022-10-28": {
-						Date:         time.Date(2022, 10, 28, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Virkedag",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 28, 5, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 28, 5, 20, 0, 0, time.UTC),
-								OtG: true,
-							},
-						},
-					},
-				},
-			},
-			want: models.Artskoder{
-				Utrykning: models.Artskode{
-					Sum:   decimal.NewFromInt(25),
-					Hours: 1,
-				},
-			},
-		},
-
-		{
-			name: "Utrykning i utvidet arbeidstid",
-			args: args{
-				satser: models.Satser{
-					Helg:    decimal.NewFromInt(65),
-					Dag:     decimal.NewFromInt(15),
-					Natt:    decimal.NewFromInt(25),
-					Utvidet: decimal.NewFromInt(25),
-				},
-				timesheet: map[string]models.TimeSheet{
-					"2022-10-31": {
-						Date:         time.Date(2022, 10, 31, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 7.75,
-						WorkingDay:   "Virkedag",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 31, 6, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 31, 8, 0, 0, 0, time.UTC),
-								OtG: true,
-							},
-						},
-					},
-				},
-			},
-			want: models.Artskoder{
-				Utrykning: models.Artskode{
-					Sum:   decimal.NewFromInt(55),
-					Hours: 2,
-				},
-			},
-		},
-	}
-
-	for _, tt := range tests {
-		var payroll *models.Payroll
-		payroll = &models.Payroll{
-			ID:         uuid.UUID{},
-			ApproverID: "Scathan",
-		}
-
-		t.Run(tt.name, func(t *testing.T) {
-			CalculateCallOut(tt.args.timesheet, tt.args.satser, payroll)
-
-			if diff := cmp.Diff(tt.want, payroll.Artskoder); diff != "" {
-				t.Errorf("CalculateCallOut() mismatch (-want +got):\n%s", diff)
-			}
-		})
-	}
-}
 
 func TestCalculate(t *testing.T) {
 	type args struct {
@@ -223,35 +30,28 @@ func TestCalculate(t *testing.T) {
 				},
 				minutes: map[string]models.GuardDuty{
 					"2022-10-12": {
-						Hvilende2000:        240,
-						Hvilende0006:        0,
-						Hvilende0620:        255,
-						Helgetillegg:        0,
-						Skifttillegg:        180,
-						WeekendCompensation: false,
+						Hvilende2000: 240,
+						Hvilende0006: 0,
+						Hvilende0620: 255,
+						Skifttillegg: 180,
 					},
 					"2022-10-13": {
-						Hvilende2000:        240,
-						Hvilende0006:        360,
-						Hvilende0620:        375,
-						Helgetillegg:        0,
-						Skifttillegg:        240,
-						WeekendCompensation: false,
+						Hvilende2000: 240,
+						Hvilende0006: 360,
+						Hvilende0620: 375,
+						Skifttillegg: 240,
 					},
 					"2022-10-14": {
-						Hvilende2000:        240,
-						Hvilende0006:        360,
-						Hvilende0620:        375,
-						Helgetillegg:        0,
-						Skifttillegg:        240,
-						WeekendCompensation: false,
+						Hvilende2000: 240,
+						Hvilende0006: 360,
+						Hvilende0620: 375,
+						Skifttillegg: 240,
 					},
 					"2022-10-15": {
 						Hvilende2000:        240,
 						Hvilende0006:        360,
 						Hvilende0620:        840,
 						Helgetillegg:        1440,
-						Skifttillegg:        0,
 						WeekendCompensation: true,
 					},
 					"2022-10-16": {
@@ -259,32 +59,25 @@ func TestCalculate(t *testing.T) {
 						Hvilende0006:        360,
 						Hvilende0620:        840,
 						Helgetillegg:        1440,
-						Skifttillegg:        0,
 						WeekendCompensation: true,
 					},
 					"2022-10-17": {
-						Hvilende2000:        240,
-						Hvilende0006:        360,
-						Hvilende0620:        375,
-						Helgetillegg:        0,
-						Skifttillegg:        240,
-						WeekendCompensation: false,
+						Hvilende2000: 240,
+						Hvilende0006: 360,
+						Hvilende0620: 375,
+						Skifttillegg: 240,
 					},
 					"2022-10-18": {
-						Hvilende2000:        240,
-						Hvilende0006:        360,
-						Hvilende0620:        375,
-						Helgetillegg:        0,
-						Skifttillegg:        240,
-						WeekendCompensation: false,
+						Hvilende2000: 240,
+						Hvilende0006: 360,
+						Hvilende0620: 375,
+						Skifttillegg: 240,
 					},
 					"2022-10-19": {
-						Hvilende2000:        0,
-						Hvilende0006:        360,
-						Hvilende0620:        120,
-						Helgetillegg:        0,
-						Skifttillegg:        60,
-						WeekendCompensation: false,
+						Hvilende2000: 0,
+						Hvilende0006: 360,
+						Hvilende0620: 120,
+						Skifttillegg: 60,
 					},
 				},
 			},
@@ -328,7 +121,6 @@ func TestCalculate(t *testing.T) {
 						Hvilende0006:        360,
 						Hvilende0620:        840,
 						Helgetillegg:        1440,
-						Skifttillegg:        0,
 						WeekendCompensation: true,
 					},
 					"2022-10-16": {
@@ -336,7 +128,6 @@ func TestCalculate(t *testing.T) {
 						Hvilende0006:        360,
 						Hvilende0620:        840,
 						Helgetillegg:        1320,
-						Skifttillegg:        0,
 						WeekendCompensation: true,
 					},
 				},
@@ -345,6 +136,47 @@ func TestCalculate(t *testing.T) {
 				Helg: models.Artskode{
 					Sum:   decimal.NewFromInt(1468),
 					Hours: 46,
+				},
+			},
+		},
+
+		{
+			name: "Beredskapsvakt en bevegelig hellig dag",
+			args: args{
+				payroll: &models.Payroll{},
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
+				},
+				minutes: map[string]models.GuardDuty{
+					"2022-10-12": {
+						Hvilende2000:  240,
+						Hvilende0006:  360,
+						Helligdag0620: 840,
+						Hvilende0620:  0,
+						Helgetillegg:  0,
+						Skifttillegg:  240,
+					},
+				},
+			},
+			want: models.Artskoder{
+				Morgen: models.Artskode{
+					Sum:   decimal.NewFromInt(150),
+					Hours: 6,
+				},
+				Kveld: models.Artskode{
+					Sum:   decimal.NewFromInt(100),
+					Hours: 4,
+				},
+				Dag: models.Artskode{
+					Sum:   decimal.NewFromInt(210),
+					Hours: 14,
+				},
+				Skift: models.Artskode{
+					Sum:   decimal.NewFromInt(20),
+					Hours: 4,
 				},
 			},
 		},

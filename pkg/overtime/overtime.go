@@ -15,12 +15,9 @@ func Calculate(minutes map[string]models.GuardDuty, salary decimal.Decimal, payr
 	for _, duty := range minutes {
 		if duty.WeekendCompensation {
 			overtimeWeekendMinutes += duty.Helgetillegg
-		} else if duty.HolidayCompensation {
-			overtimeHolidayMinutes += duty.Hvilende0620
-			overtimeEveningMinutes += duty.Hvilende2000
-			overtimeMorningMinutes += duty.Hvilende0006
 		} else {
 			overtimeDayMinutes += duty.Hvilende0620
+			overtimeHolidayMinutes += duty.Helligdag0620
 			overtimeEveningMinutes += duty.Hvilende2000
 			overtimeMorningMinutes += duty.Hvilende0006
 		}

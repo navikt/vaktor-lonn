@@ -2,6 +2,7 @@ package calculator
 
 import (
 	"fmt"
+	"github.com/navikt/vaktor-lonn/pkg/callout"
 	"github.com/navikt/vaktor-lonn/pkg/ranges"
 	"os"
 	"time"
@@ -16,8 +17,8 @@ const (
 	VaktorDateFormat = "2006-01-02"
 )
 
-// calculateMinutesToBeCompensated returns an object with the minutes you have been having guard duty each day in a given periode
-func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesheet map[string]models.TimeSheet) (map[string]models.GuardDuty, error) {
+// calculateMinutesToBePaid returns an object with the minutes you have been having guard duty each day in a given periode
+func calculateMinutesToBePaid(schedule map[string][]models.Period, timesheet map[string]models.TimeSheet) (map[string]models.GuardDuty, error) {
 	guardHours := map[string]models.GuardDuty{}
 
 	for day, periods := range schedule {
@@ -80,9 +81,30 @@ func calculateMinutesToBeCompensated(schedule map[string][]models.Period, timesh
 			}
 
 			dutyHours.WeekendCompensation = isWeekend(currentDay.Date)
-			if !dutyHours.WeekendCompensation {
-				// Det er ingen økonomiske fordeler med helligdager i helg, kun i ukedagene.
-				dutyHours.HolidayCompensation = isAHoliday(currentDay.FormName)
+
+			// Det er ingen økonomiske fordeler med helligdager i helg, kun i ukedagene.
+			// Derfor bryr vi oss ikke om helligdager i helgene.
+			if !dutyHours.WeekendCompensation && isHoliday(currentDay.FormName) {
+				if currentDay.FormName == "Helligdag" {
+					dutyHours.Helligdag0620 = dutyHours.Hvilende0620
+					dutyHours.Hvilende0620 = 0
+				} else {
+					// Tre dager i året er det kun helligdag etter kl12, så de må spesialhåndteres
+					// det er kun tiden før kjernetid som er relevant for helligdager som starter kl12.
+					if currentDay.FormName == "Nyttårsaften 1000-1200 *" {
+						// Nyttårsaften har kjernetid fra kl10 til kl12
+						minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
+							Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
+							End:   time.Date(date.Year(), date.Month(), date.Day(), 10, 0, 0, 0, time.UTC)}, currentDay.Clockings)
+					} else {
+						// Julaften og onsdag før påske har kjernetid fra kl08 til kl12
+						minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
+							Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
+							End:   time.Date(date.Year(), date.Month(), date.Day(), 8, 0, 0, 0, time.UTC)}, currentDay.Clockings)
+					}
+					dutyHours.Helligdag0620 = dutyHours.Hvilende0620 - minutesWithGuardDuty
+					dutyHours.Hvilende0620 = minutesWithGuardDuty
+				}
 			}
 		}
 		guardHours[day] = dutyHours
@@ -109,7 +131,7 @@ func isWeekend(day time.Time) bool {
 	return day.Weekday() == time.Saturday || day.Weekday() == time.Sunday
 }
 
-func isAHoliday(formName string) bool {
+func isHoliday(formName string) bool {
 	holidays := []string{"Helligdag", "Julaften 0800-1200 *", "Onsdag før Påske 0800-1200 *", "Nyttårsaften 1000-1200 *"}
 	for _, holiday := range holidays {
 		if formName == holiday {
@@ -186,6 +208,11 @@ func calculateMinutesWithGuardDutyInPeriod(vaktPeriod models.Period, compPeriod 
 
 	if dutyRange != nil {
 		for _, workHours := range timesheet {
+			if workHours.OtG {
+				// Overtid ved utrykning regnes ikke som arbeidstid
+				continue
+			}
+
 			workRange := ranges.FromTime(workHours.In, workHours.Out)
 			minutesWithGuardDuty += ranges.CalculateMinutesOverlapping(workRange, *dutyRange)
 		}
@@ -257,7 +284,7 @@ func getSalary(timesheet map[string]models.TimeSheet) (decimal.Decimal, error) {
 }
 
 func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.Payroll, error) {
-	minutes, err := calculateMinutesToBeCompensated(plan.Schedule, minWinTid.Timesheet)
+	minutes, err := calculateMinutesToBePaid(plan.Schedule, minWinTid.Timesheet)
 	if err != nil {
 		return models.Payroll{}, err
 	}
@@ -294,7 +321,7 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 	}
 
 	compensation.Calculate(minutes, minWinTid.Satser, payroll)
-	compensation.CalculateCallOut(minWinTid.Timesheet, minWinTid.Satser, payroll)
+	callout.Calculate(minWinTid.Timesheet, minWinTid.Satser, payroll)
 	overtime.Calculate(minutes, salary, payroll)
 
 	return *payroll, nil
