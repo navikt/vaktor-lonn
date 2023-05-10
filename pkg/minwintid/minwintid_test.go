@@ -14,7 +14,7 @@ import (
 
 func Test_formatTimesheet(t *testing.T) {
 	type args struct {
-		days []Dag
+		days []models.MWTDag
 	}
 	tests := []struct {
 		name    string
@@ -25,14 +25,14 @@ func Test_formatTimesheet(t *testing.T) {
 		{
 			name: "arbeidsdag med litt fravær",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Dato:       "2022-08-02T00:00:00",
 						SkjemaTid:  7,
 						SkjemaNavn: "Heltid 0800-1500 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-08-02T07:45:10",
 								Retning:      "Inn",
@@ -70,7 +70,7 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -108,14 +108,14 @@ func Test_formatTimesheet(t *testing.T) {
 		{
 			name: "helg med utrykning (liten og stor BV begrunnelse)",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Dato:       "2022-09-17T00:00:00",
 						SkjemaTid:  0,
 						SkjemaNavn: "BV Lørdag IKT",
 						Godkjent:   5,
 						Virkedag:   "Lørdag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-09-17T20:30:00",
 								Retning:      "Inn",
@@ -136,7 +136,7 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -151,7 +151,7 @@ func Test_formatTimesheet(t *testing.T) {
 						SkjemaNavn: "BV Lørdag IKT",
 						Godkjent:   5,
 						Virkedag:   "Lørdag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-09-24T20:30:00",
 								Retning:      "Inn",
@@ -172,7 +172,7 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -224,14 +224,14 @@ func Test_formatTimesheet(t *testing.T) {
 		{
 			name: "Heldags Kurs/Seminar",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Dato:       "2022-05-03T00:00:00",
 						SkjemaTid:  7.75,
 						SkjemaNavn: "Heltid 0800-1545 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-05-03T08:00:00",
 								Retning:      "Inn",
@@ -245,7 +245,7 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   740,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -279,14 +279,14 @@ func Test_formatTimesheet(t *testing.T) {
 		{
 			name: "Heldags fravær",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Dato:       "2022-10-17T00:00:00",
 						SkjemaTid:  7.75,
 						SkjemaNavn: "Heltid 0800-1545 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-10-17T08:00:00",
 								Retning:      "Inn",
@@ -312,7 +312,7 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -346,14 +346,14 @@ func Test_formatTimesheet(t *testing.T) {
 		{
 			name: "Inn fra fravær",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Dato:       "2022-10-20T00:00:00",
 						SkjemaTid:  7.75,
 						SkjemaNavn: "Heltid 0800-1545 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-10-20T11:12:10",
 								Retning:      "Inn fra fravær",
@@ -367,7 +367,7 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -401,14 +401,14 @@ func Test_formatTimesheet(t *testing.T) {
 		{
 			name: "To overtid på natten",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Dato:       "2022-09-15T00:00:00",
 						SkjemaTid:  7.75,
 						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid:       "2022-09-15T00:34:21",
 								Retning:            "Inn",
@@ -462,7 +462,7 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -506,14 +506,14 @@ func Test_formatTimesheet(t *testing.T) {
 		{
 			name: "Overtid over midnatt, ikke vakt dagen etterpå",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Dato:       "2022-09-15T00:00:00",
 						SkjemaTid:  7.75,
 						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-09-15T08:04:00",
 								Retning:      "Inn",
@@ -546,7 +546,7 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -585,14 +585,14 @@ func Test_formatTimesheet(t *testing.T) {
 		{
 			name: "Overtid over midnatt, med vakt påfølgende dag",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Dato:       "2022-09-15T00:00:00",
 						SkjemaTid:  7.75,
 						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-09-15T08:04:00",
 								Retning:      "Inn",
@@ -625,7 +625,7 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -640,7 +640,7 @@ func Test_formatTimesheet(t *testing.T) {
 						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-09-16T08:04:00",
 								Retning:      "Inn",
@@ -654,7 +654,7 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -714,14 +714,14 @@ func Test_formatTimesheet(t *testing.T) {
 		{
 			name: "Utrykning på natten, og påfølgende kveld over midnatt, med jobb påfølgende dag",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Dato:       "2022-10-25T00:00:00",
 						SkjemaTid:  7.75,
 						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid:       "2022-10-25T00:34:21",
 								Retning:            "Inn",
@@ -793,7 +793,7 @@ func Test_formatTimesheet(t *testing.T) {
 								OvertidBegrunnelse: "",
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -808,7 +808,7 @@ func Test_formatTimesheet(t *testing.T) {
 						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid:       "2022-10-26T08:00:00",
 								Retning:            "Inn",
@@ -824,7 +824,7 @@ func Test_formatTimesheet(t *testing.T) {
 								OvertidBegrunnelse: "",
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -893,14 +893,14 @@ func Test_formatTimesheet(t *testing.T) {
 		{
 			name: "Lang dag, overtid på kvelden, og overtid over midnatt, med kort vakt påfølgende dag",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Dato:       "2022-10-18T00:00:00",
 						SkjemaTid:  7.75,
 						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-10-18T08:30:00",
 								Retning:      "Inn",
@@ -952,7 +952,7 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -967,7 +967,7 @@ func Test_formatTimesheet(t *testing.T) {
 						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-10-19T08:00:00",
 								Retning:      "Inn",
@@ -981,7 +981,7 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1046,14 +1046,14 @@ func Test_formatTimesheet(t *testing.T) {
 		{
 			name: "Kun ut på fravær",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Dato:       "2022-01-20T00:00:00",
 						SkjemaTid:  7.75,
 						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-01-20T08:09:00",
 								Retning:      "Inn",
@@ -1067,7 +1067,7 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   470,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1101,14 +1101,14 @@ func Test_formatTimesheet(t *testing.T) {
 		{
 			name: "Ut på frævar, så inn igjen",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Dato:       "2022-01-24T00:00:00",
 						SkjemaTid:  7.75,
 						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-01-24T08:27:00",
 								Retning:      "Inn",
@@ -1134,7 +1134,7 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1172,14 +1172,14 @@ func Test_formatTimesheet(t *testing.T) {
 		{
 			name: "En tilfeldig døgnkontinuerlig vaktuke",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Dato:       "2022-10-05T00:00:00",
 						SkjemaTid:  7.75,
 						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   2,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid:       "2022-10-05T07:21:42",
 								Retning:            "Inn",
@@ -1195,7 +1195,7 @@ func Test_formatTimesheet(t *testing.T) {
 								OvertidBegrunnelse: "",
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1210,7 +1210,7 @@ func Test_formatTimesheet(t *testing.T) {
 						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   2,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid:       "2022-10-06T07:13:24",
 								Retning:            "Inn",
@@ -1226,7 +1226,7 @@ func Test_formatTimesheet(t *testing.T) {
 								OvertidBegrunnelse: "",
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1241,7 +1241,7 @@ func Test_formatTimesheet(t *testing.T) {
 						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   2,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid:       "2022-10-07T07:18:52",
 								Retning:            "Inn",
@@ -1257,7 +1257,7 @@ func Test_formatTimesheet(t *testing.T) {
 								OvertidBegrunnelse: "",
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1273,7 +1273,7 @@ func Test_formatTimesheet(t *testing.T) {
 						Godkjent:    2,
 						Virkedag:    "Lørdag",
 						Stemplinger: nil,
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1289,7 +1289,7 @@ func Test_formatTimesheet(t *testing.T) {
 						Godkjent:    2,
 						Virkedag:    "Søndag",
 						Stemplinger: nil,
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1304,7 +1304,7 @@ func Test_formatTimesheet(t *testing.T) {
 						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   2,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid:       "2022-10-10T07:18:32",
 								Retning:            "Inn",
@@ -1320,7 +1320,7 @@ func Test_formatTimesheet(t *testing.T) {
 								OvertidBegrunnelse: "",
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1335,7 +1335,7 @@ func Test_formatTimesheet(t *testing.T) {
 						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   2,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid:       "2022-10-11T07:09:58",
 								Retning:            "Inn",
@@ -1351,7 +1351,7 @@ func Test_formatTimesheet(t *testing.T) {
 								OvertidBegrunnelse: "",
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1366,7 +1366,7 @@ func Test_formatTimesheet(t *testing.T) {
 						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   2,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid:       "2022-10-12T08:00:00",
 								Retning:            "Inn",
@@ -1382,7 +1382,7 @@ func Test_formatTimesheet(t *testing.T) {
 								OvertidBegrunnelse: "",
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1536,7 +1536,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    TiddataResult
+		want    models.MWTTiddataResult
 		wantErr bool
 	}{
 		{
@@ -1556,13 +1556,13 @@ func Test_decodeMinWinTid(t *testing.T) {
 	}
 }`,
 			},
-			want: TiddataResult{
+			want: models.MWTTiddataResult{
 				VaktorNavId:      "123456",
 				VaktorResourceId: "E123456",
 				VaktorLederNavId: "M654321",
 				VaktorLederNavn:  "Kalpana, Bran",
 				VaktorDager:      "",
-				Dager:            []Dag{},
+				Dager:            []models.MWTDag{},
 			},
 			wantErr: false,
 		},
@@ -1583,20 +1583,20 @@ func Test_decodeMinWinTid(t *testing.T) {
 	}
 }`,
 			},
-			want: TiddataResult{
+			want: models.MWTTiddataResult{
 				VaktorNavId:      "123456",
 				VaktorResourceId: "E123456",
 				VaktorLederNavId: "M654321",
 				VaktorLederNavn:  "Kalpana, Bran",
 				VaktorDager:      "",
-				Dager: []Dag{
+				Dager: []models.MWTDag{
 					{
 						Dato:       "2022-07-15T00:00:00",
 						SkjemaTid:  7,
 						SkjemaNavn: "Heltid 0800-1500 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-07-15T15:00:00",
 								Retning:      "Inn fra fravær",
@@ -1610,7 +1610,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1640,20 +1640,20 @@ func Test_decodeMinWinTid(t *testing.T) {
 	}
 }`,
 			},
-			want: TiddataResult{
+			want: models.MWTTiddataResult{
 				VaktorNavId:      "123456",
 				VaktorResourceId: "E123456",
 				VaktorLederNavId: "M654321",
 				VaktorLederNavn:  "Kalpana, Bran",
 				VaktorDager:      "",
-				Dager: []Dag{
+				Dager: []models.MWTDag{
 					{
 						Dato:       "2022-08-02T00:00:00",
 						SkjemaTid:  7,
 						SkjemaNavn: "Heltid 0800-1500 (2018)",
 						Godkjent:   5,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-08-02T07:45:10",
 								Retning:      "Inn",
@@ -1691,7 +1691,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1721,20 +1721,20 @@ func Test_decodeMinWinTid(t *testing.T) {
 	}
 }`,
 			},
-			want: TiddataResult{
+			want: models.MWTTiddataResult{
 				VaktorNavId:      "123456",
 				VaktorResourceId: "E123456",
 				VaktorLederNavId: "M654321",
 				VaktorLederNavn:  "Kalpana, Bran",
 				VaktorDager:      "",
-				Dager: []Dag{
+				Dager: []models.MWTDag{
 					{
 						Dato:       "2022-09-24T00:00:00",
 						SkjemaTid:  0,
 						SkjemaNavn: "BV Lørdag IKT",
 						Godkjent:   5,
 						Virkedag:   "Lørdag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-09-24T20:30:00",
 								Retning:      "Inn",
@@ -1754,7 +1754,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1784,20 +1784,20 @@ func Test_decodeMinWinTid(t *testing.T) {
 	}
 }`,
 			},
-			want: TiddataResult{
+			want: models.MWTTiddataResult{
 				VaktorNavId:      "123456",
 				VaktorResourceId: "E123456",
 				VaktorLederNavId: "M654321",
 				VaktorLederNavn:  "Kalpana, Bran",
 				VaktorDager:      "",
-				Dager: []Dag{
+				Dager: []models.MWTDag{
 					{
 						Dato:       "2022-05-03T00:00:00",
 						SkjemaTid:  7.75,
 						SkjemaNavn: "Heltid 0800-1545 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-05-03T08:00:00",
 								Retning:      "Inn",
@@ -1811,7 +1811,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 								FravarKode:   740,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1841,20 +1841,20 @@ func Test_decodeMinWinTid(t *testing.T) {
 	}
 }`,
 			},
-			want: TiddataResult{
+			want: models.MWTTiddataResult{
 				VaktorNavId:      "123456",
 				VaktorResourceId: "E123456",
 				VaktorLederNavId: "M654321",
 				VaktorLederNavn:  "Kalpana, Bran",
 				VaktorDager:      "",
-				Dager: []Dag{
+				Dager: []models.MWTDag{
 					{
 						Dato:       "2022-09-15T00:00:00",
 						SkjemaTid:  7.75,
 						SkjemaNavn: "NY BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   3,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid: "2022-09-15T08:04:08",
 								Retning:      "Inn",
@@ -1886,7 +1886,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 								FravarKode:   0,
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1916,20 +1916,20 @@ func Test_decodeMinWinTid(t *testing.T) {
 	}
 }`,
 			},
-			want: TiddataResult{
+			want: models.MWTTiddataResult{
 				VaktorNavId:      "123456",
 				VaktorResourceId: "E123456",
 				VaktorLederNavId: "M654321",
 				VaktorLederNavn:  "Kalpana, Bran",
 				VaktorDager:      "",
-				Dager: []Dag{
+				Dager: []models.MWTDag{
 					{
 						Dato:       "2022-10-05T00:00:00",
 						SkjemaTid:  7.75,
 						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   2,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid:       "2022-10-05T07:21:42",
 								Retning:            "Inn",
@@ -1945,7 +1945,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 								OvertidBegrunnelse: "",
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1960,7 +1960,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   2,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid:       "2022-10-06T07:13:24",
 								Retning:            "Inn",
@@ -1976,7 +1976,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 								OvertidBegrunnelse: "",
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -1991,7 +1991,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   2,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid:       "2022-10-07T07:18:52",
 								Retning:            "Inn",
@@ -2007,7 +2007,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 								OvertidBegrunnelse: "",
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -2023,7 +2023,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						Godkjent:    2,
 						Virkedag:    "Lørdag",
 						Stemplinger: nil,
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -2039,7 +2039,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						Godkjent:    2,
 						Virkedag:    "Søndag",
 						Stemplinger: nil,
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -2054,7 +2054,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   2,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid:       "2022-10-10T07:18:32",
 								Retning:            "Inn",
@@ -2070,7 +2070,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 								OvertidBegrunnelse: "",
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -2085,7 +2085,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   2,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid:       "2022-10-11T07:09:58",
 								Retning:            "Inn",
@@ -2101,7 +2101,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 								OvertidBegrunnelse: "",
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -2116,7 +2116,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 						SkjemaNavn: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 						Godkjent:   2,
 						Virkedag:   "Virkedag",
-						Stemplinger: []Stempling{
+						Stemplinger: []models.MWTStempling{
 							{
 								StemplingTid:       "2022-10-12T08:00:00",
 								Retning:            "Inn",
@@ -2132,7 +2132,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 								OvertidBegrunnelse: "",
 							},
 						},
-						Stillinger: []Stilling{
+						Stillinger: []models.MWTStilling{
 							{
 								Koststed:  "000000",
 								Formal:    "000000",
@@ -2149,7 +2149,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var response Response
+			var response models.MWTResponse
 			err := json.Unmarshal([]byte(tt.args.body), &response)
 			if err != nil {
 				t.Errorf("failed while unmarshling: %v", err)
@@ -2525,7 +2525,7 @@ func Test_calculateSalary(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var response Response
+			var response models.MWTResponse
 			err := json.Unmarshal([]byte(tt.args.body), &response)
 			if err != nil {
 				t.Errorf("failed while unmarshling: %v", err)
@@ -2600,7 +2600,7 @@ func Test_createPerfectClocking(t *testing.T) {
 
 func Test_isTimesheetApproved(t *testing.T) {
 	type args struct {
-		days []Dag
+		days []models.MWTDag
 	}
 	tests := []struct {
 		name  string
@@ -2610,7 +2610,7 @@ func Test_isTimesheetApproved(t *testing.T) {
 		{
 			name: "Ingen godkjente dager",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Godkjent: 0,
 					},
@@ -2621,7 +2621,7 @@ func Test_isTimesheetApproved(t *testing.T) {
 		{
 			name: "Godkjent av vakthaver",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Godkjent: 1,
 					},
@@ -2632,7 +2632,7 @@ func Test_isTimesheetApproved(t *testing.T) {
 		{
 			name: "Godkjent av personalleder",
 			args: args{
-				days: []Dag{
+				days: []models.MWTDag{
 					{
 						Godkjent: 2,
 					},
