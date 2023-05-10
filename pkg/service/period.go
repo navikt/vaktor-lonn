@@ -70,4 +70,18 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 		h.Log.Error("Error when returning success", zap.Error(err), zap.String(vaktplanId, plan.ID.String()))
 		return
 	}
+
+	bearerToken, err := h.BearerClient.GenerateBearerToken()
+	if err != nil {
+		h.Log.Error("Problem generating bearer token", zap.Error(err))
+	}
+
+	beredskapsvakt := gensql.Beredskapsvakt{
+		ID:          plan.ID,
+		Ident:       plan.Ident,
+		Plan:        body,
+		PeriodBegin: periodBegin,
+		PeriodEnd:   periodEnd,
+	}
+	handleTransaction(h, beredskapsvakt, bearerToken)
 }
