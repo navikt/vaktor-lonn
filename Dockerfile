@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine as builder
+FROM golang:1.20-alpine as builder
 
 WORKDIR /usr/src/app
 
@@ -10,7 +10,7 @@ COPY pkg pkg/
 
 RUN go build -v -o /usr/src/app/lonn
 
-FROM alpine:3.16
+FROM alpine:3.18
 
 RUN apk add --no-cache ca-certificates
 
