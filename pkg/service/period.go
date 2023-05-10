@@ -71,11 +71,6 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bearerToken, err := h.BearerClient.GenerateBearerToken()
-	if err != nil {
-		h.Log.Error("Problem generating bearer token", zap.Error(err))
-	}
-
 	beredskapsvakt := gensql.Beredskapsvakt{
 		ID:          plan.ID,
 		Ident:       plan.Ident,
@@ -83,5 +78,13 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 		PeriodBegin: periodBegin,
 		PeriodEnd:   periodEnd,
 	}
-	handleTransaction(h, beredskapsvakt, bearerToken)
+	go triggerHandleOfTransaction(h, beredskapsvakt)
+}
+
+func triggerHandleOfTransaction(handler Handler, beredskapsvakt gensql.Beredskapsvakt) {
+	bearerToken, err := handler.BearerClient.GenerateBearerToken()
+	if err != nil {
+		handler.Log.Error("Problem generating bearer token", zap.Error(err))
+	}
+	handleTransaction(handler, beredskapsvakt, bearerToken)
 }
