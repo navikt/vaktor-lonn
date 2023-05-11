@@ -184,6 +184,10 @@ func formatTimesheet(days []models.MWTDag) (map[string]models.TimeSheet, []zap.F
 						stemplinger = stemplinger[1:]
 
 						overtimeBecauseOfGuardDuty := strings.Contains(strings.ToLower(utStempling.OvertidBegrunnelse), "bv")
+						// Før 1. februar så måtte man ikke merke overtiden sin med BV
+						if stemplingDate.Before(time.Date(2023, 2, 1, 0, 0, 0, 0, time.UTC)) {
+							overtimeBecauseOfGuardDuty = true
+						}
 
 						if utOvertid.Retning == "Ut" && utOvertid.Type == "B2" {
 							innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)

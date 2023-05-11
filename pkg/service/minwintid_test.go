@@ -106,7 +106,200 @@ func Test_formatTimesheet(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "kveld med utrykning (glemt BV begrunnelse)",
+			args: args{
+				days: []models.MWTDag{
+					{
+						Dato:       "2023-02-14T00:00:00",
+						SkjemaTid:  7.45,
+						SkjemaNavn: "Heltid 0800-1545 (2018)",
+						Godkjent:   5,
+						Virkedag:   "Virkedag",
+						Stemplinger: []models.MWTStempling{
+							{
+								StemplingTid: "2023-02-14T08:00:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2023-02-14T15:45:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2023-02-14T20:30:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2023-02-14T22:29:59",
+								Retning:      "Overtid                 ",
+								Type:         "B6",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2023-02-14T22:30:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+						},
+						Stillinger: []models.MWTStilling{
+							{
+								Koststed:  "000000",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
+					},
+				},
+			},
+			want: map[string]models.TimeSheet{
+				"2023-02-14": {
+					Date:         time.Date(2023, 2, 14, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7.45,
+					WorkingDay:   "Virkedag",
+					FormName:     "Heltid 0800-1545 (2018)",
+					Salary:       decimal.NewFromInt(500_000),
+					Formal:       "000000",
+					Koststed:     "000000",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2023, 2, 14, 8, 0, 0, 0, time.UTC),
+							Out: time.Date(2023, 2, 14, 15, 45, 0, 0, time.UTC),
+						},
+						{
+							In:  time.Date(2023, 2, 14, 20, 30, 0, 0, time.UTC),
+							Out: time.Date(2023, 2, 14, 22, 30, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "helg med utrykning (liten og stor BV begrunnelse)",
+			args: args{
+				days: []models.MWTDag{
+					{
+						Dato:       "2023-02-04T00:00:00",
+						SkjemaTid:  0,
+						SkjemaNavn: "BV Lørdag IKT",
+						Godkjent:   5,
+						Virkedag:   "Lørdag",
+						Stemplinger: []models.MWTStempling{
+							{
+								StemplingTid: "2023-02-04T20:30:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid:       "2023-02-04T22:29:59",
+								Retning:            "Overtid                 ",
+								Type:               "B6",
+								FravarKode:         0,
+								OvertidBegrunnelse: "BV",
+							},
+							{
+								StemplingTid: "2023-02-04T22:30:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+						},
+						Stillinger: []models.MWTStilling{
+							{
+								Koststed:  "000000",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
+					},
+					{
+						Dato:       "2023-02-11T00:00:00",
+						SkjemaTid:  0,
+						SkjemaNavn: "BV Lørdag IKT",
+						Godkjent:   5,
+						Virkedag:   "Lørdag",
+						Stemplinger: []models.MWTStempling{
+							{
+								StemplingTid: "2023-02-11T20:30:00",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid:       "2023-02-11T22:29:59",
+								Retning:            "Overtid                 ",
+								Type:               "B6",
+								FravarKode:         0,
+								OvertidBegrunnelse: "bv",
+							},
+							{
+								StemplingTid: "2023-02-11T22:30:00",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+						},
+						Stillinger: []models.MWTStilling{
+							{
+								Koststed:  "000000",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
+					},
+				},
+			},
+			want: map[string]models.TimeSheet{
+				"2023-02-04": {
+					Date:         time.Date(2023, 2, 4, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 0,
+					WorkingDay:   "Lørdag",
+					FormName:     "BV Lørdag IKT",
+					Salary:       decimal.NewFromInt(500_000),
+					Formal:       "000000",
+					Koststed:     "000000",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2023, 2, 4, 20, 30, 0, 0, time.UTC),
+							Out: time.Date(2023, 2, 4, 22, 30, 0, 0, time.UTC),
+							OtG: true,
+						},
+					},
+				},
+				"2023-02-11": {
+					Date:         time.Date(2023, 2, 11, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 0,
+					WorkingDay:   "Lørdag",
+					FormName:     "BV Lørdag IKT",
+					Salary:       decimal.NewFromInt(500_000),
+					Formal:       "000000",
+					Koststed:     "000000",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2023, 2, 11, 20, 30, 0, 0, time.UTC),
+							Out: time.Date(2023, 2, 11, 22, 30, 0, 0, time.UTC),
+							OtG: true,
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "helg med utrykning (før krav om BV begrunnelse)",
 			args: args{
 				days: []models.MWTDag{
 					{
@@ -123,11 +316,10 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 							{
-								StemplingTid:       "2022-09-17T22:29:59",
-								Retning:            "Overtid                 ",
-								Type:               "B6",
-								FravarKode:         0,
-								OvertidBegrunnelse: "BV",
+								StemplingTid: "2022-09-17T22:29:59",
+								Retning:      "Overtid                 ",
+								Type:         "B6",
+								FravarKode:   0,
 							},
 							{
 								StemplingTid: "2022-09-17T22:30:00",
@@ -159,11 +351,10 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 							{
-								StemplingTid:       "2022-09-24T22:29:59",
-								Retning:            "Overtid                 ",
-								Type:               "B6",
-								FravarKode:         0,
-								OvertidBegrunnelse: "bv",
+								StemplingTid: "2022-09-24T22:29:59",
+								Retning:      "Overtid                 ",
+								Type:         "B6",
+								FravarKode:   0,
 							},
 							{
 								StemplingTid: "2022-09-24T22:30:00",
@@ -2406,12 +2597,12 @@ func Test_calculateSalary(t *testing.T) {
 							Hours: 0,
 						},
 						Helg: models.Artskode{
-							Sum:   decimal.NewFromFloat(7820.58),
-							Hours: 46,
+							Sum:   decimal.NewFromFloat(8151.91),
+							Hours: 48,
 						},
 						Utrykning: models.Artskode{
-							Sum:   decimal.NewFromFloat(0),
-							Hours: 0,
+							Sum:   decimal.NewFromFloat(104),
+							Hours: 2,
 						},
 					},
 					Formal:    "000000",
@@ -2463,16 +2654,16 @@ func Test_calculateSalary(t *testing.T) {
 							Hours: 35,
 						},
 						Helg: models.Artskode{
-							Sum:   decimal.NewFromFloat(7820.58),
-							Hours: 46,
+							Sum:   decimal.NewFromFloat(8151.91),
+							Hours: 48,
 						},
 						Skift: models.Artskode{
 							Sum:   decimal.NewFromFloat(115),
 							Hours: 23,
 						},
 						Utrykning: models.Artskode{
-							Sum:   decimal.NewFromFloat(0),
-							Hours: 0,
+							Sum:   decimal.NewFromFloat(104),
+							Hours: 2,
 						},
 					},
 					Formal:    "000000",
