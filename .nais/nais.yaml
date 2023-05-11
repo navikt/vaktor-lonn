@@ -13,6 +13,10 @@ spec:
     outbound:
       rules:
         - application: vaktor-plan
+      external:
+        - host: tdv-p.adeo.no
+          ports:
+            - port: 9402
   image: {{image}}
   replicas:
     min: {{replicas.min}}
