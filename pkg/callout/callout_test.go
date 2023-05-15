@@ -11,8 +11,9 @@ import (
 
 func TestCalculate(t *testing.T) {
 	type args struct {
-		timesheet map[string]models.TimeSheet
 		satser    models.Satser
+		schedule  map[string][]models.Period
+		timesheet map[string]models.TimeSheet
 	}
 	tests := []struct {
 		name string
@@ -27,6 +28,14 @@ func TestCalculate(t *testing.T) {
 					Dag:     decimal.NewFromInt(15),
 					Natt:    decimal.NewFromInt(25),
 					Utvidet: decimal.NewFromInt(25),
+				},
+				schedule: map[string][]models.Period{
+					"2022-10-29": {
+						{
+							Begin: time.Date(2022, 10, 29, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 30, 0, 0, 0, 0, time.UTC),
+						},
+					},
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-10-29": {
@@ -60,6 +69,14 @@ func TestCalculate(t *testing.T) {
 					Dag:     decimal.NewFromInt(15),
 					Natt:    decimal.NewFromInt(25),
 					Utvidet: decimal.NewFromInt(25),
+				},
+				schedule: map[string][]models.Period{
+					"2022-10-29": {
+						{
+							Begin: time.Date(2022, 10, 29, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 30, 0, 0, 0, 0, time.UTC),
+						},
+					},
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-10-29": {
@@ -99,6 +116,14 @@ func TestCalculate(t *testing.T) {
 					Natt:    decimal.NewFromInt(25),
 					Utvidet: decimal.NewFromInt(25),
 				},
+				schedule: map[string][]models.Period{
+					"2022-10-29": {
+						{
+							Begin: time.Date(2022, 10, 29, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 30, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-10-29": {
 						Date:         time.Date(2022, 10, 29, 0, 0, 0, 0, time.UTC),
@@ -131,6 +156,14 @@ func TestCalculate(t *testing.T) {
 					Dag:     decimal.NewFromInt(15),
 					Natt:    decimal.NewFromInt(25),
 					Utvidet: decimal.NewFromInt(25),
+				},
+				schedule: map[string][]models.Period{
+					"2022-10-26": {
+						{
+							Begin: time.Date(2022, 10, 26, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 27, 0, 0, 0, 0, time.UTC),
+						},
+					},
 				},
 				timesheet: map[string]models.TimeSheet{
 					"2022-10-26": {
@@ -165,7 +198,7 @@ func TestCalculate(t *testing.T) {
 		}
 
 		t.Run(tt.name, func(t *testing.T) {
-			Calculate(tt.args.timesheet, tt.args.satser, payroll)
+			Calculate(tt.args.schedule, tt.args.timesheet, tt.args.satser, payroll)
 
 			if diff := cmp.Diff(tt.want, payroll.Artskoder); diff != "" {
 				t.Errorf("Calculate() mismatch (-want +got):\n%s", diff)

@@ -1,6 +1,7 @@
 package calculator
 
 import (
+	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/shopspring/decimal"
@@ -14,10 +15,14 @@ func TestGuarddutySalary(t *testing.T) {
 		timesheet   map[string]models.TimeSheet
 		guardPeriod map[string][]models.Period
 	}
+	type want struct {
+		sum     decimal.Decimal
+		details *models.Artskoder
+	}
 	tests := []struct {
 		name    string
 		args    args
-		want    decimal.Decimal
+		want    want
 		wantErr bool
 	}{
 		{
@@ -150,7 +155,9 @@ func TestGuarddutySalary(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(16_178.86),
+			want: want{
+				sum: decimal.NewFromFloat(16_178.86),
+			},
 		},
 
 		{
@@ -258,7 +265,9 @@ func TestGuarddutySalary(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(16_467.1),
+			want: want{
+				sum: decimal.NewFromFloat(16_467.1),
+			},
 		},
 
 		{
@@ -391,7 +400,9 @@ func TestGuarddutySalary(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(16_467.1),
+			want: want{
+				sum: decimal.NewFromFloat(16_467.1),
+			},
 		},
 
 		{
@@ -655,7 +666,9 @@ func TestGuarddutySalary(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(14_577.76),
+			want: want{
+				sum: decimal.NewFromFloat(14_577.76),
+			},
 		},
 
 		{
@@ -751,7 +764,9 @@ func TestGuarddutySalary(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(15_825.65),
+			want: want{
+				sum: decimal.NewFromFloat(15_825.65),
+			},
 		},
 
 		{
@@ -781,7 +796,9 @@ func TestGuarddutySalary(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(3_220.49),
+			want: want{
+				sum: decimal.NewFromFloat(3_220.49),
+			},
 		},
 
 		{
@@ -811,7 +828,9 @@ func TestGuarddutySalary(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(3_512.70),
+			want: want{
+				sum: decimal.NewFromFloat(3_512.70),
+			},
 		},
 
 		{
@@ -841,7 +860,9 @@ func TestGuarddutySalary(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(816.65),
+			want: want{
+				sum: decimal.NewFromFloat(816.65),
+			},
 		},
 
 		{
@@ -889,7 +910,9 @@ func TestGuarddutySalary(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(6_837.19),
+			want: want{
+				sum: decimal.NewFromFloat(6_837.19),
+			},
 		},
 
 		{
@@ -933,7 +956,9 @@ func TestGuarddutySalary(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(6_733.19),
+			want: want{
+				sum: decimal.NewFromFloat(6_733.19),
+			},
 		},
 
 		{
@@ -973,7 +998,9 @@ func TestGuarddutySalary(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(1_927.57),
+			want: want{
+				sum: decimal.NewFromFloat(1_927.57),
+			},
 		},
 
 		{
@@ -1154,7 +1181,89 @@ func TestGuarddutySalary(t *testing.T) {
 					},
 				},
 			},
-			want: decimal.NewFromFloat(22_365.75),
+			want: want{
+				sum: decimal.NewFromFloat(22_365.75),
+			},
+		},
+
+		{
+			name: "Overtid utenfor vaktperioden",
+			args: args{
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
+				},
+				guardPeriod: map[string][]models.Period{
+					"2023-05-12": {
+						{
+							Begin: time.Date(2023, 5, 12, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2023, 5, 13, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2023-05-13": {
+						{
+							Begin: time.Date(2023, 5, 13, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2023, 5, 13, 12, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2023-05-12": {
+						Date:         time.Date(2023, 5, 12, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2023, 5, 12, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2023, 5, 12, 15, 45, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2023-05-13": {
+						Date:         time.Date(2023, 5, 13, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Lørdag",
+						FormName:     "BV Lørdag IKT",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2023, 5, 13, 22, 0, 0, 0, time.UTC),
+								Out: time.Date(2023, 5, 13, 23, 20, 0, 0, time.UTC),
+								OtG: true,
+							},
+						},
+					},
+				},
+			},
+			want: want{
+				sum: decimal.NewFromFloat(3_620.87),
+				details: &models.Artskoder{
+					Morgen: models.Artskode{
+						Sum:   decimal.NewFromFloat(798.65),
+						Hours: 6,
+					},
+					Kveld: models.Artskode{
+						Sum:   decimal.NewFromFloat(532.43),
+						Hours: 4,
+					},
+					Dag: models.Artskode{
+						Sum:   decimal.NewFromFloat(576.49),
+						Hours: 6,
+					},
+					Helg: models.Artskode{
+						Sum:   decimal.NewFromFloat(1_693.3),
+						Hours: 12,
+					},
+					Skift: models.Artskode{
+						Sum:   decimal.NewFromFloat(20),
+						Hours: 4,
+					},
+				},
+			},
 		},
 	}
 
@@ -1189,11 +1298,17 @@ func TestGuarddutySalary(t *testing.T) {
 							Add(artskoder.Skift.Sum.
 								Add(artskoder.Utrykning.Sum)))))
 
-			if !total.Equal(tt.want) {
-				t.Errorf("GuarddutySalary() got = %v, want %v", total, tt.want)
+			if !total.Equal(tt.want.sum) {
+				t.Errorf("GuarddutySalary() got = %v, want %v", total, tt.want.sum)
 				t.Errorf("Morgen: %v, Dag: %v, Kveld: %v, Helg: %v, Skift: %v, Utrykning: %v\n", payroll.Artskoder.Morgen,
 					payroll.Artskoder.Dag, payroll.Artskoder.Kveld, payroll.Artskoder.Helg, payroll.Artskoder.Skift,
 					payroll.Artskoder.Utrykning)
+			}
+
+			if tt.want.details != nil {
+				if diff := cmp.Diff(*tt.want.details, artskoder); diff != "" {
+					t.Errorf("GuarddutySalary() mismatch (-want +got):\n%s", diff)
+				}
 			}
 		})
 	}

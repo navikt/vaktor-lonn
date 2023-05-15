@@ -321,7 +321,7 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 	}
 
 	compensation.Calculate(minutes, minWinTid.Satser, payroll)
-	callout.Calculate(minWinTid.Timesheet, minWinTid.Satser, payroll)
+	callout.Calculate(plan.Schedule, minWinTid.Timesheet, minWinTid.Satser, payroll)
 	overtime.Calculate(minutes, salary, payroll)
 
 	return *payroll, nil
