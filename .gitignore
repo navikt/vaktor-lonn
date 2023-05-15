@@ -1,2 +1,7 @@
 .idea
 .env
+.DS_Store
+
+# testkataloger
+minwintid
+sftp
