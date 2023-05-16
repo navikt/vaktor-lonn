@@ -27,6 +27,8 @@ loop Every hour
   Lønn-->>Lønn: Beregner utbetaling av kronetillegg og<br/>overtidstillegg for vaktperioden
   Lønn->>Plan: Utbetaling for vaktperiode
 end
+Plan->>Fullmaktregister: Henter BDM for vakthaver
+Fullmaktregister-->>Plan: Liste over BMDer for vakthaver
 Plan->>leder: Transaksjonsfil sendes for godkjenning via e-post
 leder-->>Økonomi: Godkjenner, og melder i fra til Økonomi
 ```
