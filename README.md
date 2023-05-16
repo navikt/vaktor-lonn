@@ -33,6 +33,27 @@ Plan->>leder: Transaksjonsfil sendes for godkjenning via e-post
 leder-->>Økonomi: Godkjenner, og melder i fra til Økonomi
 ```
 
+## Dataflyt i Vaktor
+
+```mermaid
+flowchart LR
+  vp(Vaktor Plan)
+  vl(Vaktor Lønn)
+  pgvp[(Vaktor Plan)]
+  pgvl[(Vaktor Lønn)]
+
+  vp-- "vaktplan (ident, vaktplan)" -->vl
+  vl-- "beregning (sum, timer)" -->vp
+  vl<-- in-memory timelister, satser, lønn -->MinWinTid
+  vl-- "Ident, vaktplan (slettes etter beregning)" -->pgvl
+
+  vp<-- "BMD (ident)" -->Fullmaktsregister
+  vp-- "Vaktplan (ident), beregning (sum, timer) " -->pgvp
+
+  vp-- "Innlogging/SSO" -->AzureAD
+
+```
+
 ## Utvikling
 
 Det er satt opp CI/CD for automatisk utrulling av kodebasen.
