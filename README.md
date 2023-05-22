@@ -31,7 +31,7 @@ Plan->>Fullmaktregister: Henter BDM for vakthaver
 Fullmaktregister-->>Plan: Liste over BDMer for vakthaver
 Plan->>BDM: Ber om godkjenning av utbetalinger
 BDM-->>Plan: Godkjenner vakthaver sin utbetalinger
-Plan-->>Økonomi: Sender godkjente vaktperioder
+Plan-->>Økonomi: Sender godkjente lønnstransaksjoner
 ```
 
 ## Dataflyt i Vaktor
