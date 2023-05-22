@@ -9,7 +9,7 @@ Lønnen blir beregnet basert på vaktperioden din minus arbeidet tid.
 sequenceDiagram
 actor Vakthaver
 actor Vaktsjef
-actor leder as NAV IT Leder
+actor BDM
 participant Plan as Vaktor Plan
 participant Lønn as Vaktor Lønn
 Plan-->>Plan: Endt vaktperiode
@@ -28,9 +28,10 @@ loop Every hour
   Lønn->>Plan: Utbetaling for vaktperiode
 end
 Plan->>Fullmaktregister: Henter BDM for vakthaver
-Fullmaktregister-->>Plan: Liste over BMDer for vakthaver
-Plan->>leder: Transaksjonsfil sendes for godkjenning via e-post
-leder-->>Økonomi: Godkjenner, og melder i fra til Økonomi
+Fullmaktregister-->>Plan: Liste over BDMer for vakthaver
+Plan->>BDM: Ber om godkjenning av utbetalinger
+BDM-->>Plan: Godkjenner vakthaver sin utbetalinger
+Plan-->>Økonomi: Sender godkjente vaktperioder
 ```
 
 ## Dataflyt i Vaktor
