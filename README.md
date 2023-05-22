@@ -37,21 +37,28 @@ leder-->>Økonomi: Godkjenner, og melder i fra til Økonomi
 
 ```mermaid
 flowchart LR
-  vp(Vaktor Plan)
-  vl(Vaktor Lønn)
-  pgvp[(Vaktor Plan)]
-  pgvl[(Vaktor Lønn)]
+  subgraph NAIS
+    vp(Vaktor Plan)
+    vl(Vaktor Lønn)
+    pgvp[("Vaktor Plan (10år lagring)")]
+    pgvl[(Vaktor Lønn)]
+    vp<-- "BMD (ident)" -->Fullmaktsregister
+  end
 
   vp-- "vaktplan (ident, vaktplan)" -->vl
   vl-- "beregning (sum, timer)" -->vp
-  vl<-- in-memory timelister, satser, lønn -->MinWinTid
-  vl-- "Ident, vaktplan (slettes etter beregning)" -->pgvl
+  vl<-- "Ident, vaktplan (begge slettes etter beregning)" -->pgvl
 
-  vp<-- "BMD (ident)" -->Fullmaktsregister
   vp-- "Vaktplan (ident), beregning (sum, timer) " -->pgvp
 
-  vp-- "Innlogging/SSO" -->AzureAD
+  subgraph Azure
+    vp-- "Innlogging/SSO" -->AzureAD
+  end
 
+  subgraph on-prem
+    vp-- "beregning (artskoder, sum, timer) per ident" -->ØT
+    vl<-- "timelister, satser, lønn" -->Datavarehus
+  end
 ```
 
 ## Utvikling
