@@ -6,8 +6,25 @@ metadata:
   name: vaktor-lonn
   namespace: navdig
 spec:
-  {{#each accessPolicy}}
-  {{/each}}
+  accessPolicy:
+    inbound:
+      rules:
+        {{#each accessPolicy.inbound.rules}}
+        - application: "{{this.application}}"
+        {{/each}}
+    outbound:
+      rules:
+        {{#each accessPolicy.outbound.rules}}
+        - application: "{{this.application}}"
+        {{/each}}
+      external:
+        {{#each accessPolicy.outbound.external}}
+        - host: "{{this.host}}"
+          ports:
+            {{#each this.ports}}
+            - port: "{{this.port}}"
+            {{/each}}
+        {{/each}}
   image: {{image}}
   replicas:
     min: {{replicas.min}}
