@@ -6,6 +6,10 @@ metadata:
   name: vaktor-mwt-mock
   namespace: navdig
 spec:
+  accessPolicy:
+    inbound:
+      rules:
+        - application: vaktor-lonn
   image: {{image}}
   replicas:
     min: 1

@@ -6,17 +6,8 @@ metadata:
   name: vaktor-lonn
   namespace: navdig
 spec:
-  accessPolicy:
-    inbound:
-      rules:
-        - application: vaktor-plan
-    outbound:
-      rules:
-        - application: vaktor-plan
-      external:
-        - host: tdv-p.adeo.no
-          ports:
-            - port: 9402
+  {{#each accessPolicy}}
+  {{/each}}
   image: {{image}}
   replicas:
     min: {{replicas.min}}
