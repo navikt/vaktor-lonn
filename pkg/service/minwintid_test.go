@@ -2804,6 +2804,51 @@ func Test_calculateSalary(t *testing.T) {
 				},
 			},
 		},
+
+		{
+			name: "overtid utenom beredskapsvakt",
+			args: args{
+				beredskapsvakt: gensql.Beredskapsvakt{
+					Ident:       "a123456",
+					Plan:        json.RawMessage(`{"id":"b4ac8e53-9d64-4557-8ef8-d00774ab9c06","user_id":"E123456","start_timestamp":"2023-06-17T23:00:00Z","end_timestamp":"2023-06-18T12:00:00Z","schedule":{"2023-06-17":[{"start_timestamp":"2023-06-17T23:00:00Z","end_timestamp":"2023-06-18T00:00:00Z"}],"2023-06-18":[{"start_timestamp":"2023-06-18T00:00:00Z","end_timestamp":"2023-06-18T12:00:00Z"}]}}`),
+					PeriodBegin: time.Date(2023, 6, 17, 0, 0, 0, 0, time.UTC),
+					PeriodEnd:   time.Date(2023, 6, 18, 0, 0, 0, 0, time.UTC),
+				},
+				body: `{
+	"Vaktor.Vaktor_TiddataResponse": {
+		"Vaktor.Vaktor_TiddataResult": [{
+			"Vaktor.nav_id": "123456",
+			"Vaktor.resource_id": "E123456",
+			"Vaktor.leder_resource_id": "654321",
+			"Vaktor.leder_nav_id": "M654321",
+			"Vaktor.leder_navn": "Kalpana, Bran",
+			"Vaktor.leder_epost": "Bran.Kalpana@nav.no",
+			"Vaktor.dager": "[{\"dato\":\"2023-06-17T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Lørdag IKT\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a110958\",\"godkjent_dato\":\"2023-07-02T14:36:27\",\"virkedag\":\"Lørdag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2023-06-17T19:59:56\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2023-06-17T23:54:59\",\"Navn\":\"Overtid                 \",\"Type\":\"B6\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":\"BV - Jobbet med produksjonssetting av 2023-EL06\"},{\"Stempling_Tid\":\"2023-06-17T23:55:00\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"RATE_B100\":700000}]},{\"dato\":\"2023-06-18T00:00:00\",\"skjema_tid\":0,\"skjema_navn\":\"BV Søndag IKT\",\"godkjent\":2,\"ansatt_dato_godkjent_av\":\"a110958\",\"godkjent_dato\":\"2023-07-02T14:36:27\",\"virkedag\":\"Søndag\",\"Stemplinger\":[{\"Stempling_Tid\":\"2023-06-18T00:05:00\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2023-06-18T05:09:23\",\"Navn\":\"Overtid                 \",\"Type\":\"B6\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":\"BV - Jobbet med produksjonssetting av 2023-EL06\"},{\"Stempling_Tid\":\"2023-06-18T05:09:30\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2023-06-18T10:31:03\",\"Navn\":\"Inn\",\"Type\":\"B1\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null},{\"Stempling_Tid\":\"2023-06-18T12:03:00\",\"Navn\":\"Overtid                 \",\"Type\":\"B6\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":\"Jobbet med verifisering etter Linux patching\"},{\"Stempling_Tid\":\"2023-06-18T14:33:24\",\"Navn\":\"Overtid                 \",\"Type\":\"B6\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":\"Problemer med WL etter Linux patching\"},{\"Stempling_Tid\":\"2023-06-18T14:33:33\",\"Navn\":\"Ut\",\"Type\":\"B2\",\"Fravar_kode\":0,\"Fravar_kode_navn\":\"Ute\",\"Overtid_Begrunnelse\":null}],\"Stillinger\":[{\"koststed\":\"000000\",\"formal\":\"000000\",\"aktivitet\":\"000000\",\"RATE_B100\":700000}]}]"
+		}]
+	}
+}`,
+			},
+			want: want{
+				payroll: &models.Payroll{
+					ID:           uuid.MustParse("b4ac8e53-9d64-4557-8ef8-d00774ab9c06"),
+					ApproverID:   "M654321",
+					ApproverName: "Kalpana, Bran",
+					Artskoder: models.Artskoder{
+						Helg: models.Artskode{
+							Sum:   decimal.NewFromFloat(406),
+							Hours: 12,
+						},
+						Utrykning: models.Artskode{
+							Sum:   decimal.NewFromFloat(312),
+							Hours: 6,
+						},
+					},
+					Formal:    "000000",
+					Koststed:  "000000",
+					Aktivitet: "000000",
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

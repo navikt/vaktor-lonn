@@ -180,11 +180,21 @@ func formatTimesheet(days []models.MWTDag) (map[string]models.TimeSheet, []zap.F
 
 				// Dette er en stempling med overtid
 				if utStempling.Retning == "Overtid                 " && utStempling.Type == "B6" {
-					utOvertid := stemplinger[0]
-					stemplinger = stemplinger[1:]
+					nesteStempling := utStempling
+					var overtimeBecauseOfGuardDuty bool
+					// Man kan ha flere overtidsstemplinger etter hverandre, så vi må sjekke om minst en av dem er BV
+					for nesteStempling.Retning == "Overtid                 " && nesteStempling.Type == "B6" {
+						if !overtimeBecauseOfGuardDuty {
+							overtimeBecauseOfGuardDuty = strings.Contains(strings.ToLower(nesteStempling.OvertidBegrunnelse), "bv")
+						}
 
-					overtimeBecauseOfGuardDuty := strings.Contains(strings.ToLower(utStempling.OvertidBegrunnelse), "bv")
-					// Før 1. februar så måtte man ikke merke overtiden sin med BV
+						nesteStempling = stemplinger[0]
+						stemplinger = stemplinger[1:]
+					}
+
+					utOvertid := nesteStempling
+
+					// Før 1. februar 2023 så var det ikke krav om å merke overtiden sin med BV
 					if stemplingDate.Before(time.Date(2023, 2, 1, 0, 0, 0, 0, time.UTC)) {
 						overtimeBecauseOfGuardDuty = true
 					}
