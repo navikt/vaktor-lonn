@@ -40,22 +40,10 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 							{
-								StemplingTid: "2022-08-02T16:00:01",
+								StemplingTid: "2022-08-02T14:30:11",
 								Retning:      "Ut",
 								Type:         "B2",
 								FravarKode:   0,
-							},
-							{
-								StemplingTid: "2022-08-02T16:00:00",
-								Retning:      "Inn fra fravær",
-								Type:         "B4",
-								FravarKode:   940,
-							},
-							{
-								StemplingTid: "2022-08-02T14:31:01",
-								Retning:      "Ut på fravær",
-								Type:         "B5",
-								FravarKode:   940,
 							},
 							{
 								StemplingTid: "2022-08-02T14:31:00",
@@ -64,7 +52,19 @@ func Test_formatTimesheet(t *testing.T) {
 								FravarKode:   0,
 							},
 							{
-								StemplingTid: "2022-08-02T14:30:11",
+								StemplingTid: "2022-08-02T14:31:01",
+								Retning:      "Ut på fravær",
+								Type:         "B5",
+								FravarKode:   940,
+							},
+							{
+								StemplingTid: "2022-08-02T16:00:00",
+								Retning:      "Inn fra fravær",
+								Type:         "B4",
+								FravarKode:   940,
+							},
+							{
+								StemplingTid: "2022-08-02T16:00:01",
 								Retning:      "Ut",
 								Type:         "B2",
 								FravarKode:   0,
