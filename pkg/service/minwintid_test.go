@@ -2,14 +2,15 @@ package service
 
 import (
 	"encoding/json"
+	"testing"
+	"time"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
-	"testing"
-	"time"
 )
 
 func Test_formatTimesheet(t *testing.T) {
@@ -98,7 +99,97 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						{
 							In:  time.Date(2022, 8, 2, 14, 31, 0, 0, time.UTC),
-							Out: time.Date(2022, 8, 2, 16, 0, 1, 0, time.UTC),
+							Out: time.Date(2022, 8, 2, 14, 31, 1, 0, time.UTC),
+						},
+						{
+							In:  time.Date(2022, 8, 2, 16, 00, 0, 0, time.UTC),
+							Out: time.Date(2022, 8, 2, 16, 00, 1, 0, time.UTC),
+						},
+					},
+				},
+			},
+			wantErr: false,
+		}, {
+			name: "arbeidsdag med to fravær",
+			args: args{
+				days: []models.MWTDag{
+					{
+						Dato:       "2023-06-07T00:00:00",
+						SkjemaTid:  7,
+						SkjemaNavn: "Heltid 0800-1500 (2018)",
+						Godkjent:   3,
+						Virkedag:   "Virkedag",
+						Stemplinger: []models.MWTStempling{
+							{
+								StemplingTid: "2023-06-07T08:29:46",
+								Retning:      "Inn",
+								Type:         "B1",
+								FravarKode:   0,
+							},
+							{
+								StemplingTid: "2023-06-07T11:43:10",
+								Retning:      "Ut på fravær",
+								Type:         "B5",
+								FravarKode:   180,
+							},
+							{
+								StemplingTid: "2023-06-07T12:39:09",
+								Retning:      "Inn fra fravær",
+								Type:         "B4",
+								FravarKode:   180,
+							},
+							{
+								StemplingTid: "2023-06-07T12:40:00",
+								Retning:      "Ut på fravær",
+								Type:         "B5",
+								FravarKode:   920,
+							},
+							{
+								StemplingTid: "2023-06-07T13:30:00",
+								Retning:      "Inn fra fravær",
+								Type:         "B4",
+								FravarKode:   920,
+							},
+							{
+								StemplingTid: "2023-06-07T15:11:43",
+								Retning:      "Ut",
+								Type:         "B2",
+								FravarKode:   0,
+							},
+						},
+						Stillinger: []models.MWTStilling{
+							{
+								Koststed:  "000000",
+								Formal:    "000000",
+								Aktivitet: "000000",
+								RATEK001:  500_000,
+							},
+						},
+					},
+				},
+			},
+			want: map[string]models.TimeSheet{
+				"2023-06-07": {
+					Date:         time.Date(2023, 6, 7, 0, 0, 0, 0, time.UTC),
+					WorkingHours: 7,
+					WorkingDay:   "Virkedag",
+					FormName:     "Heltid 0800-1500 (2018)",
+					Salary:       decimal.NewFromInt(500_000),
+					Formal:       "000000",
+					Koststed:     "000000",
+					Aktivitet:    "000000",
+					Clockings: []models.Clocking{
+						{
+							In:  time.Date(2023, 6, 7, 8, 29, 46, 0, time.UTC),
+							Out: time.Date(2023, 6, 7, 11, 43, 10, 0, time.UTC),
+						},
+						{
+							In:  time.Date(2023, 6, 7, 12, 39, 9, 0, time.UTC),
+							Out: time.Date(2023, 6, 7, 12, 40, 0, 0, time.UTC),
+						},
+						{
+							In:  time.Date(2023, 6, 7, 13, 30, 0, 0, time.UTC),
+							Out: time.Date(2023, 6, 7, 15, 11, 43, 0, time.UTC),
 						},
 					},
 				},

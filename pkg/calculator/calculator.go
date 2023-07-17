@@ -2,10 +2,11 @@ package calculator
 
 import (
 	"fmt"
-	"github.com/navikt/vaktor-lonn/pkg/callout"
-	"github.com/navikt/vaktor-lonn/pkg/ranges"
 	"os"
 	"time"
+
+	"github.com/navikt/vaktor-lonn/pkg/callout"
+	"github.com/navikt/vaktor-lonn/pkg/ranges"
 
 	"github.com/navikt/vaktor-lonn/pkg/compensation"
 	"github.com/navikt/vaktor-lonn/pkg/models"

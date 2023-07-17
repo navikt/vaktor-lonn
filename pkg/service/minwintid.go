@@ -4,17 +4,18 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/navikt/vaktor-lonn/pkg/calculator"
-	"github.com/navikt/vaktor-lonn/pkg/models"
-	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
-	"github.com/shopspring/decimal"
-	"go.uber.org/zap"
 	"io"
 	"math"
 	"net/http"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/navikt/vaktor-lonn/pkg/calculator"
+	"github.com/navikt/vaktor-lonn/pkg/models"
+	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
+	"github.com/shopspring/decimal"
+	"go.uber.org/zap"
 )
 
 const (
@@ -154,163 +155,139 @@ func formatTimesheet(days []models.MWTDag) (map[string]models.TimeSheet, []zap.F
 				zap.Any("stemplinger", day.Stemplinger)}
 		}
 
-		if len(stemplinger) > 0 {
-			sort.SliceStable(stemplinger, func(i, j int) bool {
-				return stemplinger[i].StemplingTid < stemplinger[j].StemplingTid
-			})
+		sort.SliceStable(stemplinger, func(i, j int) bool {
+			return stemplinger[i].StemplingTid < stemplinger[j].StemplingTid
+		})
 
-			for len(stemplinger) >= 2 {
-				innStempling := stemplinger[0]
-				stemplinger = stemplinger[1:]
+		for len(stemplinger) >= 2 {
+			innStempling := stemplinger[0]
+			stemplinger = stemplinger[1:]
 
-				utStempling := stemplinger[0]
-				stemplinger = stemplinger[1:]
+			utStempling := stemplinger[0]
+			stemplinger = stemplinger[1:]
 
-				if innStempling.Retning == "Inn" && innStempling.Type == "B1" {
-					// Dette er en vanlig stempling
-					if utStempling.Retning == "Ut" && utStempling.Type == "B2" {
-						clocking, err := createClocking(innStempling.StemplingTid, utStempling.StemplingTid)
+			if innStempling.Retning == "Inn" && innStempling.Type == "B1" {
+				// Dette er en vanlig stempling
+				if utStempling.Retning == "Ut" && utStempling.Type == "B2" {
+					clocking, err := createClocking(innStempling.StemplingTid, utStempling.StemplingTid)
+					if err != nil {
+						return nil, []zap.Field{zap.Error(err)}
+					}
+
+					ts.Clockings = append(ts.Clockings, clocking)
+					continue
+				}
+
+				// Dette er en stempling med overtid
+				if utStempling.Retning == "Overtid                 " && utStempling.Type == "B6" {
+					utOvertid := stemplinger[0]
+					stemplinger = stemplinger[1:]
+
+					overtimeBecauseOfGuardDuty := strings.Contains(strings.ToLower(utStempling.OvertidBegrunnelse), "bv")
+					// Før 1. februar så måtte man ikke merke overtiden sin med BV
+					if stemplingDate.Before(time.Date(2023, 2, 1, 0, 0, 0, 0, time.UTC)) {
+						overtimeBecauseOfGuardDuty = true
+					}
+
+					if utOvertid.Retning == "Ut" && utOvertid.Type == "B2" {
+						innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
 						if err != nil {
 							return nil, []zap.Field{zap.Error(err)}
 						}
 
-						ts.Clockings = append(ts.Clockings, clocking)
-						continue
-					}
-
-					// Dette er en stempling med overtid
-					if utStempling.Retning == "Overtid                 " && utStempling.Type == "B6" {
-						utOvertid := stemplinger[0]
-						stemplinger = stemplinger[1:]
-
-						overtimeBecauseOfGuardDuty := strings.Contains(strings.ToLower(utStempling.OvertidBegrunnelse), "bv")
-						// Før 1. februar så måtte man ikke merke overtiden sin med BV
-						if stemplingDate.Before(time.Date(2023, 2, 1, 0, 0, 0, 0, time.UTC)) {
-							overtimeBecauseOfGuardDuty = true
+						utStemplingDate, err := time.Parse(DateTimeFormat, utOvertid.StemplingTid)
+						if err != nil {
+							return nil, []zap.Field{zap.Error(err)}
 						}
 
-						if utOvertid.Retning == "Ut" && utOvertid.Type == "B2" {
-							innStemplingDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
-							if err != nil {
-								return nil, []zap.Field{zap.Error(err)}
-							}
-
-							utStemplingDate, err := time.Parse(DateTimeFormat, utOvertid.StemplingTid)
-							if err != nil {
-								return nil, []zap.Field{zap.Error(err)}
-							}
-
-							if utStemplingDate.YearDay() > innStemplingDate.YearDay() &&
-								!(utStemplingDate.Hour() == 0 && utStemplingDate.Minute() == 00) {
-								// Overtid over midnatt, flytter resten av tiden til neste dag
-								truncateOut := utStemplingDate.Truncate(24 * time.Hour)
-								nextDay = append(nextDay, models.Clocking{
-									In:  truncateOut,
-									Out: utStemplingDate,
-									OtG: overtimeBecauseOfGuardDuty,
-								})
-								utStemplingDate = truncateOut
-							}
-
-							ts.Clockings = append(ts.Clockings, models.Clocking{
-								In:  innStemplingDate,
+						if utStemplingDate.YearDay() > innStemplingDate.YearDay() &&
+							!(utStemplingDate.Hour() == 0 && utStemplingDate.Minute() == 00) {
+							// Overtid over midnatt, flytter resten av tiden til neste dag
+							truncateOut := utStemplingDate.Truncate(24 * time.Hour)
+							nextDay = append(nextDay, models.Clocking{
+								In:  truncateOut,
 								Out: utStemplingDate,
 								OtG: overtimeBecauseOfGuardDuty,
 							})
-							continue
+							utStemplingDate = truncateOut
 						}
-						return nil, []zap.Field{zap.Error(fmt.Errorf("did not get expected overtime clock-out, got direction=%v and type=%v", utOvertid.Retning, utOvertid.Type)),
-							zap.Any("stemplinger", day.Stemplinger)}
+
+						ts.Clockings = append(ts.Clockings, models.Clocking{
+							In:  innStemplingDate,
+							Out: utStemplingDate,
+							OtG: overtimeBecauseOfGuardDuty,
+						})
+						continue
+					}
+					return nil, []zap.Field{zap.Error(fmt.Errorf("did not get expected overtime clock-out, got direction=%v and type=%v", utOvertid.Retning, utOvertid.Type)),
+						zap.Any("stemplinger", day.Stemplinger)}
+				}
+
+				// Dette er en stempling ut på fravær
+				if utStempling.Retning == "Ut på fravær" && utStempling.Type == "B5" {
+					innDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
+					if err != nil {
+						return nil, []zap.Field{zap.Error(err)}
+					}
+					utDate, err := time.Parse(DateTimeFormat, utStempling.StemplingTid)
+					if err != nil {
+						return nil, []zap.Field{zap.Error(err)}
 					}
 
-					// Dette er en stempling med fravær
-					if utStempling.Retning == "Ut på fravær" && utStempling.Type == "B5" {
-						innDate, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
+					// Dette er en heldagsstempling
+					if (innDate.Hour() == 8 && innDate.Minute() == 0 && innDate.Second() == 0) &&
+						(utDate.Hour() == 8 && utDate.Minute() == 0 && utDate.Second() == 1) {
+						date, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
 						if err != nil {
 							return nil, []zap.Field{zap.Error(err)}
 						}
-						utDate, err := time.Parse(DateTimeFormat, utStempling.StemplingTid)
-						if err != nil {
-							return nil, []zap.Field{zap.Error(err)}
-						}
 
-						// Dette er en heldagsstempling
-						if (innDate.Hour() == 8 && innDate.Minute() == 0 && innDate.Second() == 0) &&
-							(utDate.Hour() == 8 && utDate.Minute() == 0 && utDate.Second() == 1) {
-							date, err := time.Parse(DateTimeFormat, innStempling.StemplingTid)
-							if err != nil {
-								return nil, []zap.Field{zap.Error(err)}
-							}
+						workdayLengthRestMinutes := int(math.Mod(ts.WorkingHours, 1) * 60)
 
-							workdayLengthRestMinutes := int(math.Mod(ts.WorkingHours, 1) * 60)
-
-							ts.Clockings = append(ts.Clockings, models.Clocking{
-								In:  date,
-								Out: time.Date(date.Year(), date.Month(), date.Day(), 15, workdayLengthRestMinutes, 0, 0, time.UTC),
-							})
-
-							if len(stemplinger) >= 2 {
-								innFravar := stemplinger[0]
-								utFravar := stemplinger[1]
-								if innFravar.Retning == "Inn fra fravær" && innFravar.Type == "B4" &&
-									utFravar.Retning == "Ut" && utFravar.Type == "B2" {
-									stemplinger = stemplinger[2:]
-								}
-							}
-							continue
-						}
+						ts.Clockings = append(ts.Clockings, models.Clocking{
+							In:  date,
+							Out: time.Date(date.Year(), date.Month(), date.Day(), 15, workdayLengthRestMinutes, 0, 0, time.UTC),
+						})
 
 						if len(stemplinger) >= 2 {
 							innFravar := stemplinger[0]
 							utFravar := stemplinger[1]
-
-							// Fravær i arbeidstid
 							if innFravar.Retning == "Inn fra fravær" && innFravar.Type == "B4" &&
 								utFravar.Retning == "Ut" && utFravar.Type == "B2" {
 								stemplinger = stemplinger[2:]
-
-								clocking, err := createClocking(innStempling.StemplingTid, utFravar.StemplingTid)
-								if err != nil {
-									return nil, []zap.Field{zap.Error(err)}
-								}
-
-								ts.Clockings = append(ts.Clockings, clocking)
-								continue
 							}
 						}
-
-						clocking, err := createClocking(innStempling.StemplingTid, utStempling.StemplingTid)
-						if err != nil {
-							return nil, []zap.Field{zap.Error(err)}
-						}
-
-						ts.Clockings = append(ts.Clockings, clocking)
 						continue
 					}
 
-					return nil, []zap.Field{zap.Error(fmt.Errorf("unknown clocking out(direction=%v, type=%v)", utStempling.Retning, utStempling.Type)),
-						zap.Any("stemplinger", day.Stemplinger)}
-				} else if innStempling.Retning == "Inn fra fravær" && innStempling.Type == "B4" {
-					// Dette er en vanlig utstempling etter fravær
-					if utStempling.Retning == "Ut" && utStempling.Type == "B2" {
-						clocking, err := createClocking(innStempling.StemplingTid, utStempling.StemplingTid)
-						if err != nil {
-							return nil, []zap.Field{zap.Error(err)}
-						}
-
-						ts.Clockings = append(ts.Clockings, clocking)
-						continue
+					clocking, err := createClocking(innStempling.StemplingTid, utStempling.StemplingTid)
+					if err != nil {
+						return nil, []zap.Field{zap.Error(err)}
 					}
+
+					ts.Clockings = append(ts.Clockings, clocking)
+					continue
+				}
+			} else if innStempling.Retning == "Inn fra fravær" && innStempling.Type == "B4" &&
+				(utStempling.Retning == "Ut" && utStempling.Type == "B2" ||
+					utStempling.Retning == "Ut på fravær" && utStempling.Type == "B5") {
+				// Fravær i arbeidstid
+				clocking, err := createClocking(innStempling.StemplingTid, utStempling.StemplingTid)
+				if err != nil {
+					return nil, []zap.Field{zap.Error(err)}
 				}
 
-				return nil, []zap.Field{zap.Error(fmt.Errorf("did not get expected direction or type, got inn{direction=%v, type=%v} and out{direction=%v, type=%v}", innStempling.Retning, innStempling.Type, utStempling.Retning, utStempling.Type)),
-					zap.Any("stemplinger", day.Stemplinger)}
+				ts.Clockings = append(ts.Clockings, clocking)
+				continue
 			}
 
-			if len(stemplinger) != 0 {
-				return nil, []zap.Field{zap.Error(fmt.Errorf("there are clockings left")),
-					zap.Any("stemplinger", day.Stemplinger)}
-			}
+			return nil, []zap.Field{zap.Error(fmt.Errorf("did not get expected direction or type, got inn{direction=%v, type=%v} and out{direction=%v, type=%v}", innStempling.Retning, innStempling.Type, utStempling.Retning, utStempling.Type)),
+				zap.Any("stemplinger", day.Stemplinger)}
+		}
+
+		if len(stemplinger) != 0 {
+			return nil, []zap.Field{zap.Error(fmt.Errorf("there are clockings left")),
+				zap.Any("stemplinger", day.Stemplinger)}
 		}
 
 		timesheet[simpleStemplingDate] = ts
