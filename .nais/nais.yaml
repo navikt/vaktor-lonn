@@ -21,6 +21,13 @@ spec:
   replicas:
     min: {{replicas.min}}
     max: {{replicas.max}}
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2048Mi
+    requests:
+      cpu: 1000m
+      memory: 2048Mi
   prometheus:
     enabled: true
     path: /metrics
