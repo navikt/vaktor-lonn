@@ -18,47 +18,36 @@ jobs:
           check-latest: true
           cache: true
       - run: go test ./...
-      - name: Create Docker image name:tag
-        id: image
-        run: echo ::set-output name=image::"ghcr.io/${{ github.repository }}:$(date '+%Y-%m-%d')-$(git --no-pager log -1 --pretty=%h)"
 
-  docker:
+  build:
+    name: Build and push Docker container
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      image: ${{ steps.docker-build-push.outputs.image }}
     steps:
-      - uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/build-push-action@v3
-        with:
-          push: true
-          tags: ${{ needs.test.outputs.image }}
-      - run: |
-          echo "Built new image! :rocket:" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "${{ needs.test.outputs.image }}" >> $GITHUB_STEP_SUMMARY
+    - uses: actions/checkout@v3
+    - name: Push docker image to GAR
+      uses: nais/docker-build-push@v0
+      id: docker-build-push
+      with:
+        team: navdig
+        identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} # Provided as Organization Secret
+        project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }} # Provided as Organization Variable
 
   deploy:
-    needs: [test, docker]
+    name: Deploy to NAIS
+    needs: build
     runs-on: ubuntu-latest
-    env:
-      IMAGE: ${{ needs.test.outputs.image }}
     steps:
-      - uses: actions/checkout@v3
-      - name: dev-gcp
-        uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-gcp
-          RESOURCE: .nais/nais.yaml
-          VARS: .nais/dev.yaml
-      - name: prod-gcp
-        if: github.ref == 'refs/heads/main'
-        uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: prod-gcp
-          RESOURCE: .nais/nais.yaml
-          VARS: .nais/prod.yaml
+    - uses: actions/checkout@v3
+    - uses: nais/deploy/actions/deploy@v1
+      env:
+        APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+        CLUSTER: prod-gcp
+        RESOURCE: .nais/nais.yaml
+        VARS: .nais/prod.yaml
+        VAR: image=${{ needs.build.outputs.image }}
