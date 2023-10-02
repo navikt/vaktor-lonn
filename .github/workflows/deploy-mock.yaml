@@ -11,7 +11,7 @@ jobs:
     outputs:
       image: ${{ steps.image.outputs.image }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Create Docker image name:tag
         id: image
         run: echo "image=ghcr.io/navikt/vaktor-mwt-mock:$(date '+%Y-%m-%d')-$(git --no-pager log -1 --pretty=%h)" >> $GITHUB_OUTPUT
@@ -20,13 +20,13 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: docker/login-action@v2
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/build-push-action@v3
+      - uses: docker/build-push-action@v5
         with:
           context: MWTmock
           push: true
@@ -42,7 +42,7 @@ jobs:
     env:
       IMAGE: ${{ needs.test.outputs.image }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: dev-gcp
         uses: nais/deploy/actions/deploy@v1
         env:
