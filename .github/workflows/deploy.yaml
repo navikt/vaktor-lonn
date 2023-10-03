@@ -2,8 +2,8 @@ name: ci
 on:
   push:
     paths-ignore:
-      - '.github/workflows/deploy-mock.yaml'
-      - 'MWTmock/**'
+      - ".github/workflows/deploy-mock.yaml"
+      - "MWTmock/**"
 
 jobs:
   test:
@@ -29,25 +29,25 @@ jobs:
     outputs:
       image: ${{ steps.docker-build-push.outputs.image }}
     steps:
-    - uses: actions/checkout@v4
-    - name: Push docker image to GAR
-      uses: nais/docker-build-push@v0
-      id: docker-build-push
-      with:
-        team: navdig
-        identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} # Provided as Organization Secret
-        project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }} # Provided as Organization Variable
+      - uses: actions/checkout@v4
+      - name: Push docker image to GAR
+        uses: nais/docker-build-push@v0
+        id: docker-build-push
+        with:
+          team: navdig
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} # Provided as Organization Secret
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }} # Provided as Organization Variable
 
   deploy:
     name: Deploy to NAIS
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: nais/deploy/actions/deploy@v1
-      env:
-        APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-        CLUSTER: prod-gcp
-        RESOURCE: .nais/nais.yaml
-        VARS: .nais/prod.yaml
-        VAR: image=${{ needs.build.outputs.image }}
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-gcp
+          RESOURCE: .nais/nais.yaml
+          VARS: .nais/prod.yaml
+          VAR: image=${{ needs.build.outputs.image }}
