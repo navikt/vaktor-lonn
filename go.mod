@@ -1,6 +1,6 @@
 module github.com/navikt/vaktor-lonn
 
-go 1.19
+go 1.21
 
 require (
 	github.com/google/go-cmp v0.5.8
