@@ -1,5 +1,5 @@
 ingresses:
-  - https://vaktor-lonn.dev.intern.nav.no
+  - https://vaktor-lonn.intern.dev.nav.no
 envs:
   - name: MINWINTID_INTERVAL
     value: 5m
