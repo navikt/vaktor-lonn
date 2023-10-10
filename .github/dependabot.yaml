@@ -29,3 +29,20 @@ updates:
       docker:
         patterns:
           - "*"
+  # MWT Mock
+  - package-ecosystem: "pip"
+    directory: "/MWTmock"
+    schedule:
+      interval: "weekly"
+    groups:
+      pip:
+        patterns:
+          - "*"
+  - package-ecosystem: "docker"
+    directory: "/MWTmock"
+    schedule:
+      interval: "weekly"
+    groups:
+      docker:
+        patterns:
+          - "*"
