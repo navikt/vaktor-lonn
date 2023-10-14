@@ -9,14 +9,22 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: vaktor-plan
+        {{#each accessPolicy.inbound.rules}}
+        - application: "{{this.application}}"
+        {{/each}}
     outbound:
       rules:
-        - application: vaktor-plan
+        {{#each accessPolicy.outbound.rules}}
+        - application: "{{this.application}}"
+        {{/each}}
       external:
-        - host: tdv-p.adeo.no
+        {{#each accessPolicy.outbound.external}}
+        - host: "{{this.host}}"
           ports:
-            - port: 9402
+            {{#each this.ports}}
+            - port: "{{this.port}}"
+            {{/each}}
+        {{/each}}
   image: {{image}}
   replicas:
     min: {{replicas.min}}

@@ -1,3 +1,11 @@
+accessPolicy:
+    inbound:
+      rules:
+        - application: vaktor-plan
+    outbound:
+      rules:
+        - application: vaktor-plan
+        - application: vaktor-mwt-mock
 ingresses:
   - https://vaktor-lonn.intern.dev.nav.no
 envs:
