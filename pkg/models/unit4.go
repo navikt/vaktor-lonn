@@ -27,12 +27,13 @@ type Artskoder struct {
 }
 
 type Payroll struct {
-	ID           uuid.UUID
-	ApproverID   string    `json:"approver_id"`
-	ApproverName string    `json:"approver_name"`
-	Artskoder    Artskoder `json:"artskoder"`
-	CommitSHA    string    `json:"commit_sha"`
-	Formal       string    `json:"formal"`
-	Koststed     string    `json:"koststed"`
-	Aktivitet    string    `json:"aktivitet"`
+	ID            uuid.UUID
+	ApproverID    string    `json:"approver_id"`
+	ApproverName  string    `json:"approver_name"`
+	Artskoder     Artskoder `json:"artskoder"`
+	CommitSHA     string    `json:"commit_sha"`
+	Formal        string    `json:"formal"`
+	Koststed      string    `json:"koststed"`
+	Aktivitet     string    `json:"aktivitet"`
+	Stillingskode string    `json:"stillingskode"`
 }

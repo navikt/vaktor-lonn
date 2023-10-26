@@ -284,6 +284,21 @@ func getSalary(timesheet map[string]models.TimeSheet) (decimal.Decimal, error) {
 	return salary, nil
 }
 
+func getStillingskode(timesheet map[string]models.TimeSheet) (string, error) {
+	var stillingskode string
+	for _, period := range timesheet {
+		if stillingskode == "" {
+			stillingskode = period.Stillingskode
+			continue
+		}
+		if stillingskode != period.Stillingskode {
+			return "", fmt.Errorf("stillingskode has changed")
+		}
+	}
+
+	return stillingskode, nil
+}
+
 func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.Payroll, error) {
 	minutes, err := calculateMinutesToBePaid(plan.Schedule, minWinTid.Timesheet)
 	if err != nil {
@@ -310,15 +325,21 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 		return models.Payroll{}, err
 	}
 
+	stillingskode, err := getStillingskode(minWinTid.Timesheet)
+	if err != nil {
+		return models.Payroll{}, err
+	}
+
 	var payroll *models.Payroll
 	payroll = &models.Payroll{
-		ID:           plan.ID,
-		ApproverID:   minWinTid.ApproverID,
-		ApproverName: minWinTid.ApproverName,
-		CommitSHA:    os.Getenv("NAIS_APP_IMAGE"),
-		Formal:       formal,
-		Koststed:     koststed,
-		Aktivitet:    aktivitet,
+		ID:            plan.ID,
+		ApproverID:    minWinTid.ApproverID,
+		ApproverName:  minWinTid.ApproverName,
+		CommitSHA:     os.Getenv("NAIS_APP_IMAGE"),
+		Formal:        formal,
+		Koststed:      koststed,
+		Aktivitet:     aktivitet,
+		Stillingskode: stillingskode,
 	}
 
 	compensation.Calculate(minutes, minWinTid.Satser, payroll)

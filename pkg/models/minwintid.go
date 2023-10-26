@@ -12,15 +12,16 @@ type Clocking struct {
 }
 
 type TimeSheet struct {
-	Date         time.Time
-	WorkingHours float64
-	WorkingDay   string
-	FormName     string
-	Salary       decimal.Decimal
-	Formal       string
-	Koststed     string
-	Aktivitet    string
-	Clockings    []Clocking
+	Date          time.Time
+	WorkingHours  float64
+	WorkingDay    string
+	FormName      string
+	Salary        decimal.Decimal
+	Stillingskode string
+	Formal        string
+	Koststed      string
+	Aktivitet     string
+	Clockings     []Clocking
 }
 
 type MinWinTid struct {
@@ -41,10 +42,11 @@ type MWTStempling struct {
 }
 
 type MWTStilling struct {
-	Koststed  string `json:"koststed"`
-	Formal    string `json:"formal"`
-	Aktivitet string `json:"aktivitet"`
-	RATEK001  int    `json:"RATE_K001"`
+	Koststed      string `json:"koststed"`
+	Formal        string `json:"formal"`
+	Aktivitet     string `json:"aktivitet"`
+	RATEK001      int    `json:"RATE_K001"`
+	Stillingskode string `json:"post_id"`
 }
 
 type MWTDag struct {

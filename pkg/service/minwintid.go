@@ -126,18 +126,19 @@ func formatTimesheet(days []models.MWTDag) (map[string]models.TimeSheet, []zap.F
 			return nil, []zap.Field{zap.Error(err)}
 		}
 		simpleStemplingDate := stemplingDate.Format(calculator.VaktorDateFormat)
-		stillig := day.Stillinger[0]
+		stilling := day.Stillinger[0]
 
 		ts := models.TimeSheet{
-			Date:         stemplingDate,
-			WorkingHours: day.SkjemaTid,
-			WorkingDay:   day.Virkedag,
-			FormName:     day.SkjemaNavn,
-			Salary:       decimal.NewFromInt(int64(stillig.RATEK001)),
-			Koststed:     stillig.Koststed,
-			Formal:       stillig.Formal,
-			Aktivitet:    stillig.Aktivitet,
-			Clockings:    []models.Clocking{},
+			Date:          stemplingDate,
+			WorkingHours:  day.SkjemaTid,
+			WorkingDay:    day.Virkedag,
+			FormName:      day.SkjemaNavn,
+			Salary:        decimal.NewFromInt(int64(stilling.RATEK001)),
+			Stillingskode: stilling.Stillingskode,
+			Koststed:      stilling.Koststed,
+			Formal:        stilling.Formal,
+			Aktivitet:     stilling.Aktivitet,
+			Clockings:     []models.Clocking{},
 		}
 
 		if len(nextDay) != 0 {
