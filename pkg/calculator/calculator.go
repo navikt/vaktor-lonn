@@ -65,19 +65,22 @@ func calculateMinutesToBePaid(schedule map[string][]models.Period, timesheet map
 				// sjekk om man har vakt i perioden 00-24
 				minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 					Begin: time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC),
-					End:   time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC).Add(24 * time.Hour)}, currentDay.Clockings)
+					End:   time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC).Add(24 * time.Hour),
+				}, currentDay.Clockings)
 				dutyHours.Helgetillegg += minutesWithGuardDuty
 			} else {
 				// sjekk om man har vakt i perioden 06-07
 				minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 					Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
-					End:   time.Date(date.Year(), date.Month(), date.Day(), 7, 0, 0, 0, time.UTC)}, currentDay.Clockings)
+					End:   time.Date(date.Year(), date.Month(), date.Day(), 7, 0, 0, 0, time.UTC),
+				}, currentDay.Clockings)
 				dutyHours.Skifttillegg += minutesWithGuardDuty
 
 				// sjekk om man har vakt i perioden 17-20
 				minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 					Begin: time.Date(date.Year(), date.Month(), date.Day(), 17, 0, 0, 0, time.UTC),
-					End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC)}, currentDay.Clockings)
+					End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
+				}, currentDay.Clockings)
 				dutyHours.Skifttillegg += minutesWithGuardDuty
 			}
 
@@ -96,12 +99,14 @@ func calculateMinutesToBePaid(schedule map[string][]models.Period, timesheet map
 						// Nyttårsaften har kjernetid fra kl10 til kl12
 						minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 							Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
-							End:   time.Date(date.Year(), date.Month(), date.Day(), 10, 0, 0, 0, time.UTC)}, currentDay.Clockings)
+							End:   time.Date(date.Year(), date.Month(), date.Day(), 10, 0, 0, 0, time.UTC),
+						}, currentDay.Clockings)
 					} else {
 						// Julaften og onsdag før påske har kjernetid fra kl08 til kl12
 						minutesWithGuardDuty = calculateMinutesWithGuardDutyInPeriod(period, models.Period{
 							Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
-							End:   time.Date(date.Year(), date.Month(), date.Day(), 8, 0, 0, 0, time.UTC)}, currentDay.Clockings)
+							End:   time.Date(date.Year(), date.Month(), date.Day(), 8, 0, 0, 0, time.UTC),
+						}, currentDay.Clockings)
 					}
 					dutyHours.Helligdag0620 = dutyHours.Hvilende0620 - minutesWithGuardDuty
 					dutyHours.Hvilende0620 = minutesWithGuardDuty

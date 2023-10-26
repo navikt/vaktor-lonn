@@ -152,8 +152,10 @@ func formatTimesheet(days []models.MWTDag) (map[string]models.TimeSheet, []zap.F
 		}
 
 		if len(stemplinger) == 1 {
-			return nil, []zap.Field{zap.Error(fmt.Errorf("there are too few clockings")),
-				zap.Any("stemplinger", day.Stemplinger)}
+			return nil, []zap.Field{
+				zap.Error(fmt.Errorf("there are too few clockings")),
+				zap.Any("stemplinger", day.Stemplinger),
+			}
 		}
 
 		sort.SliceStable(stemplinger, func(i, j int) bool {
@@ -212,7 +214,7 @@ func formatTimesheet(days []models.MWTDag) (map[string]models.TimeSheet, []zap.F
 						}
 
 						if utStemplingDate.YearDay() > innStemplingDate.YearDay() &&
-							!(utStemplingDate.Hour() == 0 && utStemplingDate.Minute() == 00) {
+							!(utStemplingDate.Hour() == 0 && utStemplingDate.Minute() == 0) {
 							// Overtid over midnatt, flytter resten av tiden til neste dag
 							truncateOut := utStemplingDate.Truncate(24 * time.Hour)
 							nextDay = append(nextDay, models.Clocking{
@@ -230,8 +232,10 @@ func formatTimesheet(days []models.MWTDag) (map[string]models.TimeSheet, []zap.F
 						})
 						continue
 					}
-					return nil, []zap.Field{zap.Error(fmt.Errorf("did not get expected overtime clock-out, got direction=%v and type=%v", utOvertid.Retning, utOvertid.Type)),
-						zap.Any("stemplinger", day.Stemplinger)}
+					return nil, []zap.Field{
+						zap.Error(fmt.Errorf("did not get expected overtime clock-out, got direction=%v and type=%v", utOvertid.Retning, utOvertid.Type)),
+						zap.Any("stemplinger", day.Stemplinger),
+					}
 				}
 
 				// Dette er en stempling ut på fravær
@@ -292,13 +296,17 @@ func formatTimesheet(days []models.MWTDag) (map[string]models.TimeSheet, []zap.F
 				continue
 			}
 
-			return nil, []zap.Field{zap.Error(fmt.Errorf("did not get expected direction or type, got inn{direction=%v, type=%v} and out{direction=%v, type=%v}", innStempling.Retning, innStempling.Type, utStempling.Retning, utStempling.Type)),
-				zap.Any("stemplinger", day.Stemplinger)}
+			return nil, []zap.Field{
+				zap.Error(fmt.Errorf("did not get expected direction or type, got inn{direction=%v, type=%v} and out{direction=%v, type=%v}", innStempling.Retning, innStempling.Type, utStempling.Retning, utStempling.Type)),
+				zap.Any("stemplinger", day.Stemplinger),
+			}
 		}
 
 		if len(stemplinger) != 0 {
-			return nil, []zap.Field{zap.Error(fmt.Errorf("there are clockings left")),
-				zap.Any("stemplinger", day.Stemplinger)}
+			return nil, []zap.Field{
+				zap.Error(fmt.Errorf("there are clockings left")),
+				zap.Any("stemplinger", day.Stemplinger),
+			}
 		}
 
 		timesheet[simpleStemplingDate] = ts

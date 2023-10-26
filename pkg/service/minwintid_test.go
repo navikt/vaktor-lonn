@@ -102,14 +102,15 @@ func Test_formatTimesheet(t *testing.T) {
 							Out: time.Date(2022, 8, 2, 14, 31, 1, 0, time.UTC),
 						},
 						{
-							In:  time.Date(2022, 8, 2, 16, 00, 0, 0, time.UTC),
-							Out: time.Date(2022, 8, 2, 16, 00, 1, 0, time.UTC),
+							In:  time.Date(2022, 8, 2, 16, 0, 0, 0, time.UTC),
+							Out: time.Date(2022, 8, 2, 16, 0, 1, 0, time.UTC),
 						},
 					},
 				},
 			},
 			wantErr: false,
-		}, {
+		},
+		{
 			name: "arbeidsdag med to fravær",
 			args: args{
 				days: []models.MWTDag{
@@ -964,7 +965,7 @@ func Test_formatTimesheet(t *testing.T) {
 						},
 						{
 							In:  time.Date(2022, 9, 15, 23, 10, 0, 0, time.UTC),
-							Out: time.Date(2022, 9, 16, 0, 00, 0, 0, time.UTC),
+							Out: time.Date(2022, 9, 16, 0, 0, 0, 0, time.UTC),
 							OtG: true,
 						},
 					},
@@ -1440,7 +1441,7 @@ func Test_formatTimesheet(t *testing.T) {
 					Clockings: []models.Clocking{
 						{
 							In:  time.Date(2022, 1, 24, 8, 27, 0, 0, time.UTC),
-							Out: time.Date(2022, 1, 24, 10, 01, 0, 0, time.UTC),
+							Out: time.Date(2022, 1, 24, 10, 1, 0, 0, time.UTC),
 						},
 						{
 							In:  time.Date(2022, 1, 24, 11, 27, 0, 0, time.UTC),
@@ -1687,8 +1688,8 @@ func Test_formatTimesheet(t *testing.T) {
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
-							In:  time.Date(2022, 10, 05, 07, 21, 42, 0, time.UTC),
-							Out: time.Date(2022, 10, 05, 15, 24, 14, 0, time.UTC),
+							In:  time.Date(2022, 10, 5, 7, 21, 42, 0, time.UTC),
+							Out: time.Date(2022, 10, 5, 15, 24, 14, 0, time.UTC),
 						},
 					},
 				},
@@ -1703,8 +1704,8 @@ func Test_formatTimesheet(t *testing.T) {
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
-							In:  time.Date(2022, 10, 06, 07, 13, 24, 0, time.UTC),
-							Out: time.Date(2022, 10, 06, 15, 03, 51, 0, time.UTC),
+							In:  time.Date(2022, 10, 6, 7, 13, 24, 0, time.UTC),
+							Out: time.Date(2022, 10, 6, 15, 3, 51, 0, time.UTC),
 						},
 					},
 				},
@@ -1719,8 +1720,8 @@ func Test_formatTimesheet(t *testing.T) {
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
-							In:  time.Date(2022, 10, 07, 07, 18, 52, 0, time.UTC),
-							Out: time.Date(2022, 10, 07, 15, 06, 59, 0, time.UTC),
+							In:  time.Date(2022, 10, 7, 7, 18, 52, 0, time.UTC),
+							Out: time.Date(2022, 10, 7, 15, 6, 59, 0, time.UTC),
 						},
 					},
 				},
@@ -1755,7 +1756,7 @@ func Test_formatTimesheet(t *testing.T) {
 					Aktivitet:    "000000",
 					Clockings: []models.Clocking{
 						{
-							In:  time.Date(2022, 10, 10, 07, 18, 32, 0, time.UTC),
+							In:  time.Date(2022, 10, 10, 7, 18, 32, 0, time.UTC),
 							Out: time.Date(2022, 10, 10, 15, 25, 0, 0, time.UTC),
 						},
 					},

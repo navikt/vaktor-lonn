@@ -1,14 +1,15 @@
 package calculator
 
 import (
+	"testing"
+	"time"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
 	"github.com/navikt/vaktor-lonn/pkg/compensation"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/navikt/vaktor-lonn/pkg/overtime"
 	"github.com/shopspring/decimal"
-	"testing"
-	"time"
 )
 
 func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
