@@ -24,6 +24,7 @@ jobs:
     name: Build and push Docker container
     needs: test
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     permissions:
       contents: read
       id-token: write
@@ -57,7 +58,6 @@ jobs:
     name: Deploy to prod
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v1

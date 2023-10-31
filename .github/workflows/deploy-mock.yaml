@@ -1,6 +1,8 @@
 name: Deploy MWTmock
 on:
   push:
+    branch:
+      - main
     paths:
       - ".github/workflows/deploy-mock.yaml"
       - "MWTmock/**"
