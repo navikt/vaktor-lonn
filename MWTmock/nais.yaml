@@ -12,3 +12,7 @@ spec:
     max: 1
   ingresses:
     - https://vaktor-mwt-mock.intern.dev.nav.no
+  accessPolicy:
+    inbound:
+      rules:
+        - application: vaktor-lonn

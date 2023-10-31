@@ -13,6 +13,7 @@ spec:
     outbound:
       rules:
         - application: vaktor-plan
+        - application: vaktor-mwt-mock
       external:
         - host: tdv-p.adeo.no
           ports:
