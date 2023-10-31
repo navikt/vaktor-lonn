@@ -20,8 +20,8 @@ spec:
             - port: 9402
   image: {{image}}
   replicas:
-    min: {{replicas.min}}
-    max: {{replicas.max}}
+    min: 1
+    max: 1
   resources:
     limits:
       memory: 512Mi
@@ -43,10 +43,6 @@ spec:
   {{/each}}
   envFrom:
     - secret: vaktor-lonn
-  ingresses:
-  {{#each ingresses as |url|}}
-    - {{url}}
-  {{/each}}
   gcp:
     sqlInstances:
       - databases:
