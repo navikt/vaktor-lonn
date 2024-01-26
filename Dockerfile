@@ -10,7 +10,7 @@ COPY pkg pkg/
 
 RUN go build -v -o /usr/src/app/lonn
 
-FROM alpine:3.18
+FROM alpine:3.19
 
 RUN apk add --no-cache ca-certificates
 
