@@ -44,12 +44,12 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 		10 * time.Second,
 	}
 
-	r, err := handler.Client.Do(req)
+	resp, err := handler.Client.Do(req)
 	if err != nil {
 		for _, duration := range backoffSchedule {
 			handler.Log.Info("Problem connecting to MinWinTid", zap.Error(err))
 			time.Sleep(duration)
-			r, err = handler.Client.Do(req)
+			resp, err = handler.Client.Do(req)
 			if err == nil {
 				break
 			}
@@ -60,12 +60,17 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 		}
 	}
 
-	if r.StatusCode != http.StatusOK {
-		return models.MWTResponse{}, fmt.Errorf("minWinTid returned http(%v)", r.StatusCode)
+	if resp.StatusCode != http.StatusOK {
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return models.MWTResponse{}, err
+		}
+
+		return models.MWTResponse{}, fmt.Errorf("minWinTid returned http(%v): %v", resp.StatusCode, string(body))
 	}
 
 	var response models.MWTResponse
-	err = json.NewDecoder(r.Body).Decode(&response)
+	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
 		return models.MWTResponse{}, err
 	}

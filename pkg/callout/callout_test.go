@@ -1,12 +1,13 @@
 package callout
 
 import (
+	"testing"
+	"time"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/shopspring/decimal"
-	"testing"
-	"time"
 )
 
 func TestCalculate(t *testing.T) {
