@@ -1,12 +1,13 @@
 package calculator
 
 import (
+	"testing"
+	"time"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/shopspring/decimal"
-	"testing"
-	"time"
 )
 
 func TestGuarddutySalary(t *testing.T) {
@@ -536,7 +537,8 @@ func TestGuarddutySalary(t *testing.T) {
 							},
 						},
 					},
-					"2022-07-16": {Date: time.Date(2022, 7, 16, 0, 0, 0, 0, time.UTC),
+					"2022-07-16": {
+						Date:         time.Date(2022, 7, 16, 0, 0, 0, 0, time.UTC),
 						WorkingHours: 0,
 						WorkingDay:   "Lørdag",
 						Salary:       decimal.NewFromInt(800_000),
@@ -1024,8 +1026,8 @@ func TestGuarddutySalary(t *testing.T) {
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
-								In:  time.Date(2022, 10, 05, 07, 21, 42, 0, time.UTC),
-								Out: time.Date(2022, 10, 05, 15, 24, 14, 0, time.UTC),
+								In:  time.Date(2022, 10, 5, 7, 21, 42, 0, time.UTC),
+								Out: time.Date(2022, 10, 5, 15, 24, 14, 0, time.UTC),
 							},
 						},
 					},
@@ -1040,8 +1042,8 @@ func TestGuarddutySalary(t *testing.T) {
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
-								In:  time.Date(2022, 10, 06, 07, 13, 24, 0, time.UTC),
-								Out: time.Date(2022, 10, 06, 15, 03, 51, 0, time.UTC),
+								In:  time.Date(2022, 10, 6, 7, 13, 24, 0, time.UTC),
+								Out: time.Date(2022, 10, 6, 15, 3, 51, 0, time.UTC),
 							},
 						},
 					},
@@ -1056,8 +1058,8 @@ func TestGuarddutySalary(t *testing.T) {
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
-								In:  time.Date(2022, 10, 07, 07, 18, 52, 0, time.UTC),
-								Out: time.Date(2022, 10, 07, 15, 06, 59, 0, time.UTC),
+								In:  time.Date(2022, 10, 7, 7, 18, 52, 0, time.UTC),
+								Out: time.Date(2022, 10, 7, 15, 6, 59, 0, time.UTC),
 							},
 						},
 					},
@@ -1092,7 +1094,7 @@ func TestGuarddutySalary(t *testing.T) {
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
-								In:  time.Date(2022, 10, 10, 07, 18, 32, 0, time.UTC),
+								In:  time.Date(2022, 10, 10, 7, 18, 32, 0, time.UTC),
 								Out: time.Date(2022, 10, 10, 15, 25, 0, 0, time.UTC),
 							},
 						},
