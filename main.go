@@ -62,7 +62,7 @@ func main() {
 	defer func(logger *zap.Logger) {
 		err := logger.Sync()
 		if err != nil {
-
+			logger.Fatal(err.Error())
 		}
 	}(logger)
 

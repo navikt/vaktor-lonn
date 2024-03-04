@@ -192,8 +192,7 @@ func TestCalculate(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		var payroll *models.Payroll
-		payroll = &models.Payroll{
+		payroll := &models.Payroll{
 			ID:         uuid.UUID{},
 			ApproverID: "Scathan",
 		}

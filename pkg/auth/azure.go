@@ -3,12 +3,13 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
-	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 type TokenResponse struct {
@@ -47,6 +48,9 @@ func (bc BearerClient) GenerateBearerToken() (string, error) {
 		http.MethodPost,
 		bc.Endpoint,
 		strings.NewReader(bc.Body))
+	if err != nil {
+		return "", err
+	}
 
 	resp, err := bc.Client.Do(request)
 	if err != nil {

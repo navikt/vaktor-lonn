@@ -335,8 +335,7 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 		return models.Payroll{}, err
 	}
 
-	var payroll *models.Payroll
-	payroll = &models.Payroll{
+	payroll := &models.Payroll{
 		ID:            plan.ID,
 		ApproverID:    minWinTid.ApproverID,
 		ApproverName:  minWinTid.ApproverName,
