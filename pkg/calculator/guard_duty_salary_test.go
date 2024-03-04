@@ -1303,8 +1303,8 @@ func TestGuarddutySalary(t *testing.T) {
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
-								In:  time.Date(2022, 10, 5, 7, 21, 42, 0, time.UTC),
-								Out: time.Date(2022, 10, 5, 15, 24, 14, 0, time.UTC),
+								In:  time.Date(2022, 10, 5, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 5, 15, 45, 0, 0, time.UTC),
 							},
 						},
 					},
@@ -1319,8 +1319,8 @@ func TestGuarddutySalary(t *testing.T) {
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
-								In:  time.Date(2022, 10, 6, 7, 13, 24, 0, time.UTC),
-								Out: time.Date(2022, 10, 6, 15, 3, 51, 0, time.UTC),
+								In:  time.Date(2022, 10, 6, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 6, 15, 45, 0, 0, time.UTC),
 							},
 						},
 					},
