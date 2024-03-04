@@ -1284,7 +1284,7 @@ func TestGuarddutySalary(t *testing.T) {
 							End:   time.Date(2022, 10, 6, 0, 0, 0, 0, time.UTC),
 						},
 					},
-					"2022-20-06": {
+					"2022-10-06": {
 						{
 							Begin: time.Date(2022, 10, 6, 0, 0, 0, 0, time.UTC),
 							End:   time.Date(2022, 10, 7, 0, 0, 0, 0, time.UTC),
@@ -1327,23 +1327,23 @@ func TestGuarddutySalary(t *testing.T) {
 				},
 			},
 			want: want{
-				sum: decimal.NewFromFloat(2_632.98),
+				sum: decimal.NewFromFloat(5_359.33),
 				details: &models.Artskoder{
 					Morgen: models.Artskode{
-						Sum:   decimal.NewFromFloat(1090.54),
-						Hours: 6,
+						Sum:   decimal.NewFromFloat(2213.51),
+						Hours: 12,
 					},
 					Kveld: models.Artskode{
-						Sum:   decimal.NewFromFloat(727.03),
-						Hours: 4,
+						Sum:   decimal.NewFromFloat(1475.68),
+						Hours: 8,
 					},
 					Dag: models.Artskode{
-						Sum:   decimal.NewFromFloat(795.41),
-						Hours: 6,
+						Sum:   decimal.NewFromFloat(1630.14),
+						Hours: 12,
 					},
 					Skift: models.Artskode{
-						Sum:   decimal.NewFromFloat(20),
-						Hours: 4,
+						Sum:   decimal.NewFromFloat(40),
+						Hours: 8,
 					},
 				},
 			},
