@@ -274,19 +274,18 @@ func getKoststed(timesheet map[string]models.TimeSheet) (string, error) {
 	return koststed, nil
 }
 
-func getSalary(timesheet map[string]models.TimeSheet) (decimal.Decimal, error) {
-	var salary decimal.Decimal
-	for _, period := range timesheet {
-		if salary.IsZero() {
-			salary = period.Salary
-			continue
-		}
-		if !salary.Equal(period.Salary) {
-			return decimal.Decimal{}, fmt.Errorf("salary has changed")
+func getDailySalaries(timesheet map[string]models.TimeSheet) map[string][]string {
+	salaries := make(map[string][]string)
+	for date, period := range timesheet {
+		key := period.Salary.String()
+		if _, ok := salaries[key]; !ok {
+			salaries[key] = []string{date}
+		} else {
+			salaries[key] = append(salaries[key], date)
 		}
 	}
 
-	return salary, nil
+	return salaries
 }
 
 func getStillingskode(timesheet map[string]models.TimeSheet) (string, error) {
@@ -325,11 +324,6 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 		return models.Payroll{}, err
 	}
 
-	salary, err := getSalary(minWinTid.Timesheet)
-	if err != nil {
-		return models.Payroll{}, err
-	}
-
 	stillingskode, err := getStillingskode(minWinTid.Timesheet)
 	if err != nil {
 		return models.Payroll{}, err
@@ -348,7 +342,25 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 
 	compensation.Calculate(minutes, minWinTid.Satser, payroll)
 	callout.Calculate(plan.Schedule, minWinTid.Timesheet, minWinTid.Satser, payroll)
-	overtime.Calculate(minutes, salary, payroll)
+
+	salariesWithDates := getDailySalaries(minWinTid.Timesheet)
+	if err != nil {
+		return models.Payroll{}, err
+	}
+
+	for salaryAsString, dates := range salariesWithDates {
+		salaryBasedMinutes := make(map[string]models.GuardDuty)
+		for _, date := range dates {
+			salaryBasedMinutes[date] = minutes[date]
+		}
+
+		salary, err := decimal.NewFromString(salaryAsString)
+		if err != nil {
+			return models.Payroll{}, err
+		}
+
+		overtime.Calculate(salaryBasedMinutes, salary, payroll)
+	}
 
 	return *payroll, nil
 }

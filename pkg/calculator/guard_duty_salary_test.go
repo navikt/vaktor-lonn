@@ -1267,6 +1267,87 @@ func TestGuarddutySalary(t *testing.T) {
 				},
 			},
 		},
+
+		{
+			name: "To vaktdager med forskjellig lønn",
+			args: args{
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
+				},
+				guardPeriod: map[string][]models.Period{
+					"2022-10-05": {
+						{
+							Begin: time.Date(2022, 10, 5, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 6, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-20-06": {
+						{
+							Begin: time.Date(2022, 10, 6, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 7, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2022-10-05": {
+						Date:         time.Date(2022, 10, 5, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(725000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 5, 7, 21, 42, 0, time.UTC),
+								Out: time.Date(2022, 10, 5, 15, 24, 14, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-06": {
+						Date:         time.Date(2022, 10, 6, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(750000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 6, 7, 13, 24, 0, time.UTC),
+								Out: time.Date(2022, 10, 6, 15, 3, 51, 0, time.UTC),
+							},
+						},
+					},
+				},
+			},
+			want: want{
+				sum: decimal.NewFromFloat(2_632.98),
+				details: &models.Artskoder{
+					Morgen: models.Artskode{
+						Sum:   decimal.NewFromFloat(1090.54),
+						Hours: 6,
+					},
+					Kveld: models.Artskode{
+						Sum:   decimal.NewFromFloat(727.03),
+						Hours: 4,
+					},
+					Dag: models.Artskode{
+						Sum:   decimal.NewFromFloat(795.41),
+						Hours: 6,
+					},
+					Skift: models.Artskode{
+						Sum:   decimal.NewFromFloat(20),
+						Hours: 4,
+					},
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
