@@ -33,22 +33,18 @@ func Calculate(minutes map[string]models.GuardDuty, satser models.Satser, payrol
 	fifthOfAnHour := decimal.NewFromInt(5)
 
 	compensationDayHours := decimal.NewFromInt(int64(compensationDayMinutes)).DivRound(minutesInHour, 0)
-	payroll.Artskoder.Dag.Hours = compensationDayHours.IntPart()
 	compensationDay := compensationDayHours.Mul(satser.Dag).Round(2)
 	payroll.Artskoder.Dag.Sum = payroll.Artskoder.Dag.Sum.Add(compensationDay)
 
 	compensationEveningHours := decimal.NewFromInt(int64(compensationEveningMinutes)).DivRound(minutesInHour, 0)
-	payroll.Artskoder.Kveld.Hours = compensationEveningHours.IntPart()
 	compensationEvening := compensationEveningHours.Mul(satser.Natt).Round(2)
 	payroll.Artskoder.Kveld.Sum = payroll.Artskoder.Kveld.Sum.Add(compensationEvening)
 
 	compensationMorningHours := decimal.NewFromInt(int64(compensationMorningMinutes)).DivRound(minutesInHour, 0)
-	payroll.Artskoder.Morgen.Hours = compensationMorningHours.IntPart()
 	compensationMorning := compensationMorningHours.Mul(satser.Natt).Round(2)
 	payroll.Artskoder.Morgen.Sum = payroll.Artskoder.Morgen.Sum.Add(compensationMorning)
 
 	compensationWeekendHours := decimal.NewFromInt(int64(compensationWeekendMinutes)).DivRound(minutesInHour, 0)
-	payroll.Artskoder.Helg.Hours = compensationWeekendHours.IntPart()
 	compensationWeekend := compensationWeekendHours.Mul(satser.Helg).Div(fifthOfAnHour).Round(2)
 	payroll.Artskoder.Helg.Sum = payroll.Artskoder.Helg.Sum.Add(compensationWeekend)
 
