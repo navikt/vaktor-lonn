@@ -3,14 +3,15 @@ package service
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/navikt/vaktor-lonn/pkg/calculator"
-	"github.com/navikt/vaktor-lonn/pkg/models"
-	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
-	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"sort"
 	"time"
+
+	"github.com/navikt/vaktor-lonn/pkg/calculator"
+	"github.com/navikt/vaktor-lonn/pkg/models"
+	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
+	"go.uber.org/zap"
 )
 
 func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
@@ -43,12 +44,23 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var dates []string
-	for key, _ := range plan.Schedule {
+	for key := range plan.Schedule {
 		dates = append(dates, key)
 	}
 	sort.Strings(dates)
 	periodBegin, err := time.Parse(calculator.VaktorDateFormat, dates[0])
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
+		h.Log.Error("Error when parsing period begin", zap.Error(err))
+		return
+	}
+
 	periodEnd, err := time.Parse(calculator.VaktorDateFormat, dates[len(dates)-1])
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
+		h.Log.Error("Error when parsing period end", zap.Error(err))
+		return
+	}
 
 	err = h.Queries.CreatePlan(h.Context, gensql.CreatePlanParams{
 		ID:          plan.ID,

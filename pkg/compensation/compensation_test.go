@@ -1,10 +1,11 @@
 package compensation
 
 import (
+	"testing"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/shopspring/decimal"
-	"testing"
 )
 
 func TestCalculate(t *testing.T) {
@@ -83,20 +84,16 @@ func TestCalculate(t *testing.T) {
 			},
 			want: models.Artskoder{
 				Morgen: models.Artskode{
-					Sum:   decimal.NewFromInt(750),
-					Hours: 30,
+					Sum: decimal.NewFromInt(750),
 				},
 				Dag: models.Artskode{
-					Sum:   decimal.NewFromInt(465),
-					Hours: 31,
+					Sum: decimal.NewFromInt(465),
 				},
 				Kveld: models.Artskode{
-					Sum:   decimal.NewFromInt(500),
-					Hours: 20,
+					Sum: decimal.NewFromInt(500),
 				},
 				Helg: models.Artskode{
-					Sum:   decimal.NewFromInt(1544),
-					Hours: 48,
+					Sum: decimal.NewFromInt(1544),
 				},
 				Skift: models.Artskode{
 					Sum:   decimal.NewFromInt(100),
@@ -134,8 +131,7 @@ func TestCalculate(t *testing.T) {
 			},
 			want: models.Artskoder{
 				Helg: models.Artskode{
-					Sum:   decimal.NewFromInt(1468),
-					Hours: 46,
+					Sum: decimal.NewFromInt(1468),
 				},
 			},
 		},
@@ -163,16 +159,13 @@ func TestCalculate(t *testing.T) {
 			},
 			want: models.Artskoder{
 				Morgen: models.Artskode{
-					Sum:   decimal.NewFromInt(150),
-					Hours: 6,
+					Sum: decimal.NewFromInt(150),
 				},
 				Kveld: models.Artskode{
-					Sum:   decimal.NewFromInt(100),
-					Hours: 4,
+					Sum: decimal.NewFromInt(100),
 				},
 				Dag: models.Artskode{
-					Sum:   decimal.NewFromInt(210),
-					Hours: 14,
+					Sum: decimal.NewFromInt(210),
 				},
 				Skift: models.Artskode{
 					Sum:   decimal.NewFromInt(20),

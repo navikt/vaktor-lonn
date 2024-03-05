@@ -1,12 +1,13 @@
 package calculator
 
 import (
+	"testing"
+	"time"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/shopspring/decimal"
-	"testing"
-	"time"
 )
 
 func TestGuarddutySalary(t *testing.T) {
@@ -536,7 +537,8 @@ func TestGuarddutySalary(t *testing.T) {
 							},
 						},
 					},
-					"2022-07-16": {Date: time.Date(2022, 7, 16, 0, 0, 0, 0, time.UTC),
+					"2022-07-16": {
+						Date:         time.Date(2022, 7, 16, 0, 0, 0, 0, time.UTC),
 						WorkingHours: 0,
 						WorkingDay:   "Lørdag",
 						Salary:       decimal.NewFromInt(800_000),
@@ -1024,8 +1026,8 @@ func TestGuarddutySalary(t *testing.T) {
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
-								In:  time.Date(2022, 10, 05, 07, 21, 42, 0, time.UTC),
-								Out: time.Date(2022, 10, 05, 15, 24, 14, 0, time.UTC),
+								In:  time.Date(2022, 10, 5, 7, 21, 42, 0, time.UTC),
+								Out: time.Date(2022, 10, 5, 15, 24, 14, 0, time.UTC),
 							},
 						},
 					},
@@ -1040,8 +1042,8 @@ func TestGuarddutySalary(t *testing.T) {
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
-								In:  time.Date(2022, 10, 06, 07, 13, 24, 0, time.UTC),
-								Out: time.Date(2022, 10, 06, 15, 03, 51, 0, time.UTC),
+								In:  time.Date(2022, 10, 6, 7, 13, 24, 0, time.UTC),
+								Out: time.Date(2022, 10, 6, 15, 3, 51, 0, time.UTC),
 							},
 						},
 					},
@@ -1056,8 +1058,8 @@ func TestGuarddutySalary(t *testing.T) {
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
-								In:  time.Date(2022, 10, 07, 07, 18, 52, 0, time.UTC),
-								Out: time.Date(2022, 10, 07, 15, 06, 59, 0, time.UTC),
+								In:  time.Date(2022, 10, 7, 7, 18, 52, 0, time.UTC),
+								Out: time.Date(2022, 10, 7, 15, 6, 59, 0, time.UTC),
 							},
 						},
 					},
@@ -1092,7 +1094,7 @@ func TestGuarddutySalary(t *testing.T) {
 						Aktivitet:    "000000",
 						Clockings: []models.Clocking{
 							{
-								In:  time.Date(2022, 10, 10, 07, 18, 32, 0, time.UTC),
+								In:  time.Date(2022, 10, 10, 7, 18, 32, 0, time.UTC),
 								Out: time.Date(2022, 10, 10, 15, 25, 0, 0, time.UTC),
 							},
 						},
@@ -1261,6 +1263,87 @@ func TestGuarddutySalary(t *testing.T) {
 					Skift: models.Artskode{
 						Sum:   decimal.NewFromFloat(20),
 						Hours: 4,
+					},
+				},
+			},
+		},
+
+		{
+			name: "To vaktdager med forskjellig lønn",
+			args: args{
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
+				},
+				guardPeriod: map[string][]models.Period{
+					"2022-10-05": {
+						{
+							Begin: time.Date(2022, 10, 5, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 6, 0, 0, 0, 0, time.UTC),
+						},
+					},
+					"2022-10-06": {
+						{
+							Begin: time.Date(2022, 10, 6, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2022, 10, 7, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2022-10-05": {
+						Date:         time.Date(2022, 10, 5, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(725000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 5, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 5, 15, 45, 0, 0, time.UTC),
+							},
+						},
+					},
+					"2022-10-06": {
+						Date:         time.Date(2022, 10, 6, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.75,
+						WorkingDay:   "Virkedag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(750000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2022, 10, 6, 8, 0, 0, 0, time.UTC),
+								Out: time.Date(2022, 10, 6, 15, 45, 0, 0, time.UTC),
+							},
+						},
+					},
+				},
+			},
+			want: want{
+				sum: decimal.NewFromFloat(5_359.33),
+				details: &models.Artskoder{
+					Morgen: models.Artskode{
+						Sum:   decimal.NewFromFloat(2213.51),
+						Hours: 12,
+					},
+					Kveld: models.Artskode{
+						Sum:   decimal.NewFromFloat(1475.68),
+						Hours: 8,
+					},
+					Dag: models.Artskode{
+						Sum:   decimal.NewFromFloat(1630.14),
+						Hours: 12,
+					},
+					Skift: models.Artskode{
+						Sum:   decimal.NewFromFloat(40),
+						Hours: 8,
 					},
 				},
 			},

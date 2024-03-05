@@ -2,8 +2,9 @@ package ranges
 
 import (
 	"fmt"
-	"github.com/navikt/vaktor-lonn/pkg/models"
 	"time"
+
+	"github.com/navikt/vaktor-lonn/pkg/models"
 )
 
 // Range representere en rekke med stigende heltall
@@ -30,7 +31,7 @@ func CalculateMinutesOverlapping(a, b Range) float64 {
 
 	if a.Begin < b.End && a.End > b.Begin {
 		if a.Begin >= b.Begin && a.End <= b.End {
-			a.Count()
+			return a.Count()
 		}
 
 		modified := Range{
