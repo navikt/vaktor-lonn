@@ -2,6 +2,8 @@ FROM python:3.12-slim
 
 WORKDIR /code
 
+RUN pip install --upgrade pip
+
 COPY ./requirements.txt requirements.txt
 
 RUN pip install --no-cache-dir --upgrade --requirement requirements.txt
