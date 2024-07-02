@@ -11,9 +11,9 @@ spec:
       rules:
         - application: vaktor-plan
       external:
-    	- host: tdv-p.adeo.no
-    	  ports:
-    	    - port: 9402
+        - host: tdv-p.adeo.no
+          ports:
+            - port: 9402
   image: {{image}}
   replicas:
     min: 1
