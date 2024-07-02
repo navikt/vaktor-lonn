@@ -11,7 +11,8 @@ spec:
       rules:
         - application: vaktor-plan
       outbound:
-        - vaktor-mwt-mock
+        rules:
+          - vaktor-mwt-mock
   image: {{image}}
   replicas:
     min: 1
