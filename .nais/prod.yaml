@@ -10,14 +10,10 @@ spec:
     inbound:
       rules:
         - application: vaktor-plan
-    outbound:
-      rules:
-        - application: vaktor-plan
-        - application: vaktor-mwt-mock
       external:
-        - host: tdv-p.adeo.no
-          ports:
-            - port: 9402
+    	- host: tdv-p.adeo.no
+    	  ports:
+    	    - port: 9402
   image: {{image}}
   replicas:
     min: 1
@@ -36,11 +32,6 @@ spec:
       enabled: true
       allowAllUsers: false
       tenant: nav.no
-  env:
-  {{#each envs}}
-    - name: {{this.name}}
-      value: "{{this.value}}"
-  {{/each}}
   envFrom:
     - secret: vaktor-lonn
   gcp:

@@ -50,13 +50,14 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: .nais/nais.yaml
-          VARS: .nais/dev.yaml
+          RESOURCE: .nais/dev.yaml
           VAR: image=${{ needs.build.outputs.image }}
 
   deploy-prod:
     name: Deploy to prod
-    needs: build
+    needs:
+      - build
+      - deploy-dev
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -64,5 +65,5 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
-          RESOURCE: .nais/nais.yaml
+          RESOURCE: .nais/prod.yaml
           VAR: image=${{ needs.build.outputs.image }}
