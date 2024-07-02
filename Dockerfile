@@ -10,10 +10,8 @@ COPY pkg pkg/
 
 RUN go build -v -o /usr/src/app/lonn
 
-FROM alpine:3.20
+FROM gcr.io/distroless/static-debian12
 
-RUN apk add --no-cache ca-certificates
+COPY --from=builder /usr/src/app/lonn /lonn
 
-COPY --from=builder /usr/src/app/lonn /app/lonn
-
-CMD ["/app/lonn"]
+CMD ["/lonn"]
