@@ -33,7 +33,7 @@ spec:
       tenant: nav.no
   env:
     - name: MINWINTID_INTERVAL
-    value: 5m
+      value: 5m
   envFrom:
     - secret: vaktor-lonn
   gcp:
