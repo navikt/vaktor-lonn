@@ -11,6 +11,8 @@ spec:
       rules:
         - application: vaktor-plan
     outbound:
+      rules:
+        - application: vaktor-plan
       external:
         - host: tdv-p.adeo.no
           ports:
