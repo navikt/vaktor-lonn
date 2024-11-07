@@ -219,7 +219,7 @@ func formatTimesheet(days []models.MWTDag) (map[string]models.TimeSheet, []zap.F
 						}
 
 						if utStemplingDate.YearDay() > innStemplingDate.YearDay() &&
-							!(utStemplingDate.Hour() == 0 && utStemplingDate.Minute() == 0) {
+							(utStemplingDate.Hour() != 0 || utStemplingDate.Minute() != 0) {
 							// Overtid over midnatt, flytter resten av tiden til neste dag
 							truncateOut := utStemplingDate.Truncate(24 * time.Hour)
 							nextDay = append(nextDay, models.Clocking{
