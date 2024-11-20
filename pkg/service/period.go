@@ -48,6 +48,7 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 		dates = append(dates, key)
 	}
 	sort.Strings(dates)
+
 	periodBegin, err := time.Parse(calculator.VaktorDateFormat, dates[0])
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusBadRequest)
@@ -62,15 +63,13 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Queries.CreatePlan(h.Context, gensql.CreatePlanParams{
+	if err := h.Queries.CreatePlan(h.Context, gensql.CreatePlanParams{
 		ID:          plan.ID,
 		Ident:       plan.Ident,
 		Plan:        body,
 		PeriodBegin: periodBegin,
 		PeriodEnd:   periodEnd,
-	})
-
-	if err != nil {
+	}); err != nil {
 		http.Error(w, fmt.Sprintf("Error: %s", err), http.StatusInternalServerError)
 		h.Log.Error("Error when trying to save period", zap.Error(err), zap.String(vaktplanId, plan.ID.String()))
 		return
