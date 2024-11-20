@@ -2478,7 +2478,6 @@ func Test_calculateSalary(t *testing.T) {
 	}
 	type want struct {
 		payroll *models.Payroll
-		error   bool
 	}
 	tests := []struct {
 		name string
@@ -2879,11 +2878,12 @@ func Test_calculateSalary(t *testing.T) {
 				return
 			}
 
-			got := calculateSalary(log, tt.args.beredskapsvakt, response)
-			if (got == nil) != tt.want.error {
-				t.Errorf("calculateSalary() error = %v, want.error %v", got == nil, tt.want.error)
+			got, err := calculateSalary(log, tt.args.beredskapsvakt, response)
+			if err != nil {
+				t.Errorf("calculateSalary() returned an error: %v", err)
 				return
 			}
+
 			if diff := cmp.Diff(tt.want.payroll, got); diff != "" {
 				t.Errorf("calculateSalary() mismatch (-want +got):\n%s", diff)
 			}

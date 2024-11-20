@@ -3,11 +3,12 @@ package service
 import (
 	"context"
 	"database/sql"
+	"net/http"
+	"time"
+
 	"github.com/navikt/vaktor-lonn/pkg/auth"
 	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
 	"go.uber.org/zap"
-	"net/http"
-	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
@@ -20,17 +21,16 @@ type minWinTidConfig struct {
 }
 
 type Handler struct {
-	BearerClient       auth.BearerClient
-	DB                 *sql.DB
-	Client             http.Client
-	Context            context.Context
-	MinWinTidConfig    minWinTidConfig
-	Queries            *gensql.Queries
-	Log                *zap.Logger
-	VaktorPlanEndpoint string
+	BearerClient    auth.BearerClient
+	DB              *sql.DB
+	Client          http.Client
+	Context         context.Context
+	MinWinTidConfig minWinTidConfig
+	Queries         *gensql.Queries
+	Log             *zap.Logger
 }
 
-func NewHandler(logger *zap.Logger, dbString, vaktorPlanEndpoint,
+func NewHandler(logger *zap.Logger, dbString,
 	azureClientId, azureClientSecret, azureOpenIdTokenEndpoint,
 	minWinTidUsername, minWinTidPassword, minWinTidEndpoint, minWinTidInterval string) (Handler, error) {
 
@@ -56,9 +56,8 @@ func NewHandler(logger *zap.Logger, dbString, vaktorPlanEndpoint,
 			Endpoint:       minWinTidEndpoint,
 			TickerInterval: minWinTidTicketInterval,
 		},
-		Queries:            gensql.New(db),
-		Log:                logger,
-		VaktorPlanEndpoint: vaktorPlanEndpoint,
+		Queries: gensql.New(db),
+		Log:     logger,
 	}
 
 	return handler, nil

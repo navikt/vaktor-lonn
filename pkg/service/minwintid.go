@@ -22,6 +22,7 @@ const (
 	DateTimeFormat  = "2006-01-02T15:04:05"
 	fravarKodeFerie = 210
 	vaktplanId      = "vaktplanId"
+	vaktorEndpoint  = "http://vaktor-plan/api/v1/salaries/"
 )
 
 func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd time.Time, handler Handler) (models.MWTResponse, error) {
@@ -328,14 +329,34 @@ func createPerfectClocking(tid float64, date time.Time) models.Clocking {
 	}
 }
 
-func postToVaktorPlan(handler Handler, payroll models.Payroll, bearerToken string) error {
-	bufferBody, err := json.Marshal(payroll)
+func postError(handler Handler, beredskapsvakt gensql.Beredskapsvakt, err error, bearerToken string) error {
+	message := map[string]string{
+		"error": err.Error(),
+		"ok":    "false",
+	}
+	payload, err := json.Marshal(message)
 	if err != nil {
 		return err
 	}
 
-	url := fmt.Sprintf("%v/%v", handler.VaktorPlanEndpoint, payroll.ID)
-	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(bufferBody))
+	url := fmt.Sprintf("%v/error", beredskapsvakt.ID)
+
+	return postToPlan(handler, payload, url, bearerToken)
+}
+
+func postPayroll(handler Handler, payroll models.Payroll, bearerToken string) error {
+	payload, err := json.Marshal(payroll)
+	if err != nil {
+		return err
+	}
+
+	url := fmt.Sprintf("confirm_calculations/%v", payroll.ID)
+
+	return postToPlan(handler, payload, url, bearerToken)
+}
+
+func postToPlan(handler Handler, payload []byte, url, bearerToken string) error {
+	req, err := http.NewRequest(http.MethodPost, vaktorEndpoint+url, bytes.NewBuffer(payload))
 	if err != nil {
 		return err
 	}
@@ -389,41 +410,35 @@ func decodeMinWinTid(response models.MWTResponse) (models.MWTTiddataResult, erro
 	return result, err
 }
 
-func calculateSalary(log *zap.Logger, beredskapsvakt gensql.Beredskapsvakt, response models.MWTResponse) *models.Payroll {
+func calculateSalary(log *zap.Logger, beredskapsvakt gensql.Beredskapsvakt, response models.MWTResponse) (*models.Payroll, error) {
 	tiddataResult, err := decodeMinWinTid(response)
 	if err != nil {
-		log.Error("Failed while decoding MinWinTid data", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
-		return nil
+		return nil, fmt.Errorf("decoding MinWinTid data: %w", err)
 	}
 
 	err = isTimesheetApproved(tiddataResult.Dager)
 	if err != nil {
-		log.Info("Timesheet is not approved", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
-		return nil
+		log.Info("timesheet is not approved", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
+		return nil, nil
 	}
 
 	var vaktplan models.Vaktplan
 	err = json.Unmarshal(beredskapsvakt.Plan, &vaktplan)
 	if err != nil {
-		log.Error("Failed while unmarshaling beredskapsvaktperiode", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
-		return nil
+		return nil, fmt.Errorf("unmarshaling beredskapsvaktperiode: %w", err)
 	}
 
 	vacationAtTheSameTimeAsGuardDuty, err := isThereRegisteredVacationAtTheSameTimeAsGuardDuty(tiddataResult.Dager, vaktplan)
 	if err != nil {
-		log.Error("Failed while parsing date from MinWinTid", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
-		return nil
+		return nil, fmt.Errorf("parsing date from MinWinTid: %w", err)
 	}
 	if vacationAtTheSameTimeAsGuardDuty {
-		log.Info("En bruker har hatt beredskapsvakt under ferien", zap.String(vaktplanId, vaktplan.ID.String()))
-		return nil
+		return nil, fmt.Errorf("bruker har hatt beredskapsvakt under ferien")
 	}
 
 	timesheet, errFields := formatTimesheet(tiddataResult.Dager)
 	if len(errFields) != 0 {
-		errFields = append(errFields, zap.String(vaktplanId, vaktplan.ID.String()))
-		log.Error("Failed trying to format MinWinTid stemplinger", errFields...)
-		return nil
+		return nil, fmt.Errorf("tried to create timesheet: %v", errFields)
 	}
 
 	minWinTid := models.MinWinTid{
@@ -441,11 +456,10 @@ func calculateSalary(log *zap.Logger, beredskapsvakt gensql.Beredskapsvakt, resp
 
 	payroll, err := calculator.GuarddutySalary(vaktplan, minWinTid)
 	if err != nil {
-		log.Error("Failed while calcualting guard duty salary", zap.Error(err), zap.String(vaktplanId, vaktplan.ID.String()))
-		return nil
+		return nil, fmt.Errorf("calcualting salary: %w", err)
 	}
 
-	return &payroll
+	return &payroll, nil
 }
 
 func handleTransaction(handler Handler, beredskapsvakt gensql.Beredskapsvakt, bearerToken string) {
@@ -455,13 +469,20 @@ func handleTransaction(handler Handler, beredskapsvakt gensql.Beredskapsvakt, be
 		return
 	}
 
-	payroll := calculateSalary(handler.Log, beredskapsvakt, response)
+	payroll, err := calculateSalary(handler.Log, beredskapsvakt, response)
+	if err != nil {
+		if err := postError(handler, beredskapsvakt, err, bearerToken); err != nil {
+			handler.Log.Error("Failed while posting error to Vaktor Plan", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
+		}
+
+		return
+	}
+
 	if payroll == nil {
 		return
 	}
 
-	err = postToVaktorPlan(handler, *payroll, bearerToken)
-	if err != nil {
+	if err := postPayroll(handler, *payroll, bearerToken); err != nil {
 		handler.Log.Error("Failed while posting to Vaktor Plan", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
 		return
 	}

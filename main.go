@@ -29,11 +29,8 @@ func onStart(logger *zap.Logger) (service.Handler, error) {
 	minWinTidUsername := os.Getenv("MINWINTID_USERNAME")
 	minWinTidPassword := os.Getenv("MINWINTID_PASSWORD")
 	minWinTidInterval := getEnv("MINWINTID_INTERVAL", "60m")
-	vaktorPlanEndpoint := os.Getenv("VAKTOR_PLAN_ENDPOINT")
 
-	handler, err := service.NewHandler(logger, dbString, vaktorPlanEndpoint,
-		azureClientId, azureClientSecret, azureOpenIdTokenEndpoint,
-		minWinTidUsername, minWinTidPassword, minWinTidEndpoint, minWinTidInterval)
+	handler, err := service.NewHandler(logger, dbString, azureClientId, azureClientSecret, azureOpenIdTokenEndpoint, minWinTidUsername, minWinTidPassword, minWinTidEndpoint, minWinTidInterval)
 	if err != nil {
 		return service.Handler{}, err
 	}
