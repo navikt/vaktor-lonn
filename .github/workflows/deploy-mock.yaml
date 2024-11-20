@@ -1,5 +1,6 @@
 name: Deploy MWTmock
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
