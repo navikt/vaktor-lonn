@@ -89,6 +89,7 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 		PeriodBegin: periodBegin,
 		PeriodEnd:   periodEnd,
 	}
+
 	go triggerHandleOfTransaction(h, beredskapsvakt)
 }
 
@@ -97,5 +98,6 @@ func triggerHandleOfTransaction(handler Handler, beredskapsvakt gensql.Beredskap
 	if err != nil {
 		handler.Log.Error("Problem generating bearer token", zap.Error(err))
 	}
+
 	handleTransaction(handler, beredskapsvakt, bearerToken)
 }

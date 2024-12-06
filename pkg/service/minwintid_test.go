@@ -10,7 +10,6 @@ import (
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	gensql "github.com/navikt/vaktor-lonn/pkg/sql/gen"
 	"github.com/shopspring/decimal"
-	"go.uber.org/zap"
 )
 
 func Test_formatTimesheet(t *testing.T) {
@@ -2446,8 +2445,7 @@ func Test_decodeMinWinTid(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var response models.MWTResponse
-			err := json.Unmarshal([]byte(tt.args.body), &response)
-			if err != nil {
+			if err := json.Unmarshal([]byte(tt.args.body), &response); err != nil {
 				t.Errorf("failed while unmarshling: %v", err)
 				return
 			}
@@ -2466,12 +2464,6 @@ func Test_decodeMinWinTid(t *testing.T) {
 }
 
 func Test_calculateSalary(t *testing.T) {
-	log, err := zap.NewDevelopment([]zap.Option{}...)
-	if err != nil {
-		t.Errorf("can't create zap.Logger: %v", err)
-		return
-	}
-
 	type args struct {
 		beredskapsvakt gensql.Beredskapsvakt
 		body           string
@@ -2872,13 +2864,14 @@ func Test_calculateSalary(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var response models.MWTResponse
-			err := json.Unmarshal([]byte(tt.args.body), &response)
-			if err != nil {
+			if err := json.Unmarshal([]byte(tt.args.body), &response); err != nil {
 				t.Errorf("failed while unmarshling: %v", err)
 				return
 			}
 
-			got, err := calculateSalary(log, tt.args.beredskapsvakt, response)
+			got, err := func() (*models.Payroll, error) {
+				return calculateSalary(tt.args.beredskapsvakt, response)
+			}()
 			if err != nil {
 				t.Errorf("calculateSalary() returned an error: %v", err)
 				return
