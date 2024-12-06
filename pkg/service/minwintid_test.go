@@ -2869,9 +2869,7 @@ func Test_calculateSalary(t *testing.T) {
 				return
 			}
 
-			got, err := func() (*models.Payroll, error) {
-				return calculateSalary(tt.args.beredskapsvakt, response)
-			}()
+			got, _, err := calculateSalary(tt.args.beredskapsvakt, response)
 			if err != nil {
 				t.Errorf("calculateSalary() returned an error: %v", err)
 				return
