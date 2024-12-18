@@ -26,12 +26,13 @@ const (
 
 func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd time.Time, handler Handler) (models.MWTRespons, error) {
 	config := handler.MinWinTidConfig
-	req, err := http.NewRequest(http.MethodGet, config.Endpoint, nil)
+
+	bearerToken, err := config.BearerClient.GenerateBearerToken()
 	if err != nil {
 		return models.MWTRespons{}, err
 	}
 
-	bearerToken, err := config.BearerClient.GenerateBearerToken()
+	req, err := http.NewRequest(http.MethodGet, config.Endpoint, nil)
 	if err != nil {
 		return models.MWTRespons{}, err
 	}
