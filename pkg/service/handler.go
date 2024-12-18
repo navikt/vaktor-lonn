@@ -20,17 +20,18 @@ type MinWinTidConfig struct {
 }
 
 type Handler struct {
-	BearerClient    auth.BearerClient
-	DB              *sql.DB
-	Client          http.Client
-	Context         context.Context
-	MinWinTidConfig MinWinTidConfig
-	Queries         *gensql.Queries
-	Log             *zap.Logger
+	BearerClient       auth.BearerClient
+	DB                 *sql.DB
+	Client             http.Client
+	Context            context.Context
+	MinWinTidConfig    MinWinTidConfig
+	VaktorPlanEndpoint string
+	Queries            *gensql.Queries
+	Log                *zap.Logger
 }
 
 func NewHandler(logger *zap.Logger, dbString,
-	azureClientId, azureClientSecret, azureOpenIdTokenEndpoint string, minWinTidConfig MinWinTidConfig) (Handler, error) {
+	azureClientId, azureClientSecret, azureOpenIdTokenEndpoint, vaktorPlanEndpoint string, minWinTidConfig MinWinTidConfig) (Handler, error) {
 
 	db, err := sql.Open("pgx", dbString)
 	if err != nil {
@@ -43,9 +44,10 @@ func NewHandler(logger *zap.Logger, dbString,
 		Client: http.Client{
 			Timeout: 10 * time.Second,
 		},
-		MinWinTidConfig: minWinTidConfig,
-		Queries:         gensql.New(db),
-		Log:             logger,
+		MinWinTidConfig:    minWinTidConfig,
+		VaktorPlanEndpoint: vaktorPlanEndpoint,
+		Queries:            gensql.New(db),
+		Log:                logger,
 	}
 
 	return handler, nil

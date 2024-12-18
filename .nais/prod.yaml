@@ -35,6 +35,9 @@ spec:
       tenant: nav.no
   envFrom:
     - secret: vaktor-lonn
+  env:
+    - name: VAKTOR_PLAN_ENDPOINT
+      value: http://vaktor-plan/api/v1/salaries/
     - name: MINWINTID_ENDPOINT
       value: https://dvh.adeo.no/ords/dvh/dt_hr/vaktor/tiddata
     - name: MINWINTID_ORDS_ENDPOINT

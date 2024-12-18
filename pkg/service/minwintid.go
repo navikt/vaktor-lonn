@@ -22,7 +22,6 @@ const (
 	DateTimeFormat  = "2006-01-02T15:04:05"
 	fravarKodeFerie = 210
 	vaktplanId      = "vaktplanId"
-	vaktorEndpoint  = "http://vaktor-plan/api/v1/salaries/"
 )
 
 func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd time.Time, handler Handler) (models.MWTRespons, error) {
@@ -368,7 +367,7 @@ func postPayroll(handler Handler, payroll models.Payroll, bearerToken string) er
 }
 
 func postToPlan(handler Handler, payload []byte, url, bearerToken string) error {
-	req, err := http.NewRequest(http.MethodPost, vaktorEndpoint+url, bytes.NewBuffer(payload))
+	req, err := http.NewRequest(http.MethodPost, handler.VaktorPlanEndpoint+url, bytes.NewBuffer(payload))
 	if err != nil {
 		return err
 	}
