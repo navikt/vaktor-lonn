@@ -14,9 +14,7 @@ spec:
       rules:
         - application: vaktor-plan
       external:
-        - host: tdv-p.adeo.no
-          ports:
-            - port: 9402
+        - host: dvh.adeo.no
   image: {{image}}
   replicas:
     min: 1
@@ -37,6 +35,10 @@ spec:
       tenant: nav.no
   envFrom:
     - secret: vaktor-lonn
+    - name: MINWINTID_ENDPOINT
+      value: https://dvh.adeo.no/ords/dvh/dt_hr/vaktor/tiddata
+    - name: MINWINTID_ORDS_ENDPOINT
+      value: https://dvh.adeo.no/ords/dvh/oauth/token
   gcp:
     sqlInstances:
       - databases:

@@ -32,9 +32,14 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 		return models.MWTResponse{}, err
 	}
 
-	req.SetBasicAuth(config.Username, config.Password)
+	bearerToken, err := config.BearerClient.GenerateBearerToken()
+	if err != nil {
+		return models.MWTResponse{}, err
+	}
+
+	req.Header.Set("Authorization", fmt.Sprintf("bearer %v", bearerToken))
 	values := req.URL.Query()
-	values.Add("ident", ident)
+	values.Add("nav_id", ident)
 	values.Add("fra_dato", periodBegin.Format(calculator.VaktorDateFormat))
 	values.Add("til_dato", periodEnd.Format(calculator.VaktorDateFormat))
 	req.URL.RawQuery = values.Encode()
@@ -460,7 +465,12 @@ func calculateSalary(beredskapsvakt gensql.Beredskapsvakt, response models.MWTRe
 	return &payroll, "", nil
 }
 
-func handleTransaction(handler Handler, beredskapsvakt gensql.Beredskapsvakt, bearerToken string) {
+func handleTransaction(handler Handler, beredskapsvakt gensql.Beredskapsvakt) {
+	bearerToken, err := handler.BearerClient.GenerateBearerToken()
+	if err != nil {
+		handler.Log.Error("Problem generating bearer token", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
+	}
+
 	response, err := getTimesheetFromMinWinTid(beredskapsvakt.Ident, beredskapsvakt.PeriodBegin, beredskapsvakt.PeriodEnd, handler)
 	if err != nil {
 		handler.Log.Error("Failed while retrieving data from MinWinTid", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
@@ -494,18 +504,13 @@ func handleTransaction(handler Handler, beredskapsvakt gensql.Beredskapsvakt, be
 }
 
 func handleTransactions(handler Handler) error {
-	bearerToken, err := handler.BearerClient.GenerateBearerToken()
-	if err != nil {
-		handler.Log.Error("Problem generating bearer token", zap.Error(err))
-	}
-
 	beredskapsvakter, err := handler.Queries.ListBeredskapsvakter(handler.Context)
 	if err != nil {
 		return err
 	}
 
 	for _, beredskapsvakt := range beredskapsvakter {
-		handleTransaction(handler, beredskapsvakt, bearerToken)
+		handleTransaction(handler, beredskapsvakt)
 	}
 
 	return nil

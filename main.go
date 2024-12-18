@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/navikt/vaktor-lonn/pkg/auth"
 	"github.com/navikt/vaktor-lonn/pkg/service"
 	"github.com/pressly/goose/v3"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -25,12 +26,24 @@ func onStart(logger *zap.Logger) (service.Handler, error) {
 	azureClientId := os.Getenv("AZURE_APP_CLIENT_ID")
 	azureClientSecret := os.Getenv("AZURE_APP_CLIENT_SECRET")
 	azureOpenIdTokenEndpoint := os.Getenv("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT")
+	minWinTidORDSEndpoint := os.Getenv("MINWINTID_ORDS_ENDPOINT")
 	minWinTidEndpoint := os.Getenv("MINWINTID_ENDPOINT")
-	minWinTidUsername := os.Getenv("MINWINTID_USERNAME")
-	minWinTidPassword := os.Getenv("MINWINTID_PASSWORD")
+	minWinTidClientID := os.Getenv("MINWINTID_CLIENTID")
+	minWinTidSecret := os.Getenv("MINWINTID_SECRET")
 	minWinTidInterval := getEnv("MINWINTID_INTERVAL", "60m")
 
-	handler, err := service.NewHandler(logger, dbString, azureClientId, azureClientSecret, azureOpenIdTokenEndpoint, minWinTidUsername, minWinTidPassword, minWinTidEndpoint, minWinTidInterval)
+	minWinTidTicketInterval, err := time.ParseDuration(minWinTidInterval)
+	if err != nil {
+		return service.Handler{}, err
+	}
+
+	minWinTidConfig := service.MinWinTidConfig{
+		BearerClient:   auth.New(minWinTidClientID, minWinTidSecret, minWinTidORDSEndpoint),
+		Endpoint:       minWinTidEndpoint,
+		TickerInterval: minWinTidTicketInterval,
+	}
+
+	handler, err := service.NewHandler(logger, dbString, azureClientId, azureClientSecret, azureOpenIdTokenEndpoint, minWinTidConfig)
 	if err != nil {
 		return service.Handler{}, err
 	}
