@@ -1,0 +1,122 @@
+{
+  "nav_id": "123456",
+  "resource_id": "E123456",
+  "leder_resource_id": "654321",
+  "leder_nav_id": "M654321",
+  "leder_navn": "Kalpana, Bran",
+  "leder_epost": "Bran.Kalpana@nav.no",
+  "dager": [
+    {
+      "dato": "2023-06-17T00:00:00",
+      "skjema_tid": 0,
+      "skjema_navn": "BV Lørdag IKT",
+      "godkjent": 2,
+      "virkedag": "Lørdag",
+      "stemplinger": [
+        {
+          "stempling_tid": "2023-06-17T19:59:56",
+          "navn": "Inn",
+          "type": "B1",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2023-06-17T23:54:59",
+          "navn": "Overtid",
+          "type": "B6",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": "BV - Jobbet med produksjonssetting av 2023-EL06"
+        },
+        {
+          "stempling_tid": "2023-06-17T23:55:00",
+          "navn": "Ut",
+          "type": "B2",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        }
+      ],
+      "stillinger": [
+        {
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000"
+        }
+      ]
+    },
+    {
+      "dato": "2023-06-18T00:00:00",
+      "skjema_tid": 0,
+      "skjema_navn": "BV Søndag IKT",
+      "godkjent": 2,
+      "virkedag": "Søndag",
+      "stemplinger": [
+        {
+          "stempling_tid": "2023-06-18T00:05:00",
+          "navn": "Inn",
+          "type": "B1",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2023-06-18T05:09:23",
+          "navn": "Overtid",
+          "type": "B6",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": "BV - Jobbet med produksjonssetting av 2023-EL06"
+        },
+        {
+          "stempling_tid": "2023-06-18T05:09:30",
+          "navn": "Ut",
+          "type": "B2",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2023-06-18T10:31:03",
+          "navn": "Inn",
+          "type": "B1",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2023-06-18T12:03:00",
+          "navn": "Overtid",
+          "type": "B6",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": "Jobbet med verifisering etter Linux patching"
+        },
+        {
+          "stempling_tid": "2023-06-18T14:33:24",
+          "navn": "Overtid",
+          "type": "B6",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": "Problemer med WL etter Linux patching"
+        },
+        {
+          "stempling_tid": "2023-06-18T14:33:33",
+          "navn": "Ut",
+          "type": "B2",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        }
+      ],
+      "stillinger": [
+        {
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000"
+        }
+      ]
+    }
+  ]
+}

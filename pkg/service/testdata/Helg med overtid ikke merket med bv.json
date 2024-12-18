@@ -1,0 +1,95 @@
+{
+  "nav_id": "123456",
+  "resource_id": "E123456",
+  "leder_resource_id": "654321",
+  "leder_nav_id": "M654321",
+  "leder_navn": "Kalpana, Bran",
+  "leder_epost": "Bran.Kalpana@nav.no",
+  "dager": [
+    {
+      "dato": "2022-10-16T00:00:00",
+      "skjema_tid": 0,
+      "skjema_navn": "BV Søndag IKT",
+      "godkjent": 3,
+      "virkedag": "Søndag",
+      "stemplinger": [
+        {
+          "stempling_tid": "2022-10-16T15:59:56",
+          "navn": "Inn",
+          "type": "B1",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2022-10-16T17:48:38",
+          "navn": "Overtid",
+          "type": "B6",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": "Statussjekk helg + populering av database for bussines objects."
+        },
+        {
+          "stempling_tid": "2022-10-16T17:48:40",
+          "navn": "Ut",
+          "type": "B2",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2022-10-16T20:51:58",
+          "navn": "Inn",
+          "type": "B1",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2022-10-16T21:02:06",
+          "navn": "Overtid",
+          "type": "B6",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": "Duplisering av Business Objects-base https://jira.adeo.no/browse/IKT-475117"
+        },
+        {
+          "stempling_tid": "2022-10-16T21:02:09",
+          "navn": "Ut",
+          "type": "B2",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        }
+      ],
+      "stillinger": [
+        {
+          "post_id": "265",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 636700
+        }
+      ]
+    },
+    {
+      "dato": "2022-10-15T00:00:00",
+      "skjema_tid": 0,
+      "skjema_navn": "BV Lørdag IKT",
+      "godkjent": 3,
+      "virkedag": "Lørdag",
+      "stemplinger": null,
+      "stillinger": [
+        {
+          "post_id": "265",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 636700
+        }
+      ]
+    }
+  ]
+}

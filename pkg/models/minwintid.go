@@ -35,18 +35,18 @@ type MinWinTid struct {
 }
 
 type MWTStempling struct {
-	StemplingTid       string `json:"Stempling_Tid"`
-	Retning            string `json:"Navn"`
-	Type               string `json:"Type"`
-	FravarKode         int    `json:"Fravar_kode"`
-	OvertidBegrunnelse string `json:"Overtid_Begrunnelse"`
+	StemplingTid       string `json:"stempling_tid"`
+	Retning            string `json:"navn"`
+	Type               string `json:"type"`
+	Fravarkode         int    `json:"fravar_kode"`
+	OvertidBegrunnelse string `json:"overtid_begrunnelse"`
 }
 
 type MWTStilling struct {
 	Koststed      string `json:"koststed"`
-	Formal        string `json:"formal"`
-	Aktivitet     string `json:"aktivitet"`
-	RATEK001      int    `json:"RATE_K001"`
+	Formal        string `json:"produkt"`
+	Aktivitet     string `json:"oppgave"`
+	RATEK001      int    `json:"rate_k001"`
 	Stillingskode string `json:"post_id"`
 }
 
@@ -56,21 +56,14 @@ type MWTDag struct {
 	SkjemaNavn  string         `json:"skjema_navn"`
 	Godkjent    int            `json:"godkjent"`
 	Virkedag    string         `json:"virkedag"`
-	Stemplinger []MWTStempling `json:"Stemplinger"`
-	Stillinger  []MWTStilling  `json:"Stillinger"`
+	Stemplinger []MWTStempling `json:"stemplinger"`
+	Stillinger  []MWTStilling  `json:"stillinger"`
 }
 
-type MWTTiddataResult struct {
-	VaktorNavId      string `json:"Vaktor.nav_id"`
-	VaktorResourceId string `json:"Vaktor.resource_id"`
-	VaktorLederNavId string `json:"Vaktor.leder_nav_id"`
-	VaktorLederNavn  string `json:"Vaktor.leder_navn"`
-	VaktorDager      string `json:"Vaktor.dager"`
-	Dager            []MWTDag
-}
-
-type MWTResponse struct {
-	VaktorVaktorTiddataResponse struct {
-		VaktorVaktorTiddataResult []MWTTiddataResult `json:"Vaktor.Vaktor_TiddataResult"`
-	} `json:"Vaktor.Vaktor_TiddataResponse"`
+type MWTRespons struct {
+	NavID      string   `json:"nav_id"`
+	ResourceID string   `json:"resource_id"`
+	LederNavID string   `json:"leder_nav_id"`
+	LederNavn  string   `json:"leder_navn"`
+	Dager      []MWTDag `json:"dager"`
 }
