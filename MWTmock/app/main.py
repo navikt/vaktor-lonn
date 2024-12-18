@@ -67,7 +67,7 @@ def generate_dager(fra_dato, til_dato):
     return json.dumps(timesheet, ensure_ascii=False)
 
 
-@app.get("/json/Hr/Vaktor/Vaktor_Tiddata")
+@app.get("/ords/dvh/dt_hr/vaktor/tiddata")
 def mock(ident: str, fra_dato: str, til_dato: str):
     return {
         "nav_id": "123456",
