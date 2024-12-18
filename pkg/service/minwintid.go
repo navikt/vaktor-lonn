@@ -25,23 +25,23 @@ const (
 	vaktorEndpoint  = "http://vaktor-plan/api/v1/salaries/"
 )
 
-func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd time.Time, handler Handler) (models.MWTResponse, error) {
+func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd time.Time, handler Handler) (models.MWTTiddataResult, error) {
 	config := handler.MinWinTidConfig
 	req, err := http.NewRequest(http.MethodGet, config.Endpoint, nil)
 	if err != nil {
-		return models.MWTResponse{}, err
+		return models.MWTTiddataResult{}, err
 	}
 
 	bearerToken, err := config.BearerClient.GenerateBearerToken()
 	if err != nil {
-		return models.MWTResponse{}, err
+		return models.MWTTiddataResult{}, err
 	}
 
 	req.Header.Set("Authorization", fmt.Sprintf("bearer %v", bearerToken))
 	values := req.URL.Query()
 	values.Add("nav_id", ident)
-	values.Add("fra_dato", periodBegin.Format(calculator.VaktorDateFormat))
-	values.Add("til_dato", periodEnd.Format(calculator.VaktorDateFormat))
+	values.Add("fra_dato", periodBegin.Format(DateTimeFormat))
+	values.Add("til_dato", periodEnd.Format(DateTimeFormat))
 	req.URL.RawQuery = values.Encode()
 
 	backoffSchedule := []time.Duration{
@@ -62,24 +62,30 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 		}
 
 		if err != nil {
-			return models.MWTResponse{}, err
+			return models.MWTTiddataResult{}, err
 		}
 	}
 
 	if resp.StatusCode != http.StatusOK {
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return models.MWTResponse{}, err
+			return models.MWTTiddataResult{}, err
 		}
 
-		return models.MWTResponse{}, fmt.Errorf("minWinTid returned http(%v): %v", resp.StatusCode, string(body))
+		return models.MWTTiddataResult{}, fmt.Errorf("minWinTid returned http(%v): %v", resp.StatusCode, string(body))
 	}
 
-	var response models.MWTResponse
+	var response models.MWTTiddataResult
 	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
-		return models.MWTResponse{}, err
+		return models.MWTTiddataResult{}, fmt.Errorf("decoding MinWinTid response: %w", err)
 	}
+
+	dager := response.Dager
+	sort.SliceStable(dager, func(i, j int) bool {
+		return dager[i].Dato < dager[j].Dato
+	})
+	response.Dager = dager
 
 	return response, nil
 }
@@ -393,35 +399,7 @@ func postToPlan(handler Handler, payload []byte, url, bearerToken string) error 
 	return nil
 }
 
-func decodeMinWinTid(response models.MWTResponse) (models.MWTTiddataResult, error) {
-	results := response.VaktorVaktorTiddataResponse.VaktorVaktorTiddataResult
-	if len(results) != 1 {
-		return models.MWTTiddataResult{}, fmt.Errorf("not enough data from MinWinTid, missing TiddataResult")
-	}
-
-	result := results[0]
-	var dager []models.MWTDag
-	err := json.Unmarshal([]byte(result.VaktorDager), &dager)
-	if err != nil {
-		return models.MWTTiddataResult{}, err
-	}
-
-	sort.SliceStable(dager, func(i, j int) bool {
-		return dager[i].Dato < dager[j].Dato
-	})
-
-	result.Dager = dager
-	result.VaktorDager = ""
-
-	return result, err
-}
-
-func calculateSalary(beredskapsvakt gensql.Beredskapsvakt, response models.MWTResponse) (*models.Payroll, string, error) {
-	tiddataResult, err := decodeMinWinTid(response)
-	if err != nil {
-		return nil, "Ukjent data fra MinWinTid", fmt.Errorf("decoding MinWinTid response: %w", err)
-	}
-
+func calculateSalary(beredskapsvakt gensql.Beredskapsvakt, tiddataResult models.MWTTiddataResult) (*models.Payroll, string, error) {
 	if err := isTimesheetApproved(tiddataResult.Dager); err != nil {
 		return nil, "Timelisten din er ikke godkjent", nil
 	}

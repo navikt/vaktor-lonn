@@ -1,0 +1,304 @@
+{
+  "nav_id": "123456",
+  "resource_id": "E123456",
+  "leder_resource_id": "654321",
+  "leder_nav_id": "M654321",
+  "leder_navn": "Kalpana, Bran",
+  "leder_epost": "Bran.Kalpana@nav.no",
+  "dager": [
+    {
+      "dato": "2022-10-12T00:00:00",
+      "skjema_tid": 7.75,
+      "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+      "godkjent": 2,
+      "virkedag": "Virkedag",
+      "stemplinger": [
+        {
+          "stempling_tid": "2022-10-12T08:00:00",
+          "navn": "Inn",
+          "type": "B1",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2022-10-12T16:00:00",
+          "navn": "Ut",
+          "type": "B2",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        }
+      ],
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 964000
+        }
+      ]
+    },
+    {
+      "dato": "2022-10-19T00:00:00",
+      "skjema_tid": 7.75,
+      "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+      "godkjent": 2,
+      "virkedag": "Virkedag",
+      "stemplinger": [
+        {
+          "stempling_tid": "2022-10-19T08:00:00",
+          "navn": "Inn",
+          "type": "B1",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2022-10-19T17:00:00",
+          "navn": "Ut",
+          "type": "B2",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        }
+      ],
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 964000
+        }
+      ]
+    },
+    {
+      "dato": "2022-10-18T00:00:00",
+      "skjema_tid": 7.75,
+      "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+      "godkjent": 2,
+      "virkedag": "Virkedag",
+      "stemplinger": [
+        {
+          "stempling_tid": "2022-10-18T08:30:00",
+          "navn": "Inn",
+          "type": "B1",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2022-10-19T00:29:59",
+          "navn": "Overtid                 ",
+          "type": "B6",
+          "fravar_kode": 1,
+          "fravar_kode_navn": "Inne",
+          "overtid_begrunnelse": "Oppringt vakt, feilsøk, BV"
+        },
+        {
+          "stempling_tid": "2022-10-18T20:59:59",
+          "navn": "Overtid                 ",
+          "type": "B6",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": "Endring i prod, BV"
+        },
+        {
+          "stempling_tid": "2022-10-19T00:30:00",
+          "navn": "Ut",
+          "type": "B2",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2022-10-18T23:30:00",
+          "navn": "Inn",
+          "type": "B1",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2022-10-18T21:00:00",
+          "navn": "Ut",
+          "type": "B2",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2022-10-18T20:00:00",
+          "navn": "Inn",
+          "type": "B1",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2022-10-18T17:00:00",
+          "navn": "Ut",
+          "type": "B2",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        }
+      ],
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 964000
+        }
+      ]
+    },
+    {
+      "dato": "2022-10-17T00:00:00",
+      "skjema_tid": 7.75,
+      "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+      "godkjent": 2,
+      "virkedag": "Virkedag",
+      "stemplinger": [
+        {
+          "stempling_tid": "2022-10-17T08:45:00",
+          "navn": "Inn",
+          "type": "B1",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2022-10-17T16:30:00",
+          "navn": "Ut",
+          "type": "B2",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        }
+      ],
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 964000
+        }
+      ]
+    },
+    {
+      "dato": "2022-10-16T00:00:00",
+      "skjema_tid": 0,
+      "skjema_navn": "BV Søndag IKT",
+      "godkjent": 2,
+      "virkedag": "Søndag",
+      "stemplinger": null,
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 964000
+        }
+      ]
+    },
+    {
+      "dato": "2022-10-15T00:00:00",
+      "skjema_tid": 0,
+      "skjema_navn": "BV Lørdag IKT",
+      "godkjent": 2,
+      "virkedag": "Lørdag",
+      "stemplinger": null,
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 964000
+        }
+      ]
+    },
+    {
+      "dato": "2022-10-14T00:00:00",
+      "skjema_tid": 7.75,
+      "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+      "godkjent": 2,
+      "virkedag": "Virkedag",
+      "stemplinger": [
+        {
+          "stempling_tid": "2022-10-14T08:00:00",
+          "navn": "Inn",
+          "type": "B1",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2022-10-14T14:00:00",
+          "navn": "Ut",
+          "type": "B2",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        }
+      ],
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 964000
+        }
+      ]
+    },
+    {
+      "dato": "2022-10-13T00:00:00",
+      "skjema_tid": 7.75,
+      "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+      "godkjent": 2,
+      "virkedag": "Virkedag",
+      "stemplinger": [
+        {
+          "stempling_tid": "2022-10-13T07:45:00",
+          "navn": "Inn",
+          "type": "B1",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        },
+        {
+          "stempling_tid": "2022-10-13T18:00:00",
+          "navn": "Ut",
+          "type": "B2",
+          "fravar_kode": 0,
+          "fravar_kode_navn": "Ute",
+          "overtid_begrunnelse": null
+        }
+      ],
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 964000
+        }
+      ]
+    }
+  ]
+}

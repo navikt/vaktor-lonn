@@ -1,0 +1,154 @@
+{
+  "nav_id": "123456",
+  "resource_id": "E123456",
+  "leder_resource_id": "654321",
+  "leder_nav_id": "M654321",
+  "leder_navn": "Kalpana, Bran",
+  "leder_epost": "Bran.Kalpana@nav.no",
+  "dager": [
+    {
+      "dato": "2022-10-05T00:00:00",
+      "skjema_tid": 7.75,
+      "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+      "godkjent": 4,
+      "virkedag": "Virkedag",
+      "stemplinger": null,
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 814900
+        }
+      ]
+    },
+    {
+      "dato": "2022-10-12T00:00:00",
+      "skjema_tid": 7.75,
+      "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+      "godkjent": 4,
+      "virkedag": "Virkedag",
+      "stemplinger": null,
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 814900
+        }
+      ]
+    },
+    {
+      "dato": "2022-10-11T00:00:00",
+      "skjema_tid": 7.75,
+      "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+      "godkjent": 4,
+      "virkedag": "Virkedag",
+      "stemplinger": null,
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 814900
+        }
+      ]
+    },
+    {
+      "dato": "2022-10-10T00:00:00",
+      "skjema_tid": 7.75,
+      "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+      "godkjent": 4,
+      "virkedag": "Virkedag",
+      "stemplinger": null,
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 814900
+        }
+      ]
+    },
+    {
+      "dato": "2022-10-09T00:00:00",
+      "skjema_tid": 0,
+      "skjema_navn": "BV Søndag IKT",
+      "godkjent": 4,
+      "virkedag": "Søndag",
+      "stemplinger": null,
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 814900
+        }
+      ]
+    },
+    {
+      "dato": "2022-10-08T00:00:00",
+      "skjema_tid": 0,
+      "skjema_navn": "BV Lørdag IKT",
+      "godkjent": 4,
+      "virkedag": "Lørdag",
+      "stemplinger": null,
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 814900
+        }
+      ]
+    },
+    {
+      "dato": "2022-10-06T00:00:00",
+      "skjema_tid": 7.75,
+      "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+      "godkjent": 4,
+      "virkedag": "Virkedag",
+      "stemplinger": null,
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 814900
+        }
+      ]
+    },
+    {
+      "dato": "2022-10-07T00:00:00",
+      "skjema_tid": 7.75,
+      "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+      "godkjent": 4,
+      "virkedag": "Virkedag",
+      "stemplinger": null,
+      "stillinger": [
+        {
+          "post_id": "258",
+          "parttime_pct": 100,
+          "koststed": "000000",
+          "produkt": "000000",
+          "oppgave": "000000",
+          "rate_k001": 814900
+        }
+      ]
+    }
+  ]
+}
