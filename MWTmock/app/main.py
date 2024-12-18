@@ -80,7 +80,7 @@ def mock(ident: str, fra_dato: str, til_dato: str):
     }
 
 
-@app.get("/ords/dvh/oauth/token")
+@app.post("/ords/dvh/oauth/token")
 def token():
     return {
         "access_token": "super-secret-not-fake-token",
