@@ -13,8 +13,8 @@ def read_root():
 
 
 def generate_dager(fra_dato, til_dato):
-    fra = datetime.strptime(fra_dato, '%Y-%m-%d')
-    til = datetime.strptime(til_dato, '%Y-%m-%d')
+    fra = datetime.strptime(fra_dato, '%Y-%m-%dT%H:%M:%S')
+    til = datetime.strptime(til_dato, '%Y-%m-%dT%H:%M:%S')
     salary = random.randint(400_000, 800_000)
 
     timesheet = []
