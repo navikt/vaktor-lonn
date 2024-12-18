@@ -40,8 +40,6 @@ spec:
       value: http://vaktor-mwt-mock/ords/dvh/oauth/token
     - name: MINWINTID_INTERVAL
       value: 5m
-  envFrom:
-    - secret: vaktor-lonn
   gcp:
     sqlInstances:
       - databases:
