@@ -93,7 +93,7 @@
         },
         {
           "stempling_tid": "2022-10-19T00:29:59",
-          "navn": "Overtid                 ",
+          "navn": "Overtid",
           "type": "B6",
           "fravar_kode": 1,
           "fravar_kode_navn": "Inne",
@@ -101,7 +101,7 @@
         },
         {
           "stempling_tid": "2022-10-18T20:59:59",
-          "navn": "Overtid                 ",
+          "navn": "Overtid",
           "type": "B6",
           "fravar_kode": 0,
           "fravar_kode_navn": "Ute",

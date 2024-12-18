@@ -199,11 +199,11 @@ func formatTimesheet(days []models.MWTDag) (map[string]models.TimeSheet, []zap.F
 				}
 
 				// Dette er en stempling med overtid
-				if utStempling.Retning == "Overtid                 " && utStempling.Type == "B6" {
+				if utStempling.Retning == "Overtid" && utStempling.Type == "B6" {
 					nesteStempling := utStempling
 					var overtimeBecauseOfGuardDuty bool
 					// Man kan ha flere overtidsstemplinger etter hverandre, så vi må sjekke om minst en av dem er BV
-					for nesteStempling.Retning == "Overtid                 " && nesteStempling.Type == "B6" {
+					for nesteStempling.Retning == "Overtid" && nesteStempling.Type == "B6" {
 						if !overtimeBecauseOfGuardDuty {
 							overtimeBecauseOfGuardDuty = strings.Contains(strings.ToLower(nesteStempling.OvertidBegrunnelse), "bv")
 						}

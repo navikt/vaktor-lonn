@@ -230,7 +230,7 @@ func Test_formatTimesheet(t *testing.T) {
 							},
 							{
 								StemplingTid: "2023-02-14T22:29:59",
-								Retning:      "Overtid                 ",
+								Retning:      "Overtid",
 								Type:         "B6",
 								Fravarkode:   0,
 							},
@@ -295,7 +295,7 @@ func Test_formatTimesheet(t *testing.T) {
 							},
 							{
 								StemplingTid:       "2023-02-04T22:29:59",
-								Retning:            "Overtid                 ",
+								Retning:            "Overtid",
 								Type:               "B6",
 								Fravarkode:         0,
 								OvertidBegrunnelse: "BV",
@@ -331,7 +331,7 @@ func Test_formatTimesheet(t *testing.T) {
 							},
 							{
 								StemplingTid:       "2023-02-11T22:29:59",
-								Retning:            "Overtid                 ",
+								Retning:            "Overtid",
 								Type:               "B6",
 								Fravarkode:         0,
 								OvertidBegrunnelse: "bv",
@@ -411,7 +411,7 @@ func Test_formatTimesheet(t *testing.T) {
 							},
 							{
 								StemplingTid: "2022-09-17T22:29:59",
-								Retning:      "Overtid                 ",
+								Retning:      "Overtid",
 								Type:         "B6",
 								Fravarkode:   0,
 							},
@@ -446,7 +446,7 @@ func Test_formatTimesheet(t *testing.T) {
 							},
 							{
 								StemplingTid: "2022-09-24T22:29:59",
-								Retning:      "Overtid                 ",
+								Retning:      "Overtid",
 								Type:         "B6",
 								Fravarkode:   0,
 							},
@@ -703,7 +703,7 @@ func Test_formatTimesheet(t *testing.T) {
 							},
 							{
 								StemplingTid:       "2022-09-15T00:34:24",
-								Retning:            "Overtid                 ",
+								Retning:            "Overtid",
 								Type:               "B6",
 								Fravarkode:         0,
 								OvertidBegrunnelse: "BV - IKT-478705 DVH",
@@ -723,7 +723,7 @@ func Test_formatTimesheet(t *testing.T) {
 							},
 							{
 								StemplingTid:       "2022-09-15T03:31:00",
-								Retning:            "Overtid                 ",
+								Retning:            "Overtid",
 								Type:               "B6",
 								Fravarkode:         0,
 								OvertidBegrunnelse: "BV",
@@ -819,7 +819,7 @@ func Test_formatTimesheet(t *testing.T) {
 							},
 							{
 								StemplingTid:       "2022-09-15T23:31:00",
-								Retning:            "Overtid                 ",
+								Retning:            "Overtid",
 								Type:               "B6",
 								Fravarkode:         0,
 								OvertidBegrunnelse: "BV",
@@ -898,7 +898,7 @@ func Test_formatTimesheet(t *testing.T) {
 							},
 							{
 								StemplingTid:       "2022-09-15T23:31:00",
-								Retning:            "Overtid                 ",
+								Retning:            "Overtid",
 								Type:               "B6",
 								Fravarkode:         0,
 								OvertidBegrunnelse: "BV",
@@ -1016,7 +1016,7 @@ func Test_formatTimesheet(t *testing.T) {
 							},
 							{
 								StemplingTid:       "2022-10-25T00:34:24",
-								Retning:            "Overtid                 ",
+								Retning:            "Overtid",
 								Type:               "B6",
 								Fravarkode:         0,
 								OvertidBegrunnelse: "BV - IKT-478705 DVH",
@@ -1065,7 +1065,7 @@ func Test_formatTimesheet(t *testing.T) {
 							},
 							{
 								StemplingTid:       "2022-10-26T00:45:34",
-								Retning:            "Overtid                 ",
+								Retning:            "Overtid",
 								Type:               "B6",
 								Fravarkode:         1,
 								OvertidBegrunnelse: "BV - Feilsøking ifbm høy load på CICSP460, IKT-479284 DVH, IKT-479282 KUHR",
@@ -1206,7 +1206,7 @@ func Test_formatTimesheet(t *testing.T) {
 							},
 							{
 								StemplingTid:       "2022-10-18T20:59:59",
-								Retning:            "Overtid                 ",
+								Retning:            "Overtid",
 								Type:               "B6",
 								Fravarkode:         0,
 								OvertidBegrunnelse: "BV",
@@ -1225,7 +1225,7 @@ func Test_formatTimesheet(t *testing.T) {
 							},
 							{
 								StemplingTid:       "2022-10-19T00:29:59",
-								Retning:            "Overtid                 ",
+								Retning:            "Overtid",
 								Type:               "B6",
 								Fravarkode:         1,
 								OvertidBegrunnelse: "BV",
