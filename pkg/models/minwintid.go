@@ -38,7 +38,7 @@ type MWTStempling struct {
 	StemplingTid       string `json:"stempling_tid"`
 	Retning            string `json:"navn"`
 	Type               string `json:"type"`
-	FravarKode         int    `json:"fravar_kode"`
+	Fravarkode         int    `json:"fravar_kode"`
 	OvertidBegrunnelse string `json:"overtid_begrunnelse"`
 }
 
@@ -60,10 +60,10 @@ type MWTDag struct {
 	Stillinger  []MWTStilling  `json:"stillinger"`
 }
 
-type MWTTiddataResult struct {
-	VaktorNavId      string   `json:"nav_id"`
-	VaktorResourceId string   `json:"resource_id"`
-	VaktorLederNavId string   `json:"leder_nav_id"`
-	VaktorLederNavn  string   `json:"leder_navn"`
-	Dager            []MWTDag `json:"dager"`
+type MWTRespons struct {
+	NavID      string   `json:"nav_id"`
+	ResourceID string   `json:"resource_id"`
+	LederNavID string   `json:"leder_nav_id"`
+	LederNavn  string   `json:"leder_navn"`
+	Dager      []MWTDag `json:"dager"`
 }

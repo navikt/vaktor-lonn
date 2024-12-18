@@ -25,16 +25,16 @@ const (
 	vaktorEndpoint  = "http://vaktor-plan/api/v1/salaries/"
 )
 
-func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd time.Time, handler Handler) (models.MWTTiddataResult, error) {
+func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd time.Time, handler Handler) (models.MWTRespons, error) {
 	config := handler.MinWinTidConfig
 	req, err := http.NewRequest(http.MethodGet, config.Endpoint, nil)
 	if err != nil {
-		return models.MWTTiddataResult{}, err
+		return models.MWTRespons{}, err
 	}
 
 	bearerToken, err := config.BearerClient.GenerateBearerToken()
 	if err != nil {
-		return models.MWTTiddataResult{}, err
+		return models.MWTRespons{}, err
 	}
 
 	req.Header.Set("Authorization", fmt.Sprintf("bearer %v", bearerToken))
@@ -62,23 +62,23 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 		}
 
 		if err != nil {
-			return models.MWTTiddataResult{}, err
+			return models.MWTRespons{}, err
 		}
 	}
 
 	if resp.StatusCode != http.StatusOK {
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return models.MWTTiddataResult{}, err
+			return models.MWTRespons{}, err
 		}
 
-		return models.MWTTiddataResult{}, fmt.Errorf("minWinTid returned http(%v): %v", resp.StatusCode, string(body))
+		return models.MWTRespons{}, fmt.Errorf("minWinTid returned http(%v): %v", resp.StatusCode, string(body))
 	}
 
-	var response models.MWTTiddataResult
+	var response models.MWTRespons
 	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
-		return models.MWTTiddataResult{}, fmt.Errorf("decoding MinWinTid response: %w", err)
+		return models.MWTRespons{}, fmt.Errorf("decoding MinWinTid response: %w", err)
 	}
 
 	dager := response.Dager
@@ -104,7 +104,7 @@ func isThereRegisteredVacationAtTheSameTimeAsGuardDuty(days []models.MWTDag, vak
 	for _, day := range days {
 		for _, stempling := range day.Stemplinger {
 			// Denne tar ikke høyde for planlagt ferie over lengre tid
-			if stempling.FravarKode == fravarKodeFerie {
+			if stempling.Fravarkode == fravarKodeFerie {
 				date, err := time.Parse(DateTimeFormat, stempling.StemplingTid)
 				if err != nil {
 					return false, err
@@ -399,7 +399,7 @@ func postToPlan(handler Handler, payload []byte, url, bearerToken string) error 
 	return nil
 }
 
-func calculateSalary(beredskapsvakt gensql.Beredskapsvakt, tiddataResult models.MWTTiddataResult) (*models.Payroll, string, error) {
+func calculateSalary(beredskapsvakt gensql.Beredskapsvakt, tiddataResult models.MWTRespons) (*models.Payroll, string, error) {
 	if err := isTimesheetApproved(tiddataResult.Dager); err != nil {
 		return nil, "Timelisten din er ikke godkjent", nil
 	}
@@ -423,9 +423,9 @@ func calculateSalary(beredskapsvakt gensql.Beredskapsvakt, tiddataResult models.
 	}
 
 	minWinTid := models.MinWinTid{
-		ResourceID:   tiddataResult.VaktorNavId,
-		ApproverID:   tiddataResult.VaktorLederNavId,
-		ApproverName: tiddataResult.VaktorLederNavn,
+		ResourceID:   tiddataResult.NavID,
+		ApproverID:   tiddataResult.LederNavID,
+		ApproverName: tiddataResult.LederNavn,
 		Satser: models.Satser{
 			Helg:    decimal.NewFromInt(65),
 			Dag:     decimal.NewFromInt(15),
