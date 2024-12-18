@@ -68,10 +68,10 @@ def generate_dager(fra_dato, til_dato):
 
 
 @app.get("/ords/dvh/dt_hr/vaktor/tiddata")
-def mock(ident: str, fra_dato: str, til_dato: str):
+def mock(nav_id: str, fra_dato: str, til_dato: str):
     return {
         "nav_id": "123456",
-        "resource_id": ident,
+        "resource_id": nav_id,
         "leder_resource_id": "654321",
         "leder_nav_id": "M654321",
         "leder_navn": "Kalpana, Bran",
