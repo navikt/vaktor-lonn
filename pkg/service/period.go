@@ -34,7 +34,6 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: Hvordan kan vi validere input?
 	var plan models.Vaktplan
 	err = json.Unmarshal(body, &plan)
 	if err != nil {

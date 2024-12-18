@@ -97,7 +97,7 @@ func isTimesheetApproved(days []models.MWTDag) error {
 func isThereRegisteredVacationAtTheSameTimeAsGuardDuty(days []models.MWTDag, vaktplan models.Vaktplan) (bool, error) {
 	for _, day := range days {
 		for _, stempling := range day.Stemplinger {
-			// TODO: Denne tar ikke høyde for planlagt ferie over lengre tid
+			// Denne tar ikke høyde for planlagt ferie over lengre tid
 			if stempling.FravarKode == fravarKodeFerie {
 				date, err := time.Parse(DateTimeFormat, stempling.StemplingTid)
 				if err != nil {

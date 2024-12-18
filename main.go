@@ -84,9 +84,9 @@ func main() {
 		return
 	}
 
-	context, cancel := signal.NotifyContext(context.Background(), syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	defer cancel()
-	handler.Context = context
+	handler.Context = ctx
 
 	go service.Run(handler)
 
