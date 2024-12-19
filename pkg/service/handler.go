@@ -39,7 +39,7 @@ func NewHandler(logger *zap.Logger, dbString,
 	}
 
 	handler := Handler{
-		BearerClient: auth.New(azureClientId, azureClientSecret, azureOpenIdTokenEndpoint),
+		BearerClient: auth.New(azureClientId, azureClientSecret, azureOpenIdTokenEndpoint, "https://graph.microsoft.com/.default"),
 		DB:           db,
 		Client: http.Client{
 			Timeout: 10 * time.Second,

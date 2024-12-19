@@ -37,7 +37,7 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 		return models.MWTRespons{}, err
 	}
 
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", bearerToken))
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", bearerToken))
 	values := req.URL.Query()
 	values.Add("nav_id", ident)
 	values.Add("fra_dato", periodBegin.Format(DateTimeFormat))

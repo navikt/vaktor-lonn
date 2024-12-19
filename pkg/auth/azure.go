@@ -19,12 +19,14 @@ type BearerClient struct {
 	Body     string
 }
 
-func New(clientId, clientSecret, authEndpoint string) BearerClient {
+func New(clientId, clientSecret, authEndpoint, scope string) BearerClient {
 	values := url.Values{}
 	values.Add("client_id", clientId)
 	values.Add("client_secret", clientSecret)
 	values.Add("grant_type", "client_credentials")
-	values.Add("scope", "https://graph.microsoft.com/.default")
+	if scope != "" {
+		values.Add("scope", scope)
+	})
 
 	return BearerClient{
 		Client: &http.Client{
