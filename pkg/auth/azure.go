@@ -26,7 +26,7 @@ func New(clientId, clientSecret, authEndpoint, scope string) BearerClient {
 	values.Add("grant_type", "client_credentials")
 	if scope != "" {
 		values.Add("scope", scope)
-	})
+	}
 
 	return BearerClient{
 		Client: &http.Client{
