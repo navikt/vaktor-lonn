@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -33,7 +34,7 @@ type Handler struct {
 func NewHandler(logger *zap.Logger, dbString,
 	azureClientId, azureClientSecret, azureOpenIdTokenEndpoint, vaktorPlanEndpoint string, minWinTidConfig MinWinTidConfig) (Handler, error) {
 
-	db, err := sql.Open("pgx", dbString)
+	db, err := openDB(logger, dbString)
 	if err != nil {
 		return Handler{}, err
 	}
@@ -51,4 +52,28 @@ func NewHandler(logger *zap.Logger, dbString,
 	}
 
 	return handler, nil
+}
+
+func openDB(logger *zap.Logger, dbString string) (*sql.DB, error) {
+	var db *sql.DB
+	var err error
+	maxRetries := 5
+	backoff := time.Second
+
+	for i := 0; i < maxRetries; i++ {
+		db, err = sql.Open("pgx", dbString)
+		if err == nil {
+			break
+		}
+
+		logger.Info("Failed to open database connection, retrying...", zap.Error(err))
+		time.Sleep(backoff)
+		backoff *= 2
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to open database connection after retries: %s", err)
+	}
+
+	return db, nil
 }
