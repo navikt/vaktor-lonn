@@ -29,7 +29,7 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 
 	bearerToken, err := config.BearerClient.GenerateBearerToken()
 	if err != nil {
-		return models.MWTRespons{}, err
+		return models.MWTRespons{}, fmt.Errorf("generating bearer token: %v", err)
 	}
 
 	req, err := http.NewRequest(http.MethodGet, config.Endpoint, nil)
@@ -62,7 +62,7 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 		}
 
 		if err != nil {
-			return models.MWTRespons{}, err
+			return models.MWTRespons{}, fmt.Errorf("failed three times to connect to MinWinTid: %v", err)
 		}
 	}
 
