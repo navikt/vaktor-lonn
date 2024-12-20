@@ -40,8 +40,8 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", bearerToken))
 	values := req.URL.Query()
 	values.Add("nav_id", ident)
-	values.Add("fra_dato", periodBegin.Format(DateTimeFormat))
-	values.Add("til_dato", periodEnd.Format(DateTimeFormat))
+	values.Add("fra_dato", periodBegin.Format("2006-01-02"))
+	values.Add("til_dato", periodEnd.Format("2006-01-02"))
 	req.URL.RawQuery = values.Encode()
 
 	backoffSchedule := []time.Duration{
