@@ -444,6 +444,8 @@ func calculateSalary(beredskapsvakt gensql.Beredskapsvakt, tiddataResult models.
 }
 
 func handleTransaction(handler Handler, beredskapsvakt gensql.Beredskapsvakt) {
+	handler.Log.Info("Handling transaction", zap.String(vaktplanId, beredskapsvakt.ID.String()))
+
 	bearerToken, err := handler.BearerClient.GenerateBearerToken()
 	if err != nil {
 		handler.Log.Error("Problem generating bearer token", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
