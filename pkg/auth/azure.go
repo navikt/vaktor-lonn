@@ -3,7 +3,6 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -55,12 +54,7 @@ func (bc BearerClient) GenerateBearerToken() (string, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		bodyBytes, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return "", fmt.Errorf("httpStatus: %v (reading body failed)", resp.StatusCode)
-		}
-
-		return "", fmt.Errorf("httpStatus: %v, %s", resp.StatusCode, string(bodyBytes))
+		return "", fmt.Errorf("httpStatus: %v", resp.StatusCode)
 	}
 
 	var tokenRespons TokenResponse
