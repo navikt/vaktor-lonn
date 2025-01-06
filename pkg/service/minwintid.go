@@ -476,8 +476,7 @@ func handleTransaction(handler Handler, beredskapsvakt gensql.Beredskapsvakt) {
 		return
 	}
 
-	err = handler.Queries.DeletePlan(handler.Context, beredskapsvakt.ID)
-	if err != nil {
+	if err := handler.Queries.DeletePlan(handler.Context, beredskapsvakt.ID); err != nil {
 		handler.Log.Error("Failed while deleting beredskapsvakt", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
 		return
 	}
