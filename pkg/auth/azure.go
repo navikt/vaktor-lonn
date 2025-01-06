@@ -55,8 +55,8 @@ func (bc BearerClient) GenerateBearerToken() (string, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		bodyBytes, readErr := io.ReadAll(resp.Body)
-		if readErr != nil {
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
 			return "", fmt.Errorf("httpStatus: %v (reading body failed)", resp.StatusCode)
 		}
 
