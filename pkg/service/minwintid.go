@@ -449,14 +449,12 @@ func handleTransaction(handler Handler, beredskapsvakt gensql.Beredskapsvakt) {
 	if err != nil {
 		handler.Log.Error("Problem generating bearer token", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
 	}
-	handler.Log.Info("Generated bearer token", zap.String(vaktplanId, beredskapsvakt.ID.String()))
 
 	response, err := getTimesheetFromMinWinTid(beredskapsvakt.Ident, beredskapsvakt.PeriodBegin, beredskapsvakt.PeriodEnd, handler)
 	if err != nil {
 		handler.Log.Error("Failed while retrieving data from MinWinTid", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
 		return
 	}
-	handler.Log.Info("Got timesheet from MinWinTid", zap.String(vaktplanId, beredskapsvakt.ID.String()))
 
 	payroll, message, err := calculateSalary(beredskapsvakt, response)
 	if err != nil || message != "" {
@@ -477,13 +475,11 @@ func handleTransaction(handler Handler, beredskapsvakt gensql.Beredskapsvakt) {
 		handler.Log.Error("Failed while posting to Vaktor Plan", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
 		return
 	}
-	handler.Log.Info("Posted to Vaktor Plan", zap.String(vaktplanId, beredskapsvakt.ID.String()))
 
 	if err := handler.Queries.DeletePlan(handler.Context, beredskapsvakt.ID); err != nil {
 		handler.Log.Error("Failed while deleting beredskapsvakt", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
 		return
 	}
-	handler.Log.Info("Deleted beredskapsvakt", zap.String(vaktplanId, beredskapsvakt.ID.String()))
 }
 
 func handleTransactions(handler Handler) error {
