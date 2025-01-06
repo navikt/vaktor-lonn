@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
 )
 
@@ -13,9 +15,13 @@ type BasicAuthClient struct {
 	Endpoint     string
 	ClientID     string
 	ClientSecret string
+	Body         string
 }
 
 func NewWithBasicAuth(clientId, clientSecret, authEndpoint string) BasicAuthClient {
+	values := url.Values{}
+	values.Add("grant_type", "client_credentials")
+
 	return BasicAuthClient{
 		Client: &http.Client{
 			Timeout: 10 * time.Second,
@@ -23,6 +29,7 @@ func NewWithBasicAuth(clientId, clientSecret, authEndpoint string) BasicAuthClie
 		Endpoint:     authEndpoint,
 		ClientID:     clientId,
 		ClientSecret: clientSecret,
+		Body:         values.Encode(),
 	}
 }
 
@@ -30,7 +37,7 @@ func (bc BasicAuthClient) GenerateBearerToken() (string, error) {
 	request, err := http.NewRequest(
 		http.MethodGet,
 		bc.Endpoint,
-		nil)
+		strings.NewReader(bc.Body))
 	if err != nil {
 		return "", err
 	}
