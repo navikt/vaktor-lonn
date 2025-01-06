@@ -43,6 +43,7 @@ func (bc BasicAuthClient) GenerateBearerToken() (string, error) {
 	}
 
 	request.Header.Set("Accept", "application/problem+json")
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	request.SetBasicAuth(bc.ClientID, bc.ClientSecret)
 
 	return handleResponse(bc.Client.Do(request))
