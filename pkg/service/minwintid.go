@@ -76,8 +76,7 @@ func getTimesheetFromMinWinTid(ident string, periodBegin time.Time, periodEnd ti
 	}
 
 	var response models.MWTRespons
-	err = json.NewDecoder(resp.Body).Decode(&response)
-	if err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		return models.MWTRespons{}, fmt.Errorf("decoding MinWinTid response: %w", err)
 	}
 
