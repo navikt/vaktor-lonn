@@ -35,7 +35,7 @@ func NewWithBasicAuth(clientId, clientSecret, authEndpoint string) BasicAuthClie
 
 func (bc BasicAuthClient) GenerateBearerToken() (string, error) {
 	request, err := http.NewRequest(
-		http.MethodGet,
+		http.MethodPost,
 		bc.Endpoint,
 		strings.NewReader(bc.Body))
 	if err != nil {
