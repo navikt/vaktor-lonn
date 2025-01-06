@@ -3,6 +3,7 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -46,6 +47,8 @@ func (bc BearerClient) GenerateBearerToken() (string, error) {
 		return "", err
 	}
 
+	request.Header.Set("Accept", "application/problem+json")
+
 	resp, err := bc.Client.Do(request)
 	if err != nil {
 		return "", err
@@ -54,7 +57,12 @@ func (bc BearerClient) GenerateBearerToken() (string, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("httpStatus: %v", resp.StatusCode)
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return "", fmt.Errorf("httpStatus: %v (reading body failed)", resp.StatusCode)
+		}
+
+		return "", fmt.Errorf("httpStatus: %v, %s", resp.StatusCode, string(bodyBytes))
 	}
 
 	var tokenRespons TokenResponse
