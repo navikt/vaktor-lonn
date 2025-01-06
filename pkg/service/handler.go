@@ -15,7 +15,7 @@ import (
 )
 
 type MinWinTidConfig struct {
-	BearerClient   auth.BearerClient
+	BearerClient   auth.BasicAuthClient
 	Endpoint       string
 	TickerInterval time.Duration
 }

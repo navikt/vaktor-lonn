@@ -39,7 +39,7 @@ func onStart(logger *zap.Logger) (service.Handler, error) {
 	}
 
 	minWinTidConfig := service.MinWinTidConfig{
-		BearerClient:   auth.New(minWinTidClientID, minWinTidSecret, minWinTidORDSEndpoint, ""),
+		BearerClient:   auth.NewWithBasicAuth(minWinTidClientID, minWinTidSecret, minWinTidORDSEndpoint),
 		Endpoint:       minWinTidEndpoint,
 		TickerInterval: minWinTidTicketInterval,
 	}

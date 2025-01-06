@@ -1,9 +1,6 @@
 package auth
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -25,9 +22,7 @@ func New(clientId, clientSecret, authEndpoint, scope string) BearerClient {
 	values.Add("client_id", clientId)
 	values.Add("client_secret", clientSecret)
 	values.Add("grant_type", "client_credentials")
-	if scope != "" {
-		values.Add("scope", scope)
-	}
+	values.Add("scope", scope)
 
 	return BearerClient{
 		Client: &http.Client{
@@ -49,27 +44,5 @@ func (bc BearerClient) GenerateBearerToken() (string, error) {
 
 	request.Header.Set("Accept", "application/problem+json")
 
-	resp, err := bc.Client.Do(request)
-	if err != nil {
-		return "", err
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		bodyBytes, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return "", fmt.Errorf("httpStatus: %v (reading body failed)", resp.StatusCode)
-		}
-
-		return "", fmt.Errorf("httpStatus: %v, %s", resp.StatusCode, string(bodyBytes))
-	}
-
-	var tokenRespons TokenResponse
-	err = json.NewDecoder(resp.Body).Decode(&tokenRespons)
-	if err != nil {
-		return "", err
-	}
-
-	return tokenRespons.AccessToken, nil
+	return handleResponse(bc.Client.Do(request))
 }
