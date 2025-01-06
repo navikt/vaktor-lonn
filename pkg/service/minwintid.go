@@ -445,7 +445,7 @@ func calculateSalary(beredskapsvakt gensql.Beredskapsvakt, tiddataResult models.
 func handleTransaction(handler Handler, beredskapsvakt gensql.Beredskapsvakt) {
 	handler.Log.Info("Handling transaction", zap.String(vaktplanId, beredskapsvakt.ID.String()))
 
-	bearerToken, err := handler.BearerClient.GenerateBearerToken()
+	azureBearerToken, err := handler.BearerClient.GenerateBearerToken()
 	if err != nil {
 		handler.Log.Error("Problem generating bearer token", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
 	}
@@ -461,7 +461,7 @@ func handleTransaction(handler Handler, beredskapsvakt gensql.Beredskapsvakt) {
 	payroll, message, err := calculateSalary(beredskapsvakt, response)
 	if err != nil || message != "" {
 		handler.Log.Info("calculateSalary feilet, sender info til Plan", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()), zap.String("message", message))
-		if err := postError(handler, beredskapsvakt, message, bearerToken); err != nil {
+		if err := postError(handler, beredskapsvakt, message, azureBearerToken); err != nil {
 			handler.Log.Error("Failed while posting error to Vaktor Plan", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
 		}
 
@@ -473,7 +473,7 @@ func handleTransaction(handler Handler, beredskapsvakt gensql.Beredskapsvakt) {
 		return
 	}
 
-	if err := postPayroll(handler, *payroll, bearerToken); err != nil {
+	if err := postPayroll(handler, *payroll, azureBearerToken); err != nil {
 		handler.Log.Error("Failed while posting to Vaktor Plan", zap.Error(err), zap.String(vaktplanId, beredskapsvakt.ID.String()))
 		return
 	}
