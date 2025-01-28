@@ -400,7 +400,7 @@ func postToPlan(handler Handler, payload []byte, url, bearerToken string) error 
 
 func calculateSalary(beredskapsvakt gensql.Beredskapsvakt, tiddataResult models.MWTRespons) (*models.Payroll, string, error) {
 	if err := isTimesheetApproved(tiddataResult.Dager); err != nil {
-		return nil, "Timelisten din er ikke godkjent", nil
+		return nil, "Timelisten din er ikke godkjent av din personalleder i MinWinTid", nil
 	}
 
 	var vaktplan models.Vaktplan
