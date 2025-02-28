@@ -42,6 +42,16 @@ func (h Handler) Period(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(plan.Schedule) == 0 {
+		h.Log.Error("No schedule found in request")
+		_, err := fmt.Fprint(w, "{\"message\":\"No schedule found in request\"}\n")
+		if err != nil {
+			h.Log.Error("Error when returning error", zap.Error(err))
+		}
+
+		return
+	}
+
 	var dates []string
 	for key := range plan.Schedule {
 		dates = append(dates, key)
