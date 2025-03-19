@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 FROM cgr.dev/chainguard/python:latest
 WORKDIR /app
-COPY main.py main.py
 COPY --from=dev /app /app
+COPY main.py main.py
 ENV PATH="/app/venv/bin:$PATH"
-ENTRYPOINT ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+ENTRYPOINT ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
