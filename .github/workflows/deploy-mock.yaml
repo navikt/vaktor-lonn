@@ -8,13 +8,14 @@ on:
       - ".github/workflows/deploy-mock.yaml"
       - "MWTmock/**"
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   build:
     name: Build and push Docker container
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
     outputs:
       image: ${{ steps.docker-build-push.outputs.image }}
     steps:
@@ -33,6 +34,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: nais/login@v0
+        with:
+          team: vaktor
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
