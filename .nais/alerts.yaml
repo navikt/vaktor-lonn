@@ -2,16 +2,16 @@ apiVersion: "nais.io/v1"
 kind: "Alert"
 metadata:
   name: vaktor-lonn
-  namespace: navdig
+  namespace: vaktor
   labels:
-    team: navdig
+    team: vaktor
 spec:
   receivers:
     slack:
       channel: '#vaktor_alerts'
   alerts:
     - alert: HighErrorRate
-      expr: sum(rate(logd_messages_total{log_namespace="navdig",log_level=~"^(Error|Warning)$",log_app="vaktor-lonn"}[3m])) > 0
+      expr: sum(rate(logd_messages_total{log_namespace="vaktor",log_level=~"^(Error|Warning)$",log_app="vaktor-lonn"}[3m])) > 0
       for: 3m
       description: ":gasp: High error rate from Vaktor Lønn"
       action: Sjekk logger
