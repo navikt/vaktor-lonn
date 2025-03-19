@@ -49,5 +49,5 @@ spec:
       - databases:
         - name: vaktor-lonn
           envVarPrefix: DB
-        type: POSTGRES_14
+        type: POSTGRES_17
         tier: db-f1-micro
