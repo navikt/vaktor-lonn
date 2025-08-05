@@ -20,7 +20,15 @@ jobs:
       image: ${{ steps.docker-build-push.outputs.image }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for what-changed action
+      - name: Determine what to do
+        id: changed-files
+        uses: "nais/what-changed@main"
+        with:
+          files: MWTmock/nais.yaml
       - name: Push docker image to GAR
+        if: steps.changed-files.outputs.changed != 'only-inputs'
         uses: nais/docker-build-push@v0
         id: docker-build-push
         with:
@@ -34,11 +42,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: nais/login@v0
-        with:
-          team: vaktor
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
           RESOURCE: MWTmock/nais.yaml
-          VAR: image=${{ needs.build.outputs.image }}
+          WORKLOAD_IMAGE: ${{ needs.build.outputs.image }}

@@ -1,4 +1,4 @@
-FROM golang:1.24-alpine as builder
+FROM golang:1.24-alpine AS builder
 
 WORKDIR /usr/src/app
 
@@ -7,6 +7,10 @@ RUN go mod download && go mod verify
 
 COPY main.go .
 COPY pkg pkg/
+
+RUN go vet ./...
+RUN go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+RUN go test ./...
 
 RUN go build -v -o /usr/src/app/lonn
 

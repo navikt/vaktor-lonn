@@ -2,6 +2,8 @@ name: ci
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths-ignore:
       - ".github/workflows/deploy-mock.yaml"
       - "MWTmock/**"
@@ -12,29 +14,23 @@ permissions:
 
 jobs:
   test:
-    name: Run tests
-    runs-on: ubuntu-latest
-    outputs:
-      image: ${{ steps.image.outputs.image }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: "1.22"
-          check-latest: true
-          cache: true
-      - run: go test ./...
-
   build:
     name: Build and push Docker container
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
     outputs:
       image: ${{ steps.docker-build-push.outputs.image }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for what-changed action
+      - name: Determine what to do
+        id: changed-files
+        uses: "nais/what-changed@main"
+        with:
+          files: .nais/prod.yaml,.nais/dev.yaml
       - name: Push docker image to GAR
+        if: steps.changed-files.outputs.changed != 'only-inputs'
         uses: nais/docker-build-push@v0
         id: docker-build-push
         with:
@@ -46,14 +42,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: nais/login@v0
-        with:
-          team: vaktor
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
           RESOURCE: .nais/dev.yaml
-          VAR: image=${{ needs.build.outputs.image }}
+          WORKLOAD_IMAGE: ${{ needs.build.outputs.image }}
 
   deploy-prod:
     name: Deploy to prod
@@ -63,11 +56,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: nais/login@v0
-        with:
-          team: vaktor
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: prod-gcp
           RESOURCE: .nais/prod.yaml
-          VAR: image=${{ needs.build.outputs.image }}
+          WORKLOAD_IMAGE: ${{ needs.build.outputs.image }}

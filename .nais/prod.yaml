@@ -15,15 +15,14 @@ spec:
         - application: vaktor-plan
       external:
         - host: dvh.adeo.no
-  image: {{image}}
   replicas:
     min: 1
     max: 1
   resources:
     limits:
-      memory: 512Mi
+      memory: 64Mi
     requests:
-      cpu: 100m
+      cpu: 10m
       memory: 32Mi
   observability:
     logging:
@@ -49,7 +48,7 @@ spec:
   gcp:
     sqlInstances:
       - databases:
-        - name: vaktor-lonn
-          envVarPrefix: DB
+          - name: vaktor-lonn
+            envVarPrefix: DB
         type: POSTGRES_17
         tier: db-f1-micro
