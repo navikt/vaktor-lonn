@@ -16,7 +16,6 @@ permissions:
 jobs:
   build:
     name: Build and push Docker container
-    needs: test
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.docker-build-push.outputs.image }}
