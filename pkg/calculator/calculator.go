@@ -264,10 +264,7 @@ func getKoststed(timesheet map[string]models.TimeSheet) (string, error) {
 	for _, period := range timesheet {
 		if koststed == "" {
 			koststed = period.Koststed
-			continue
-		}
-		if koststed != period.Koststed {
-			return "", fmt.Errorf("koststed has changed")
+			return koststed, nil
 		}
 	}
 
