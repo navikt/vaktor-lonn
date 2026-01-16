@@ -32,8 +32,8 @@ type Handler struct {
 }
 
 func NewHandler(logger *zap.Logger, dbString,
-	azureClientId, azureClientSecret, azureOpenIdTokenEndpoint, vaktorPlanEndpoint string, minWinTidConfig MinWinTidConfig) (Handler, error) {
-
+	azureClientId, azureClientSecret, azureOpenIdTokenEndpoint, vaktorPlanEndpoint string, minWinTidConfig MinWinTidConfig,
+) (Handler, error) {
 	db, err := openDB(logger, dbString)
 	if err != nil {
 		return Handler{}, err

@@ -1,10 +1,11 @@
 package overtime
 
 import (
+	"testing"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/shopspring/decimal"
-	"testing"
 )
 
 func TestCalculate(t *testing.T) {

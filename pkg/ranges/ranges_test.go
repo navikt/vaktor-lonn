@@ -1,10 +1,11 @@
 package ranges
 
 import (
-	"github.com/google/go-cmp/cmp"
-	"github.com/navikt/vaktor-lonn/pkg/models"
 	"testing"
 	"time"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/navikt/vaktor-lonn/pkg/models"
 )
 
 func Test_timeToMinutes(t *testing.T) {

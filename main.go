@@ -23,9 +23,9 @@ var embedMigrations embed.FS
 
 func onStart(logger *zap.Logger) (service.Handler, error) {
 	dbString := getEnv("DB_URL", "postgres://postgres:postgres@127.0.0.1:5432/vaktor")
-	azureClientId := os.Getenv("AZURE_APP_CLIENT_ID")
+	azureClientID := os.Getenv("AZURE_APP_CLIENT_ID")
 	azureClientSecret := os.Getenv("AZURE_APP_CLIENT_SECRET")
-	azureOpenIdTokenEndpoint := os.Getenv("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT")
+	azureOpenIDTokenEndpoint := os.Getenv("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT")
 	minWinTidORDSEndpoint := os.Getenv("MINWINTID_ORDS_ENDPOINT")
 	minWinTidEndpoint := os.Getenv("MINWINTID_ENDPOINT")
 	minWinTidClientID := os.Getenv("MINWINTID_CLIENTID")
@@ -44,7 +44,7 @@ func onStart(logger *zap.Logger) (service.Handler, error) {
 		TickerInterval: minWinTidTicketInterval,
 	}
 
-	handler, err := service.NewHandler(logger, dbString, azureClientId, azureClientSecret, azureOpenIdTokenEndpoint, vaktorPlanEndpoint, minWinTidConfig)
+	handler, err := service.NewHandler(logger, dbString, azureClientID, azureClientSecret, azureOpenIDTokenEndpoint, vaktorPlanEndpoint, minWinTidConfig)
 	if err != nil {
 		return service.Handler{}, err
 	}
@@ -71,7 +71,7 @@ func main() {
 	}
 
 	defer func(logger *zap.Logger) {
-		err := logger.Sync()
+		err = logger.Sync()
 		if err != nil {
 			logger.Fatal(err.Error())
 		}
@@ -92,7 +92,7 @@ func main() {
 	go service.Run(handler)
 
 	defer func(DB *sql.DB) {
-		err := DB.Close()
+		err = DB.Close()
 		if err != nil {
 			logger.Error("Problem with DB.close", zap.Error(err))
 			return

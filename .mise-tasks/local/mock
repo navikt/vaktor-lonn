@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+#MISE description="Run MWT mock"
+
+set -e
+
+uvicorn MWTmock.app.main:app --port 8079

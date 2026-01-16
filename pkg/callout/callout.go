@@ -1,10 +1,11 @@
 package callout
 
 import (
+	"time"
+
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/navikt/vaktor-lonn/pkg/ranges"
 	"github.com/shopspring/decimal"
-	"time"
 )
 
 func Calculate(schedule map[string][]models.Period, timesheet map[string]models.TimeSheet, satser models.Satser, payroll *models.Payroll) {
