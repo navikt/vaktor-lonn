@@ -2139,7 +2139,6 @@ func Test_calculateSalary(t *testing.T) {
 				t.Errorf("failed while unmarshling: %v", err)
 				return
 			}
-			fmt.Println(response)
 
 			got, _, err := calculateSalary(tt.args.beredskapsvakt, response)
 			if err != nil {
