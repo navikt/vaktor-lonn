@@ -99,11 +99,20 @@ func main() {
 		}
 	}(handler.DB)
 
-	http.Handle("/metrics", promhttp.Handler())
-	http.HandleFunc("/period", handler.Period)
+	mux := http.NewServeMux()
+	mux.Handle("/metrics", promhttp.Handler())
+	mux.HandleFunc("/period", handler.Period)
+
+	srv := &http.Server{
+		Addr:         ":8080",
+		Handler:      mux,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  120 * time.Second,
+	}
 
 	logger.Info("Ready to serve 🙇")
-	err = http.ListenAndServe(":8080", nil)
+	err = srv.ListenAndServe()
 	if err != nil {
 		logger.Error("Problem with ListenAndServer", zap.Error(err))
 		return
