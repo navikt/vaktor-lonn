@@ -89,7 +89,7 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 			args: args{
 				work: Range{0, 0},
 				period: Range{
-					Begin: 06 * 60,
+					Begin: 6 * 60,
 					End:   20 * 60,
 				},
 			},
@@ -100,7 +100,7 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 			args: args{
 				work: Range{6 * 60, 20 * 60},
 				period: Range{
-					Begin: 06 * 60,
+					Begin: 6 * 60,
 					End:   20 * 60,
 				},
 			},
@@ -111,7 +111,7 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 			args: args{
 				work: Range{8 * 60, 15 * 60},
 				period: Range{
-					Begin: 06 * 60,
+					Begin: 6 * 60,
 					End:   20 * 60,
 				},
 			},
@@ -122,7 +122,7 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 			args: args{
 				work: Range{19 * 60, 21 * 60},
 				period: Range{
-					Begin: 06 * 60,
+					Begin: 6 * 60,
 					End:   20 * 60,
 				},
 			},
@@ -133,7 +133,7 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 			args: args{
 				work: Range{3 * 60, 6 * 60},
 				period: Range{
-					Begin: 06 * 60,
+					Begin: 6 * 60,
 					End:   20 * 60,
 				},
 			},
@@ -144,7 +144,7 @@ func Test_calculateWorkInPeriode(t *testing.T) {
 			args: args{
 				work: Range{20 * 60, 22 * 60},
 				period: Range{
-					Begin: 06 * 60,
+					Begin: 6 * 60,
 					End:   20 * 60,
 				},
 			},
