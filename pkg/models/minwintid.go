@@ -9,6 +9,7 @@ import (
 type Clocking struct {
 	In  time.Time
 	Out time.Time
+	// OvertimeBecauseOfGuardDuty - Man har hatt vakt med utrykning
 	OtG bool
 }
 
