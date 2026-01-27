@@ -1050,7 +1050,47 @@ func TestHoursGuarddutySalary(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "Vakt en lørdag med utrykning",
+			args: args{
+				timesheet: map[string]models.TimeSheet{
+					"2026-01-10": {
+						Date:         time.Date(2026, 1, 10, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.5,
+						WorkingDay:   "Lørdag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(500_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2026, 1, 10, 20, 0, 0, 0, time.UTC),
+								Out: time.Date(2026, 1, 10, 22, 0, 0, 0, time.UTC),
+								OtG: true,
+							},
+						},
+					},
+				},
+				guardPeriod: map[string][]models.Period{
+					"2026-01-10": {
+						{
+							Begin: time.Date(2026, 1, 10, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2026, 1, 11, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			want: models.Artskoder{
+				Helg: models.Artskode{
+					Sum:   decimal.NewFromFloat(3366.59),
+					Hours: 24,
+				},
+			},
+			wantErr: false,
+		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			vaktplan := models.Vaktplan{
