@@ -913,7 +913,7 @@ func TestGuarddutySalary(t *testing.T) {
 				},
 			},
 			want: want{
-				sum: decimal.NewFromFloat(6_837.19),
+				sum: decimal.NewFromFloat(6_863.19),
 			},
 		},
 

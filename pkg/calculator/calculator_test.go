@@ -1050,7 +1050,107 @@ func TestHoursGuarddutySalary(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "Vakt en lørdag med utrykning",
+			args: args{
+				timesheet: map[string]models.TimeSheet{
+					"2026-01-10": {
+						Date:         time.Date(2026, 1, 10, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.5,
+						WorkingDay:   "Lørdag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(500_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2026, 1, 10, 20, 0, 0, 0, time.UTC),
+								Out: time.Date(2026, 1, 10, 22, 0, 0, 0, time.UTC),
+								OtG: true,
+							},
+						},
+					},
+				},
+				guardPeriod: map[string][]models.Period{
+					"2026-01-10": {
+						{
+							Begin: time.Date(2026, 1, 10, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2026, 1, 11, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			want: models.Artskoder{
+				Helg: models.Artskode{
+					Sum:   decimal.NewFromFloat(3366.59),
+					Hours: 24,
+				},
+				Utrykning: models.Artskode{
+					Sum:   decimal.NewFromInt(130),
+					Hours: 2,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Vakt en arbeidsdag med utrykning under utvidetarbeidstid",
+			args: args{
+				timesheet: map[string]models.TimeSheet{
+					"2026-01-27": {
+						Date:         time.Date(2026, 1, 27, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 7.5,
+						WorkingDay:   "Lørdag",
+						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
+						Salary:       decimal.NewFromInt(500_000),
+						Koststed:     "000000",
+						Formal:       "000000",
+						Aktivitet:    "000000",
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2026, 1, 27, 17, 0, 0, 0, time.UTC),
+								Out: time.Date(2026, 1, 27, 19, 0, 0, 0, time.UTC),
+								OtG: true,
+							},
+						},
+					},
+				},
+				guardPeriod: map[string][]models.Period{
+					"2026-01-27": {
+						{
+							Begin: time.Date(2026, 1, 27, 0, 0, 0, 0, time.UTC),
+							End:   time.Date(2026, 1, 28, 0, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+			},
+			want: models.Artskoder{
+				Morgen: models.Artskode{
+					Sum:   decimal.NewFromFloat(798.65),
+					Hours: 6,
+				},
+				Kveld: models.Artskode{
+					Sum:   decimal.NewFromFloat(532.43),
+					Hours: 4,
+				},
+				Dag: models.Artskode{
+					Sum:   decimal.NewFromFloat(672.57),
+					Hours: 7,
+				},
+				Helg: models.Artskode{},
+				Skift: models.Artskode{
+					Sum:   decimal.NewFromInt(20),
+					Hours: 4,
+				},
+				Utrykning: models.Artskode{
+					Sum:   decimal.NewFromInt(50),
+					Hours: 2,
+				},
+			},
+			wantErr: false,
+		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			vaktplan := models.Vaktplan{
