@@ -1998,7 +1998,7 @@ func Test_calculateSalary(t *testing.T) {
 							Hours: 48,
 						},
 						Utrykning: models.Artskode{
-							Sum:   decimal.NewFromFloat(104),
+							Sum:   decimal.NewFromFloat(130),
 							Hours: 2,
 						},
 					},
@@ -2047,7 +2047,7 @@ func Test_calculateSalary(t *testing.T) {
 							Hours: 23,
 						},
 						Utrykning: models.Artskode{
-							Sum:   decimal.NewFromFloat(104),
+							Sum:   decimal.NewFromFloat(130),
 							Hours: 2,
 						},
 					},
@@ -2109,7 +2109,7 @@ func Test_calculateSalary(t *testing.T) {
 							Hours: 12,
 						},
 						Utrykning: models.Artskode{
-							Sum:   decimal.NewFromFloat(312),
+							Sum:   decimal.NewFromFloat(390),
 							Hours: 6,
 						},
 					},

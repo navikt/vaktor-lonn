@@ -34,7 +34,7 @@ func Calculate(schedule map[string][]models.Period, timesheet map[string]models.
 
 						dutyRangeEarly := ranges.CreateForPeriod(guardDutyPeriod, models.Period{
 							Begin: time.Date(date.Year(), date.Month(), date.Day(), 6, 0, 0, 0, time.UTC),
-							End:   time.Date(date.Year(), date.Month(), date.Day(), 7, 0, 0, 0, time.UTC).Add(24 * time.Hour),
+							End:   time.Date(date.Year(), date.Month(), date.Day(), 7, 0, 0, 0, time.UTC),
 						})
 
 						minutesWithGuardDuty := ranges.CalculateMinutesOverlapping(workRange, *dutyRangeEarly)
@@ -42,7 +42,7 @@ func Calculate(schedule map[string][]models.Period, timesheet map[string]models.
 
 						dutyRangeLate := ranges.CreateForPeriod(guardDutyPeriod, models.Period{
 							Begin: time.Date(date.Year(), date.Month(), date.Day(), 17, 0, 0, 0, time.UTC),
-							End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC).Add(24 * time.Hour),
+							End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
 						})
 
 						minutesWithGuardDuty = ranges.CalculateMinutesOverlapping(workRange, *dutyRangeLate)
@@ -54,12 +54,12 @@ func Calculate(schedule map[string][]models.Period, timesheet map[string]models.
 	}
 
 	hours := decimal.NewFromInt(int64(guardMinutes.Helgetillegg)).DivRound(minutesInHour, 0)
-	payroll.Artskoder.Utrykning.Hours = hours.IntPart()
+	payroll.Artskoder.Utrykning.Hours = payroll.Artskoder.Utrykning.Hours + hours.IntPart()
 	compensation := hours.Mul(satser.Helg).Round(2)
 	payroll.Artskoder.Utrykning.Sum = payroll.Artskoder.Utrykning.Sum.Add(compensation)
 
 	hours = decimal.NewFromInt(int64(guardMinutes.Skifttillegg)).DivRound(minutesInHour, 0)
-	payroll.Artskoder.Skift.Hours = hours.IntPart()
+	payroll.Artskoder.Utrykning.Hours = payroll.Artskoder.Utrykning.Hours + hours.IntPart()
 	compensation = hours.Mul(satser.Utvidet).Round(2)
-	payroll.Artskoder.Skift.Sum = payroll.Artskoder.Skift.Sum.Add(compensation)
+	payroll.Artskoder.Utrykning.Sum = payroll.Artskoder.Utrykning.Sum.Add(compensation)
 }
