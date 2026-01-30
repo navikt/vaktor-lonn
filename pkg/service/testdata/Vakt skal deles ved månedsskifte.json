@@ -10,7 +10,7 @@
       "dato": "2022-10-26T00:00:00",
       "skjema_tid": 7.75,
       "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-      "godkjent": 2,
+      "godkjent": 4,
       "virkedag": "Virkedag",
       "stemplinger": [
         {
@@ -45,7 +45,7 @@
       "dato": "2022-10-31T00:00:00",
       "skjema_tid": 7.75,
       "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-      "godkjent": 2,
+      "godkjent": 4,
       "virkedag": "Virkedag",
       "stemplinger": [
         {
@@ -80,7 +80,7 @@
       "dato": "2022-10-30T00:00:00",
       "skjema_tid": 0,
       "skjema_navn": "BV Søndag IKT",
-      "godkjent": 2,
+      "godkjent": 4,
       "virkedag": "Søndag",
       "stemplinger": null,
       "stillinger": [
@@ -98,7 +98,7 @@
       "dato": "2022-10-29T00:00:00",
       "skjema_tid": 0,
       "skjema_navn": "BV Lørdag IKT",
-      "godkjent": 2,
+      "godkjent": 4,
       "virkedag": "Lørdag",
       "stemplinger": null,
       "stillinger": [
@@ -116,7 +116,7 @@
       "dato": "2022-10-28T00:00:00",
       "skjema_tid": 7.75,
       "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-      "godkjent": 2,
+      "godkjent": 4,
       "virkedag": "Virkedag",
       "stemplinger": [
         {
@@ -151,7 +151,7 @@
       "dato": "2022-10-27T00:00:00",
       "skjema_tid": 7.75,
       "skjema_navn": "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-      "godkjent": 2,
+      "godkjent": 4,
       "virkedag": "Virkedag",
       "stemplinger": [
         {
@@ -182,5 +182,8 @@
         }
       ]
     }
-  ]
+  ],
+  " leder_navn": "Kalpana, Bran",
+  " leder_epost": "Bran.Kalpana@nav.no",
+  " leder_nav_id": "M654321"
 }

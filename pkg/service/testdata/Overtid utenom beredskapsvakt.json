@@ -10,7 +10,7 @@
       "dato": "2023-06-17T00:00:00",
       "skjema_tid": 0,
       "skjema_navn": "BV Lørdag IKT",
-      "godkjent": 2,
+      "godkjent": 4,
       "virkedag": "Lørdag",
       "stemplinger": [
         {
@@ -50,7 +50,7 @@
       "dato": "2023-06-18T00:00:00",
       "skjema_tid": 0,
       "skjema_navn": "BV Søndag IKT",
-      "godkjent": 2,
+      "godkjent": 4,
       "virkedag": "Søndag",
       "stemplinger": [
         {
@@ -118,5 +118,8 @@
         }
       ]
     }
-  ]
+  ],
+  " leder_navn": "Kalpana, Bran",
+  " leder_epost": "Bran.Kalpana@nav.no",
+  " leder_nav_id": "M654321"
 }
