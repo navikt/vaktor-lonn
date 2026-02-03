@@ -230,6 +230,42 @@ func TestCalculate(t *testing.T) {
 				},
 			},
 		},
+
+		{
+			name: "Vakt hverdag utenfor utvidet arbeidstid",
+			args: args{
+				satser: models.Satser{
+					Helg:    decimal.NewFromInt(65),
+					Dag:     decimal.NewFromInt(15),
+					Natt:    decimal.NewFromInt(25),
+					Utvidet: decimal.NewFromInt(25),
+				},
+				schedule: map[string][]models.Period{
+					"2026-01-01": {
+						{
+							Begin: time.Date(2026, 1, 1, 10, 0, 0, 0, time.UTC),
+							End:   time.Date(2026, 1, 1, 15, 0, 0, 0, time.UTC),
+						},
+					},
+				},
+				timesheet: map[string]models.TimeSheet{
+					"2026-01-01": {
+						Date:         time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+						WorkingHours: 0,
+						WorkingDay:   "Helligdag",
+						Salary:       decimal.NewFromInt(500_000),
+						Clockings: []models.Clocking{
+							{
+								In:  time.Date(2026, 10, 26, 10, 0, 0, 0, time.UTC),
+								Out: time.Date(2026, 10, 26, 11, 0, 0, 0, time.UTC),
+								OtG: true,
+							},
+						},
+					},
+				},
+			},
+			want: models.Artskoder{},
+		},
 	}
 
 	for _, tt := range tests {

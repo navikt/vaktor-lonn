@@ -37,16 +37,20 @@ func Calculate(schedule map[string][]models.Period, timesheet map[string]models.
 							End:   time.Date(date.Year(), date.Month(), date.Day(), 7, 0, 0, 0, time.UTC),
 						})
 
-						minutesWithGuardDuty := ranges.CalculateMinutesOverlapping(workRange, *dutyRangeEarly)
-						guardMinutes.Skifttillegg += minutesWithGuardDuty
+						if dutyRangeEarly != nil {
+							minutesWithGuardDuty := ranges.CalculateMinutesOverlapping(workRange, *dutyRangeEarly)
+							guardMinutes.Skifttillegg += minutesWithGuardDuty
+						}
 
 						dutyRangeLate := ranges.CreateForPeriod(guardDutyPeriod, models.Period{
 							Begin: time.Date(date.Year(), date.Month(), date.Day(), 17, 0, 0, 0, time.UTC),
 							End:   time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.UTC),
 						})
 
-						minutesWithGuardDuty = ranges.CalculateMinutesOverlapping(workRange, *dutyRangeLate)
-						guardMinutes.Skifttillegg += minutesWithGuardDuty
+						if dutyRangeLate != nil {
+							minutesWithGuardDuty := ranges.CalculateMinutesOverlapping(workRange, *dutyRangeLate)
+							guardMinutes.Skifttillegg += minutesWithGuardDuty
+						}
 					}
 				}
 			}
