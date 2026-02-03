@@ -12,7 +12,6 @@ import (
 
 func TestCalculate(t *testing.T) {
 	type args struct {
-		satser    models.Satser
 		schedule  map[string][]models.Period
 		timesheet map[string]models.TimeSheet
 	}
@@ -24,12 +23,6 @@ func TestCalculate(t *testing.T) {
 		{
 			name: "Utrykning i helg",
 			args: args{
-				satser: models.Satser{
-					Helg:    decimal.NewFromInt(65),
-					Dag:     decimal.NewFromInt(15),
-					Natt:    decimal.NewFromInt(25),
-					Utvidet: decimal.NewFromInt(25),
-				},
 				schedule: map[string][]models.Period{
 					"2022-10-29": {
 						{
@@ -65,12 +58,6 @@ func TestCalculate(t *testing.T) {
 		{
 			name: "Flere korte utrykninger på en lørdag",
 			args: args{
-				satser: models.Satser{
-					Helg:    decimal.NewFromInt(65),
-					Dag:     decimal.NewFromInt(15),
-					Natt:    decimal.NewFromInt(25),
-					Utvidet: decimal.NewFromInt(25),
-				},
 				schedule: map[string][]models.Period{
 					"2022-10-29": {
 						{
@@ -111,12 +98,6 @@ func TestCalculate(t *testing.T) {
 		{
 			name: "For kort utrykninger på en lørdag blir rundet ned",
 			args: args{
-				satser: models.Satser{
-					Helg:    decimal.NewFromInt(65),
-					Dag:     decimal.NewFromInt(15),
-					Natt:    decimal.NewFromInt(25),
-					Utvidet: decimal.NewFromInt(25),
-				},
 				schedule: map[string][]models.Period{
 					"2022-10-29": {
 						{
@@ -152,12 +133,6 @@ func TestCalculate(t *testing.T) {
 		{
 			name: "Utrykning i ukedag på kvelden gir ingen kompensasjon",
 			args: args{
-				satser: models.Satser{
-					Helg:    decimal.NewFromInt(65),
-					Dag:     decimal.NewFromInt(15),
-					Natt:    decimal.NewFromInt(25),
-					Utvidet: decimal.NewFromInt(25),
-				},
 				schedule: map[string][]models.Period{
 					"2022-10-26": {
 						{
@@ -188,12 +163,6 @@ func TestCalculate(t *testing.T) {
 		{
 			name: "Utrykning i ukedag under utvidet arbeidstid gir kompensasjon",
 			args: args{
-				satser: models.Satser{
-					Helg:    decimal.NewFromInt(65),
-					Dag:     decimal.NewFromInt(15),
-					Natt:    decimal.NewFromInt(25),
-					Utvidet: decimal.NewFromInt(25),
-				},
 				schedule: map[string][]models.Period{
 					"2022-10-26": {
 						{
@@ -234,12 +203,6 @@ func TestCalculate(t *testing.T) {
 		{
 			name: "Vakt hverdag utenfor utvidet arbeidstid",
 			args: args{
-				satser: models.Satser{
-					Helg:    decimal.NewFromInt(65),
-					Dag:     decimal.NewFromInt(15),
-					Natt:    decimal.NewFromInt(25),
-					Utvidet: decimal.NewFromInt(25),
-				},
 				schedule: map[string][]models.Period{
 					"2026-01-01": {
 						{
@@ -274,8 +237,15 @@ func TestCalculate(t *testing.T) {
 			ApproverID: "Scathan",
 		}
 
+		satser := models.Satser{
+			Helg:    decimal.NewFromInt(65),
+			Dag:     decimal.NewFromInt(15),
+			Natt:    decimal.NewFromInt(25),
+			Utvidet: decimal.NewFromInt(25),
+		}
+
 		t.Run(tt.name, func(t *testing.T) {
-			Calculate(tt.args.schedule, tt.args.timesheet, tt.args.satser, payroll)
+			Calculate(tt.args.schedule, tt.args.timesheet, satser, payroll)
 
 			if diff := cmp.Diff(tt.want, payroll.Artskoder); diff != "" {
 				t.Errorf("Calculate() mismatch (-want +got):\n%s", diff)
