@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
-	"github.com/navikt/vaktor-lonn/pkg/compensation"
+	"github.com/navikt/vaktor-lonn/pkg/kronetillegg"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/navikt/vaktor-lonn/pkg/overtime"
 	"github.com/shopspring/decimal"
@@ -490,28 +490,28 @@ func Test_calculateMinutesToBePaid(t *testing.T) {
 			},
 			want: map[string]models.GuardDuty{
 				"2022-12-24": {
-					Hvilende2000:        240,
-					Hvilende0006:        360,
-					Hvilende0620:        840,
-					Helgetillegg:        1440,
-					Skifttillegg:        0,
-					WeekendCompensation: true,
+					Hvilende2000: 240,
+					Hvilende0006: 360,
+					Hvilende0620: 840,
+					Helgetillegg: 1440,
+					Skifttillegg: 0,
+					IsWeekend:    true,
 				},
 				"2022-12-25": {
-					Hvilende2000:        240,
-					Hvilende0006:        360,
-					Hvilende0620:        840,
-					Helgetillegg:        1440,
-					Skifttillegg:        0,
-					WeekendCompensation: true,
+					Hvilende2000: 240,
+					Hvilende0006: 360,
+					Hvilende0620: 840,
+					Helgetillegg: 1440,
+					Skifttillegg: 0,
+					IsWeekend:    true,
 				},
 				"2022-12-26": {
-					Hvilende2000:        240,
-					Hvilende0006:        360,
-					Helligdag0620:       840,
-					Helgetillegg:        0,
-					Skifttillegg:        240,
-					WeekendCompensation: false,
+					Hvilende2000:  240,
+					Hvilende0006:  360,
+					Helligdag0620: 840,
+					Helgetillegg:  0,
+					Skifttillegg:  240,
+					IsWeekend:     false,
 				},
 			},
 		},
@@ -540,12 +540,12 @@ func Test_calculateMinutesToBePaid(t *testing.T) {
 			},
 			want: map[string]models.GuardDuty{
 				"2022-12-31": {
-					Hvilende2000:        240,
-					Hvilende0006:        360,
-					Hvilende0620:        840,
-					Helgetillegg:        1440,
-					Skifttillegg:        0,
-					WeekendCompensation: true,
+					Hvilende2000: 240,
+					Hvilende0006: 360,
+					Hvilende0620: 840,
+					Helgetillegg: 1440,
+					Skifttillegg: 0,
+					IsWeekend:    true,
 				},
 			},
 		},
@@ -610,20 +610,20 @@ func Test_calculateMinutesToBePaid(t *testing.T) {
 					Skifttillegg:  240,
 				},
 				"2021-12-25": {
-					Hvilende2000:        240,
-					Hvilende0006:        360,
-					Hvilende0620:        840,
-					Helgetillegg:        1440,
-					Skifttillegg:        0,
-					WeekendCompensation: true,
+					Hvilende2000: 240,
+					Hvilende0006: 360,
+					Hvilende0620: 840,
+					Helgetillegg: 1440,
+					Skifttillegg: 0,
+					IsWeekend:    true,
 				},
 				"2021-12-26": {
-					Hvilende2000:        240,
-					Hvilende0006:        360,
-					Hvilende0620:        840,
-					Helgetillegg:        1440,
-					Skifttillegg:        0,
-					WeekendCompensation: true,
+					Hvilende2000: 240,
+					Hvilende0006: 360,
+					Hvilende0620: 840,
+					Helgetillegg: 1440,
+					Skifttillegg: 0,
+					IsWeekend:    true,
 				},
 			},
 		},
@@ -1198,29 +1198,29 @@ func TestCalculateIsEqualForHolidayOnSaturdayAndRegularSaturday(t *testing.T) {
 	holidayPayroll := &models.Payroll{}
 	holidayMinutes := map[string]models.GuardDuty{
 		"2022-10-15": {
-			Hvilende2000:        240,
-			Hvilende0006:        360,
-			Hvilende0620:        840,
-			Helgetillegg:        1440,
-			Skifttillegg:        0,
-			WeekendCompensation: true,
+			Hvilende2000: 240,
+			Hvilende0006: 360,
+			Hvilende0620: 840,
+			Helgetillegg: 1440,
+			Skifttillegg: 0,
+			IsWeekend:    true,
 		},
 	}
-	compensation.Calculate(holidayMinutes, satser, holidayPayroll)
+	kronetillegg.Calculate(holidayMinutes, satser, holidayPayroll)
 	overtime.Calculate(holidayMinutes, salary, holidayPayroll)
 
 	regularPayroll := &models.Payroll{}
 	regularMinutes := map[string]models.GuardDuty{
 		"2022-10-15": {
-			Hvilende2000:        240,
-			Hvilende0006:        360,
-			Hvilende0620:        840,
-			Helgetillegg:        1440,
-			Skifttillegg:        0,
-			WeekendCompensation: true,
+			Hvilende2000: 240,
+			Hvilende0006: 360,
+			Hvilende0620: 840,
+			Helgetillegg: 1440,
+			Skifttillegg: 0,
+			IsWeekend:    true,
 		},
 	}
-	compensation.Calculate(regularMinutes, satser, regularPayroll)
+	kronetillegg.Calculate(regularMinutes, satser, regularPayroll)
 	overtime.Calculate(regularMinutes, salary, regularPayroll)
 
 	if diff := cmp.Diff(holidayPayroll.Artskoder, regularPayroll.Artskoder); diff != "" {
@@ -1250,7 +1250,7 @@ func TestCalculateIsNotEqualForHolidayOnMondayAndRegularMonday(t *testing.T) {
 			Skifttillegg:  240,
 		},
 	}
-	compensation.Calculate(holidayMinutes, satser, holidayPayroll)
+	kronetillegg.Calculate(holidayMinutes, satser, holidayPayroll)
 	overtime.Calculate(holidayMinutes, salary, holidayPayroll)
 
 	regularPayroll := &models.Payroll{}
@@ -1263,7 +1263,7 @@ func TestCalculateIsNotEqualForHolidayOnMondayAndRegularMonday(t *testing.T) {
 			Skifttillegg: 240,
 		},
 	}
-	compensation.Calculate(regularMinutes, satser, regularPayroll)
+	kronetillegg.Calculate(regularMinutes, satser, regularPayroll)
 	overtime.Calculate(regularMinutes, salary, regularPayroll)
 
 	if diff := cmp.Diff(holidayPayroll.Artskoder, regularPayroll.Artskoder); diff == "" {

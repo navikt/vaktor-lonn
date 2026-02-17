@@ -1,4 +1,4 @@
-package compensation
+package kronetillegg
 
 import (
 	"testing"
@@ -49,18 +49,18 @@ func TestCalculate(t *testing.T) {
 						Skifttillegg: 240,
 					},
 					"2022-10-15": {
-						Hvilende2000:        240,
-						Hvilende0006:        360,
-						Hvilende0620:        840,
-						Helgetillegg:        1440,
-						WeekendCompensation: true,
+						Hvilende2000: 240,
+						Hvilende0006: 360,
+						Hvilende0620: 840,
+						Helgetillegg: 1440,
+						IsWeekend:    true,
 					},
 					"2022-10-16": {
-						Hvilende2000:        240,
-						Hvilende0006:        360,
-						Hvilende0620:        840,
-						Helgetillegg:        1440,
-						WeekendCompensation: true,
+						Hvilende2000: 240,
+						Hvilende0006: 360,
+						Hvilende0620: 840,
+						Helgetillegg: 1440,
+						IsWeekend:    true,
 					},
 					"2022-10-17": {
 						Hvilende2000: 240,
@@ -114,18 +114,18 @@ func TestCalculate(t *testing.T) {
 				},
 				minutes: map[string]models.GuardDuty{
 					"2022-10-15": {
-						Hvilende2000:        240,
-						Hvilende0006:        360,
-						Hvilende0620:        840,
-						Helgetillegg:        1440,
-						WeekendCompensation: true,
+						Hvilende2000: 240,
+						Hvilende0006: 360,
+						Hvilende0620: 840,
+						Helgetillegg: 1440,
+						IsWeekend:    true,
 					},
 					"2022-10-16": {
-						Hvilende2000:        120,
-						Hvilende0006:        360,
-						Hvilende0620:        840,
-						Helgetillegg:        1320,
-						WeekendCompensation: true,
+						Hvilende2000: 120,
+						Hvilende0006: 360,
+						Hvilende0620: 840,
+						Helgetillegg: 1320,
+						IsWeekend:    true,
 					},
 				},
 			},

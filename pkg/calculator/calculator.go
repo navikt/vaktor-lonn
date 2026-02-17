@@ -8,7 +8,7 @@ import (
 	"github.com/navikt/vaktor-lonn/pkg/callout"
 	"github.com/navikt/vaktor-lonn/pkg/ranges"
 
-	"github.com/navikt/vaktor-lonn/pkg/compensation"
+	"github.com/navikt/vaktor-lonn/pkg/kronetillegg"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/navikt/vaktor-lonn/pkg/overtime"
 	"github.com/shopspring/decimal"
@@ -84,11 +84,11 @@ func calculateMinutesToBePaid(schedule map[string][]models.Period, timesheet map
 				dutyHours.Skifttillegg += minutesWithGuardDuty
 			}
 
-			dutyHours.WeekendCompensation = isWeekend(currentDay.Date)
+			dutyHours.IsWeekend = isWeekend(currentDay.Date)
 
 			// Det er ingen økonomiske fordeler med helligdager i helg, kun i ukedagene.
 			// Derfor bryr vi oss ikke om helligdager i helgene.
-			if !dutyHours.WeekendCompensation && isHoliday(currentDay.FormName) {
+			if !dutyHours.IsWeekend && isHoliday(currentDay.FormName) {
 				if currentDay.FormName == "Helligdag" {
 					dutyHours.Helligdag0620 = dutyHours.Hvilende0620
 					dutyHours.Hvilende0620 = 0
@@ -337,7 +337,7 @@ func GuarddutySalary(plan models.Vaktplan, minWinTid models.MinWinTid) (models.P
 		Stillingskode: stillingskode,
 	}
 
-	compensation.Calculate(minutes, minWinTid.Satser, payroll)
+	kronetillegg.Calculate(minutes, minWinTid.Satser, payroll)
 	callout.Calculate(plan.Schedule, minWinTid.Timesheet, minWinTid.Satser, payroll)
 
 	salariesWithDates := getDailySalaries(minWinTid.Timesheet)
