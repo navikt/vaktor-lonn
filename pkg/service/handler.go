@@ -60,7 +60,7 @@ func openDB(logger *zap.Logger, dbString string) (*sql.DB, error) {
 	maxRetries := 5
 	backoff := time.Second
 
-	for i := 0; i < maxRetries; i++ {
+	for range maxRetries {
 		db, err = sql.Open("pgx", dbString)
 		if err == nil {
 			break

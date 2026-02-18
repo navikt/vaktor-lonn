@@ -3,6 +3,7 @@ package calculator
 import (
 	"fmt"
 	"os"
+	"slices"
 	"time"
 
 	"github.com/navikt/vaktor-lonn/pkg/callout"
@@ -139,13 +140,7 @@ func isWeekend(day time.Time) bool {
 
 func isHoliday(formName string) bool {
 	holidays := []string{"Helligdag", "Julaften 0800-1200 *", "Onsdag før Påske 0800-1200 *", "Nyttårsaften 1000-1200 *"}
-	for _, holiday := range holidays {
-		if formName == holiday {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(holidays, formName)
 }
 
 // calculateGuardDutyInKjernetid sjekker om man hadde vakt i kjernetiden. Man vil ikke kunne få vakttillegg i
