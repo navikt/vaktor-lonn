@@ -20,9 +20,6 @@ type TimeSheet struct {
 	FormName      string
 	Salary        decimal.Decimal
 	Stillingskode string
-	Formal        string
-	Koststed      string
-	Aktivitet     string
 	Clockings     []Clocking
 }
 
@@ -44,9 +41,6 @@ type MWTStempling struct {
 }
 
 type MWTStilling struct {
-	Koststed      string `json:"koststed"`
-	Formal        string `json:"produkt"`
-	Aktivitet     string `json:"oppgave"`
 	RATEK001      int    `json:"rate_k001"`
 	Stillingskode string `json:"post_id"`
 }

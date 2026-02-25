@@ -151,9 +151,6 @@ func formatTimesheet(days []models.MWTDag) (map[string]models.TimeSheet, []zap.F
 			FormName:      day.SkjemaNavn,
 			Salary:        decimal.NewFromInt(int64(stilling.RATEK001)),
 			Stillingskode: stilling.Stillingskode,
-			Koststed:      stilling.Koststed,
-			Formal:        stilling.Formal,
-			Aktivitet:     stilling.Aktivitet,
 			Clockings:     []models.Clocking{},
 		}
 
