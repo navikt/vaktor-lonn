@@ -20,7 +20,7 @@ jobs:
     outputs:
       image: ${{ steps.docker-build-push.outputs.image }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
         with:
           fetch-depth: 0 # Fetch all history for what-changed action
       - name: Determine what to do
@@ -30,7 +30,7 @@ jobs:
           files: .nais/prod.yaml,.nais/dev.yaml
       - name: Push docker image to GAR
         if: steps.changed-files.outputs.changed != 'only-inputs'
-        uses: nais/docker-build-push@45d352fb62fb52ccb5ff6cba22c047fa02b35321
+        uses: nais/docker-build-push@05dbb6091b30bd84279c6d64a45ef8782fd410a5
         id: docker-build-push
         with:
           team: vaktor
@@ -40,8 +40,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-      - uses: nais/deploy/actions/deploy@fa754451577294aae42872a69b888b3470478ec1
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: nais/deploy/actions/deploy@c55d6073d913975d2dada508bdfefc6427d39867
         env:
           CLUSTER: dev-gcp
           RESOURCE: .nais/dev.yaml
@@ -54,8 +54,8 @@ jobs:
       - deploy-dev
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-      - uses: nais/deploy/actions/deploy@fa754451577294aae42872a69b888b3470478ec1
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: nais/deploy/actions/deploy@c55d6073d913975d2dada508bdfefc6427d39867
         env:
           CLUSTER: prod-gcp
           RESOURCE: .nais/prod.yaml
