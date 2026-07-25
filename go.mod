@@ -74,7 +74,7 @@ require (
 	golang.org/x/vuln v1.1.4 // indirect
 	google.golang.org/genai v1.37.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260420184626-e10c466a9529 // indirect
-	google.golang.org/grpc v1.80.0 // indirect
+	google.golang.org/grpc v1.82.1 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	honnef.co/go/tools v0.6.1 // indirect
 	mvdan.cc/gofumpt v0.9.2 // indirect
