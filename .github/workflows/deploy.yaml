@@ -30,7 +30,7 @@ jobs:
           files: .nais/prod.yaml,.nais/dev.yaml
       - name: Push docker image to GAR
         if: steps.changed-files.outputs.changed != 'only-inputs'
-        uses: nais/docker-build-push@31c3a7321909bcb20799fdf46153fec721fd9512
+        uses: nais/docker-build-push@8e41f1f58749b9248e376c25d33bfbdd2b1163c0
         id: docker-build-push
         with:
           team: vaktor
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: nais/deploy/actions/deploy@2d18f050f07b6a007864c6a57070ed915d571beb
+      - uses: nais/deploy/actions/deploy@027a91857992525139798892f2804b0ca21f4af6
         env:
           CLUSTER: dev-gcp
           RESOURCE: .nais/dev.yaml
@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: nais/deploy/actions/deploy@2d18f050f07b6a007864c6a57070ed915d571beb
+      - uses: nais/deploy/actions/deploy@027a91857992525139798892f2804b0ca21f4af6
         env:
           CLUSTER: prod-gcp
           RESOURCE: .nais/prod.yaml
