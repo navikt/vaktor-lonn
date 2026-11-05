@@ -1,0 +1,14 @@
+{
+  "id": "b4ac8e53-9d64-4557-8ef8-d00774ab9c06",
+  "user_id": "E123456",
+  "start_timestamp": "2022-12-31T00:00:00Z",
+  "end_timestamp": "2023-01-01T00:00:00Z",
+  "schedule": {
+    "2022-12-31": [
+      {
+        "start_timestamp": "2022-12-31T00:00:00Z",
+        "end_timestamp": "2023-01-01T00:00:00Z"
+      }
+    ]
+  }
+}

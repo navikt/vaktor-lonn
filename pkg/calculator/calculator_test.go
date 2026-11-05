@@ -9,7 +9,7 @@ import (
 	"github.com/navikt/vaktor-lonn/pkg/kronetillegg"
 	"github.com/navikt/vaktor-lonn/pkg/models"
 	"github.com/navikt/vaktor-lonn/pkg/overtime"
-	"github.com/shopspring/decimal"
+	"github.com/navikt/vaktor-lonn/pkg/testhelpers"
 )
 
 func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
@@ -27,19 +27,10 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Vanlig arbeidsdag",
 			args: args{
-				dutyPeriod: models.Period{
-					Begin: time.Date(2022, 10, 3, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 10, 4, 0, 0, 0, 0, time.UTC),
-				},
-				compPeriod: models.Period{
-					Begin: time.Date(2022, 10, 3, 9, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 10, 3, 14, 30, 0, 0, time.UTC),
-				},
+				dutyPeriod: testhelpers.Period("2022-10-03T00:00", "2022-10-04T00:00"),
+				compPeriod: testhelpers.Period("2022-10-03T09:00", "2022-10-03T14:30"),
 				timesheet: []models.Clocking{
-					{
-						In:  time.Date(2022, 10, 3, 8, 0, 0, 0, time.UTC),
-						Out: time.Date(2022, 10, 3, 15, 0, 0, 0, time.UTC),
-					},
+					testhelpers.Clocking("2022-10-03T08:00", "2022-10-03T15:00"),
 				},
 			},
 			want: 0,
@@ -47,19 +38,10 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Uvanlig kort arbeidsdag",
 			args: args{
-				dutyPeriod: models.Period{
-					Begin: time.Date(2022, 10, 3, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 10, 4, 0, 0, 0, 0, time.UTC),
-				},
-				compPeriod: models.Period{
-					Begin: time.Date(2022, 10, 3, 9, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 10, 3, 14, 30, 0, 0, time.UTC),
-				},
+				dutyPeriod: testhelpers.Period("2022-10-03T00:00", "2022-10-04T00:00"),
+				compPeriod: testhelpers.Period("2022-10-03T09:00", "2022-10-03T14:30"),
 				timesheet: []models.Clocking{
-					{
-						In:  time.Date(2022, 10, 3, 10, 0, 0, 0, time.UTC),
-						Out: time.Date(2022, 10, 3, 14, 0, 0, 0, time.UTC),
-					},
+					testhelpers.Clocking("2022-10-03T10:00", "2022-10-03T14:00"),
 				},
 			},
 			want: 90,
@@ -67,19 +49,10 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Forskjøvet arbeidsdag",
 			args: args{
-				dutyPeriod: models.Period{
-					Begin: time.Date(2022, 10, 3, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 10, 4, 0, 0, 0, 0, time.UTC),
-				},
-				compPeriod: models.Period{
-					Begin: time.Date(2022, 10, 3, 9, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 10, 3, 14, 30, 0, 0, time.UTC),
-				},
+				dutyPeriod: testhelpers.Period("2022-10-03T00:00", "2022-10-04T00:00"),
+				compPeriod: testhelpers.Period("2022-10-03T09:00", "2022-10-03T14:30"),
 				timesheet: []models.Clocking{
-					{
-						In:  time.Date(2022, 10, 3, 10, 0, 0, 0, time.UTC),
-						Out: time.Date(2022, 10, 3, 18, 0, 0, 0, time.UTC),
-					},
+					testhelpers.Clocking("2022-10-03T10:00", "2022-10-03T18:00"),
 				},
 			},
 			want: 60,
@@ -87,19 +60,10 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Morgenvakt",
 			args: args{
-				dutyPeriod: models.Period{
-					Begin: time.Date(2022, 10, 3, 6, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 10, 3, 9, 0, 0, 0, time.UTC),
-				},
-				compPeriod: models.Period{
-					Begin: time.Date(2022, 10, 3, 20, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 10, 4, 0, 0, 0, 0, time.UTC),
-				},
+				dutyPeriod: testhelpers.Period("2022-10-03T06:00", "2022-10-03T09:00"),
+				compPeriod: testhelpers.Period("2022-10-03T20:00", "2022-10-04T00:00"),
 				timesheet: []models.Clocking{
-					{
-						In:  time.Date(2022, 10, 3, 10, 0, 0, 0, time.UTC),
-						Out: time.Date(2022, 10, 3, 18, 0, 0, 0, time.UTC),
-					},
+					testhelpers.Clocking("2022-10-03T10:00", "2022-10-03T18:00"),
 				},
 			},
 			want: 0,
@@ -107,19 +71,10 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Døgnvakt med kveldsarbeid",
 			args: args{
-				dutyPeriod: models.Period{
-					Begin: time.Date(2022, 10, 3, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 10, 4, 0, 0, 0, 0, time.UTC),
-				},
-				compPeriod: models.Period{
-					Begin: time.Date(2022, 10, 3, 20, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 10, 4, 0, 0, 0, 0, time.UTC),
-				},
+				dutyPeriod: testhelpers.Period("2022-10-03T00:00", "2022-10-04T00:00"),
+				compPeriod: testhelpers.Period("2022-10-03T20:00", "2022-10-04T00:00"),
 				timesheet: []models.Clocking{
-					{
-						In:  time.Date(2022, 10, 3, 23, 10, 0, 0, time.UTC),
-						Out: time.Date(2022, 10, 4, 0, 0, 0, 0, time.UTC),
-					},
+					testhelpers.Clocking("2022-10-03T23:10", "2022-10-04T00:00"),
 				},
 			},
 			want: 190,
@@ -127,19 +82,10 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Døgnvakt med kveldsarbeid ved månedskifte",
 			args: args{
-				dutyPeriod: models.Period{
-					Begin: time.Date(2022, 10, 31, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 11, 1, 0, 0, 0, 0, time.UTC),
-				},
-				compPeriod: models.Period{
-					Begin: time.Date(2022, 10, 31, 20, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 11, 1, 0, 0, 0, 0, time.UTC),
-				},
+				dutyPeriod: testhelpers.Period("2022-10-31T00:00", "2022-11-01T00:00"),
+				compPeriod: testhelpers.Period("2022-10-31T20:00", "2022-11-01T00:00"),
 				timesheet: []models.Clocking{
-					{
-						In:  time.Date(2022, 10, 31, 23, 10, 0, 0, time.UTC),
-						Out: time.Date(2022, 11, 1, 0, 0, 0, 0, time.UTC),
-					},
+					testhelpers.Clocking("2022-10-31T23:10", "2022-11-01T00:00"),
 				},
 			},
 			want: 190,
@@ -147,30 +93,18 @@ func Test_calculateMinutesWithGuardDutyInPeriod(t *testing.T) {
 		{
 			name: "Døgnvakt ved månedskifte",
 			args: args{
-				dutyPeriod: models.Period{
-					Begin: time.Date(2022, 7, 31, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 8, 1, 0, 0, 0, 0, time.UTC),
-				},
-				compPeriod: models.Period{
-					Begin: time.Date(2022, 7, 31, 20, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 8, 1, 0, 0, 0, 0, time.UTC),
-				},
-				timesheet: []models.Clocking{},
+				dutyPeriod: testhelpers.Period("2022-07-31T00:00", "2022-08-01T00:00"),
+				compPeriod: testhelpers.Period("2022-07-31T20:00", "2022-08-01T00:00"),
+				timesheet:  []models.Clocking{},
 			},
 			want: 240,
 		},
 		{
 			name: "Døgnvakt ved årskifte",
 			args: args{
-				dutyPeriod: models.Period{
-					Begin: time.Date(2022, 12, 31, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
-				},
-				compPeriod: models.Period{
-					Begin: time.Date(2022, 12, 31, 20, 0, 0, 0, time.UTC),
-					End:   time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
-				},
-				timesheet: []models.Clocking{},
+				dutyPeriod: testhelpers.Period("2022-12-31T00:00", "2023-01-01T00:00"),
+				compPeriod: testhelpers.Period("2022-12-31T20:00", "2023-01-01T00:00"),
+				timesheet:  []models.Clocking{},
 			},
 			want: 240,
 		},
@@ -198,12 +132,9 @@ func Test_calculateDaylightSavingTimeModifier(t *testing.T) {
 		{
 			name: "Stiller klokken tilbake (normaltid)",
 			args: args{
-				date: time.Date(2022, 10, 30, 10, 0, 0, 0, time.UTC),
+				date: testhelpers.At("2022-10-30T10:00"),
 				periods: []models.Period{
-					{
-						Begin: time.Date(2022, 10, 30, 0, 0, 0, 0, time.UTC),
-						End:   time.Date(2022, 10, 31, 0, 0, 0, 0, time.UTC),
-					},
+					testhelpers.Period("2022-10-30T00:00", "2022-10-31T00:00"),
 				},
 			},
 			want: 60,
@@ -211,12 +142,9 @@ func Test_calculateDaylightSavingTimeModifier(t *testing.T) {
 		{
 			name: "Har _ikke_ vakt når vi stiller klokken tilbake (normaltid)",
 			args: args{
-				date: time.Date(2022, 10, 30, 10, 0, 0, 0, time.UTC),
+				date: testhelpers.At("2022-10-30T10:00"),
 				periods: []models.Period{
-					{
-						Begin: time.Date(2022, 10, 30, 10, 0, 0, 0, time.UTC),
-						End:   time.Date(2022, 10, 30, 20, 0, 0, 0, time.UTC),
-					},
+					testhelpers.Period("2022-10-30T10:00", "2022-10-30T20:00"),
 				},
 			},
 			want: 0,
@@ -224,12 +152,9 @@ func Test_calculateDaylightSavingTimeModifier(t *testing.T) {
 		{
 			name: "Stiller klokken fremover (sommertid)",
 			args: args{
-				date: time.Date(2022, 3, 27, 10, 0, 0, 0, time.UTC),
+				date: testhelpers.At("2022-03-27T10:00"),
 				periods: []models.Period{
-					{
-						Begin: time.Date(2022, 3, 27, 0, 0, 0, 0, time.UTC),
-						End:   time.Date(2022, 3, 28, 0, 0, 0, 0, time.UTC),
-					},
+					testhelpers.Period("2022-03-27T00:00", "2022-03-28T00:00"),
 				},
 			},
 			want: -60,
@@ -237,12 +162,9 @@ func Test_calculateDaylightSavingTimeModifier(t *testing.T) {
 		{
 			name: "Har _ikke_ vakt når vi stiller klokken fremover (sommertid)",
 			args: args{
-				date: time.Date(2022, 3, 27, 10, 0, 0, 0, time.UTC),
+				date: testhelpers.At("2022-03-27T10:00"),
 				periods: []models.Period{
-					{
-						Begin: time.Date(2022, 3, 27, 10, 0, 0, 0, time.UTC),
-						End:   time.Date(2022, 3, 27, 20, 0, 0, 0, time.UTC),
-					},
+					testhelpers.Period("2022-03-27T10:00", "2022-03-27T20:00"),
 				},
 			},
 			want: 0,
@@ -271,24 +193,18 @@ func Test_createKjernetid(t *testing.T) {
 		{
 			name: "Vanlig kjernetid",
 			args: args{
-				date:     time.Date(2022, 11, 6, 0, 0, 0, 0, time.UTC),
+				date:     testhelpers.D("2022-11-06"),
 				formName: "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
 			},
-			want: models.Period{
-				Begin: time.Date(2022, 11, 6, 9, 0, 0, 0, time.UTC),
-				End:   time.Date(2022, 11, 6, 14, 30, 0, 0, time.UTC),
-			},
+			want: testhelpers.Period("2022-11-06T09:00", "2022-11-06T14:30"),
 		},
 		{
 			name: "Kjernetid for julaften",
 			args: args{
-				date:     time.Date(2021, 12, 24, 0, 0, 0, 0, time.UTC),
+				date:     testhelpers.D("2021-12-24"),
 				formName: "Julaften 0800-1200 *",
 			},
-			want: models.Period{
-				Begin: time.Date(2021, 12, 24, 8, 0, 0, 0, time.UTC),
-				End:   time.Date(2021, 12, 24, 12, 0, 0, 0, time.UTC),
-			},
+			want: testhelpers.Period("2021-12-24T08:00", "2021-12-24T12:00"),
 		},
 	}
 	for _, tt := range tests {
@@ -314,66 +230,27 @@ func Test_calculateGuardDutyInKjernetid(t *testing.T) {
 		{
 			name: "Vanlig arbeid i kjernetid",
 			args: args{
-				currentDay: models.TimeSheet{
-					Date:         time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
-					WorkingHours: 7.75,
-					WorkingDay:   "Virkedag",
-					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-					Clockings: []models.Clocking{
-						{
-							In:  time.Date(2022, 11, 7, 8, 0, 0, 0, time.UTC),
-							Out: time.Date(2022, 11, 7, 15, 45, 0, 0, time.UTC),
-						},
-					},
-				},
-				period: models.Period{
-					Begin: time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 11, 8, 0, 0, 0, 0, time.UTC),
-				},
+				currentDay: testhelpers.WorkDay("2022-11-07", 7.75, "Virkedag", "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)", testhelpers.Salary500k,
+					testhelpers.Clocking("2022-11-07T08:00", "2022-11-07T15:45")),
+				period: testhelpers.Period("2022-11-07T00:00", "2022-11-08T00:00"),
 			},
 			want: 0,
 		},
 		{
 			name: "Ingen arbeid i kjernetid",
 			args: args{
-				currentDay: models.TimeSheet{
-					Date:         time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
-					WorkingHours: 7.75,
-					WorkingDay:   "Virkedag",
-					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-					Clockings: []models.Clocking{
-						{
-							In:  time.Date(2022, 11, 7, 15, 0, 0, 0, time.UTC),
-							Out: time.Date(2022, 11, 7, 20, 45, 0, 0, time.UTC),
-						},
-					},
-				},
-				period: models.Period{
-					Begin: time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 11, 8, 0, 0, 0, 0, time.UTC),
-				},
+				currentDay: testhelpers.WorkDay("2022-11-07", 7.75, "Virkedag", "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)", testhelpers.Salary500k,
+					testhelpers.Clocking("2022-11-07T15:00", "2022-11-07T20:45")),
+				period: testhelpers.Period("2022-11-07T00:00", "2022-11-08T00:00"),
 			},
 			want: 330,
 		},
 		{
 			name: "Kom sent på jobb",
 			args: args{
-				currentDay: models.TimeSheet{
-					Date:         time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
-					WorkingHours: 7.75,
-					WorkingDay:   "Virkedag",
-					FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-					Clockings: []models.Clocking{
-						{
-							In:  time.Date(2022, 11, 7, 10, 0, 0, 0, time.UTC),
-							Out: time.Date(2022, 11, 7, 17, 45, 0, 0, time.UTC),
-						},
-					},
-				},
-				period: models.Period{
-					Begin: time.Date(2022, 11, 7, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 11, 8, 0, 0, 0, 0, time.UTC),
-				},
+				currentDay: testhelpers.WorkDay("2022-11-07", 7.75, "Virkedag", "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)", testhelpers.Salary500k,
+					testhelpers.Clocking("2022-11-07T10:00", "2022-11-07T17:45")),
+				period: testhelpers.Period("2022-11-07T00:00", "2022-11-08T00:00"),
 			},
 			want: 60,
 		},
@@ -382,15 +259,12 @@ func Test_calculateGuardDutyInKjernetid(t *testing.T) {
 			name: "Julaften på en lørdag",
 			args: args{
 				currentDay: models.TimeSheet{
-					Date:       time.Date(2022, 12, 24, 0, 0, 0, 0, time.UTC),
+					Date:       testhelpers.D("2022-12-24"),
 					WorkingDay: "Lørdag",
 					FormName:   "BV Lørdag IKT",
 					Clockings:  []models.Clocking{},
 				},
-				period: models.Period{
-					Begin: time.Date(2022, 12, 24, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2022, 12, 25, 0, 0, 0, 0, time.UTC),
-				},
+				period: testhelpers.Period("2022-12-24T00:00", "2022-12-25T00:00"),
 			},
 			want: 0,
 		},
@@ -398,22 +272,9 @@ func Test_calculateGuardDutyInKjernetid(t *testing.T) {
 		{
 			name: "Julaften på en fredag (litt sen klokking)",
 			args: args{
-				currentDay: models.TimeSheet{
-					Date:         time.Date(2021, 12, 24, 0, 0, 0, 0, time.UTC),
-					WorkingHours: 4,
-					WorkingDay:   "Virkedag",
-					FormName:     "Julaften 0800-1200 *",
-					Clockings: []models.Clocking{
-						{
-							In:  time.Date(2021, 12, 24, 9, 0, 0, 0, time.UTC),
-							Out: time.Date(2021, 12, 24, 14, 0, 0, 0, time.UTC),
-						},
-					},
-				},
-				period: models.Period{
-					Begin: time.Date(2021, 12, 24, 0, 0, 0, 0, time.UTC),
-					End:   time.Date(2021, 12, 25, 0, 0, 0, 0, time.UTC),
-				},
+				currentDay: testhelpers.WorkDay("2021-12-24", 4, "Virkedag", "Julaften 0800-1200 *", testhelpers.Salary500k,
+					testhelpers.Clocking("2021-12-24T09:00", "2021-12-24T14:00")),
+				period: testhelpers.Period("2021-12-24T00:00", "2021-12-25T00:00"),
 			},
 			want: 60,
 		},
@@ -442,50 +303,14 @@ func Test_calculateMinutesToBePaid(t *testing.T) {
 			name: "Julaften på en lørdag",
 			args: args{
 				schedule: map[string][]models.Period{
-					"2022-12-24": {
-						{
-							Begin: time.Date(2022, 12, 24, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 12, 25, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-12-25": {
-						{
-							Begin: time.Date(2022, 12, 25, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 12, 26, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-12-26": {
-						{
-							Begin: time.Date(2022, 12, 26, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 12, 27, 0, 0, 0, 0, time.UTC),
-						},
-					},
+					"2022-12-24": {testhelpers.Period("2022-12-24T00:00", "2022-12-25T00:00")},
+					"2022-12-25": {testhelpers.Period("2022-12-25T00:00", "2022-12-26T00:00")},
+					"2022-12-26": {testhelpers.Period("2022-12-26T00:00", "2022-12-27T00:00")},
 				},
 				timesheet: map[string]models.TimeSheet{
-					"2022-12-24": {
-						Date:         time.Date(2022, 12, 24, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Lørdag",
-						FormName:     "BV Lørdag IKT",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings:    nil,
-					},
-					"2022-12-25": {
-						Date:         time.Date(2022, 12, 25, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "1. Juledag",
-						FormName:     "Helligdag",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings:    nil,
-					},
-					"2022-12-26": {
-						Date:         time.Date(2022, 12, 26, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "2. Juledag",
-						FormName:     "Helligdag",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings:    nil,
-					},
+					"2022-12-24": testhelpers.OffDay("2022-12-24", "Lørdag", "BV Lørdag IKT", testhelpers.Salary500k),
+					"2022-12-25": testhelpers.OffDay("2022-12-25", "1. Juledag", "Helligdag", testhelpers.Salary500k),
+					"2022-12-26": testhelpers.OffDay("2022-12-26", "2. Juledag", "Helligdag", testhelpers.Salary500k),
 				},
 			},
 			want: map[string]models.GuardDuty{
@@ -520,22 +345,10 @@ func Test_calculateMinutesToBePaid(t *testing.T) {
 			name: "Nyttårsaften på en lørdag",
 			args: args{
 				schedule: map[string][]models.Period{
-					"2022-12-31": {
-						{
-							Begin: time.Date(2022, 12, 31, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
-						},
-					},
+					"2022-12-31": {testhelpers.Period("2022-12-31T00:00", "2023-01-01T00:00")},
 				},
 				timesheet: map[string]models.TimeSheet{
-					"2022-12-31": {
-						Date:         time.Date(2022, 12, 31, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Lørdag",
-						FormName:     "BV Lørdag IKT",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings:    nil,
-					},
+					"2022-12-31": testhelpers.OffDay("2022-12-31", "Lørdag", "BV Lørdag IKT", testhelpers.Salary500k),
 				},
 			},
 			want: map[string]models.GuardDuty{
@@ -554,50 +367,14 @@ func Test_calculateMinutesToBePaid(t *testing.T) {
 			name: "Julaften på en fredag",
 			args: args{
 				schedule: map[string][]models.Period{
-					"2021-12-24": {
-						{
-							Begin: time.Date(2021, 12, 24, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2021, 12, 25, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2021-12-25": {
-						{
-							Begin: time.Date(2021, 12, 25, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2021, 12, 26, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2021-12-26": {
-						{
-							Begin: time.Date(2021, 12, 26, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2021, 12, 27, 0, 0, 0, 0, time.UTC),
-						},
-					},
+					"2021-12-24": {testhelpers.Period("2021-12-24T00:00", "2021-12-25T00:00")},
+					"2021-12-25": {testhelpers.Period("2021-12-25T00:00", "2021-12-26T00:00")},
+					"2021-12-26": {testhelpers.Period("2021-12-26T00:00", "2021-12-27T00:00")},
 				},
 				timesheet: map[string]models.TimeSheet{
-					"2021-12-24": {
-						Date:         time.Date(2021, 12, 24, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Virkedag",
-						FormName:     "Julaften 0800-1200 *",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings:    nil,
-					},
-					"2021-12-25": {
-						Date:         time.Date(2021, 12, 25, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "1. Juledag",
-						FormName:     "Helligdag",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings:    nil,
-					},
-					"2021-12-26": {
-						Date:         time.Date(2021, 12, 26, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "2. Juledag",
-						FormName:     "Helligdag",
-						Salary:       decimal.NewFromInt(500_000),
-						Clockings:    nil,
-					},
+					"2021-12-24": testhelpers.OffDay("2021-12-24", "Virkedag", "Julaften 0800-1200 *", testhelpers.Salary500k),
+					"2021-12-25": testhelpers.OffDay("2021-12-25", "1. Juledag", "Helligdag", testhelpers.Salary500k),
+					"2021-12-26": testhelpers.OffDay("2021-12-26", "2. Juledag", "Helligdag", testhelpers.Salary500k),
 				},
 			},
 			want: map[string]models.GuardDuty{
@@ -659,173 +436,38 @@ func TestHoursGuarddutySalary(t *testing.T) {
 			name: "En døgnkontinuerlig vaktuke (vintertid)",
 			args: args{
 				timesheet: map[string]models.TimeSheet{
-					"2022-10-12": {
-						Date:         time.Date(2022, 10, 12, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 7.75,
-						WorkingDay:   "Virkedag",
-						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 12, 8, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 12, 15, 45, 0, 0, time.UTC),
-							},
-						},
-					},
-					"2022-10-13": {
-						Date:         time.Date(2022, 10, 13, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 7.75,
-						WorkingDay:   "Virkedag",
-						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 13, 8, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 13, 15, 45, 0, 0, time.UTC),
-							},
-						},
-					},
-					"2022-10-14": {
-						Date:         time.Date(2022, 10, 14, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 7.75,
-						WorkingDay:   "Virkedag",
-						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 14, 8, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 14, 15, 45, 0, 0, time.UTC),
-							},
-						},
-					},
-					"2022-10-15": {
-						Date:         time.Date(2022, 10, 15, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Lørdag",
-						FormName:     "BV Lørdag IKT",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings:    []models.Clocking{},
-					},
-					"2022-10-16": {
-						Date:         time.Date(2022, 10, 16, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Søndag",
-						FormName:     "BV Søndag IKT",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings:    []models.Clocking{},
-					},
-					"2022-10-17": {
-						Date:         time.Date(2022, 10, 17, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 7.75,
-						WorkingDay:   "Virkedag",
-						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 17, 8, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 17, 15, 45, 0, 0, time.UTC),
-							},
-						},
-					},
-					"2022-10-18": {
-						Date:         time.Date(2022, 10, 18, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 7.75,
-						WorkingDay:   "Virkedag",
-						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 18, 8, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 18, 15, 45, 0, 0, time.UTC),
-							},
-						},
-					},
-					"2022-10-19": {
-						Date:         time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 7.75,
-						WorkingDay:   "Virkedag",
-						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 19, 8, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 19, 15, 45, 0, 0, time.UTC),
-							},
-						},
-					},
+					"2022-10-12": testhelpers.WorkDay("2022-10-12", 7.75, "Virkedag", "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)", testhelpers.Salary750k,
+						testhelpers.Clocking("2022-10-12T08:00", "2022-10-12T15:45")),
+					"2022-10-13": testhelpers.WorkDay("2022-10-13", 7.75, "Virkedag", "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)", testhelpers.Salary750k,
+						testhelpers.Clocking("2022-10-13T08:00", "2022-10-13T15:45")),
+					"2022-10-14": testhelpers.WorkDay("2022-10-14", 7.75, "Virkedag", "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)", testhelpers.Salary750k,
+						testhelpers.Clocking("2022-10-14T08:00", "2022-10-14T15:45")),
+					"2022-10-15": testhelpers.OffDay("2022-10-15", "Lørdag", "BV Lørdag IKT", testhelpers.Salary750k),
+					"2022-10-16": testhelpers.OffDay("2022-10-16", "Søndag", "BV Søndag IKT", testhelpers.Salary750k),
+					"2022-10-17": testhelpers.WorkDay("2022-10-17", 7.75, "Virkedag", "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)", testhelpers.Salary750k,
+						testhelpers.Clocking("2022-10-17T08:00", "2022-10-17T15:45")),
+					"2022-10-18": testhelpers.WorkDay("2022-10-18", 7.75, "Virkedag", "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)", testhelpers.Salary750k,
+						testhelpers.Clocking("2022-10-18T08:00", "2022-10-18T15:45")),
+					"2022-10-19": testhelpers.WorkDay("2022-10-19", 7.75, "Virkedag", "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)", testhelpers.Salary750k,
+						testhelpers.Clocking("2022-10-19T08:00", "2022-10-19T15:45")),
 				},
 				guardPeriod: map[string][]models.Period{
-					"2022-10-12": {
-						{
-							Begin: time.Date(2022, 10, 12, 12, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 13, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-10-13": {
-						{
-							Begin: time.Date(2022, 10, 13, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 14, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-10-14": {
-						{
-							Begin: time.Date(2022, 10, 14, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 15, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-10-15": {
-						{
-							Begin: time.Date(2022, 10, 15, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 16, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-10-16": {
-						{
-							Begin: time.Date(2022, 10, 16, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 17, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-10-17": {
-						{
-							Begin: time.Date(2022, 10, 17, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 18, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-10-18": {
-						{
-							Begin: time.Date(2022, 10, 18, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-10-19": {
-						{
-							Begin: time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 19, 12, 0, 0, 0, time.UTC),
-						},
-					},
+					"2022-10-12": {testhelpers.Period("2022-10-12T12:00", "2022-10-13T00:00")},
+					"2022-10-13": {testhelpers.Period("2022-10-13T00:00", "2022-10-14T00:00")},
+					"2022-10-14": {testhelpers.Period("2022-10-14T00:00", "2022-10-15T00:00")},
+					"2022-10-15": {testhelpers.Period("2022-10-15T00:00", "2022-10-16T00:00")},
+					"2022-10-16": {testhelpers.Period("2022-10-16T00:00", "2022-10-17T00:00")},
+					"2022-10-17": {testhelpers.Period("2022-10-17T00:00", "2022-10-18T00:00")},
+					"2022-10-18": {testhelpers.Period("2022-10-18T00:00", "2022-10-19T00:00")},
+					"2022-10-19": {testhelpers.Period("2022-10-19T00:00", "2022-10-19T12:00")},
 				},
 			},
 			want: models.Artskoder{
-				Morgen: models.Artskode{
-					Sum:   decimal.NewFromFloat(5614.86),
-					Hours: 30,
-				},
-				Kveld: models.Artskode{
-					Sum:   decimal.NewFromFloat(3743.24),
-					Hours: 20,
-				},
-				Dag: models.Artskode{
-					Sum:   decimal.NewFromFloat(4235.27),
-					Hours: 31,
-				},
-				Helg: models.Artskode{
-					Sum:   decimal.NewFromFloat(9327.78),
-					Hours: 48,
-				},
-				Skift: models.Artskode{
-					Sum:   decimal.NewFromFloat(100),
-					Hours: 20,
-				},
+				Morgen: models.Artskode{Sum: testhelpers.Dec(5614.86), Hours: 30},
+				Kveld:  models.Artskode{Sum: testhelpers.Dec(3743.24), Hours: 20},
+				Dag:    models.Artskode{Sum: testhelpers.Dec(4235.27), Hours: 31},
+				Helg:   models.Artskode{Sum: testhelpers.Dec(9327.78), Hours: 48},
+				Skift:  models.Artskode{Sum: testhelpers.DecI(100), Hours: 20},
 			},
 		},
 
@@ -833,173 +475,38 @@ func TestHoursGuarddutySalary(t *testing.T) {
 			name: "En døgnkontinuerlig vaktuke (normaltid)",
 			args: args{
 				timesheet: map[string]models.TimeSheet{
-					"2022-10-12": {
-						Date:         time.Date(2022, 10, 12, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 7.5,
-						WorkingDay:   "Virkedag",
-						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 12, 8, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 12, 15, 30, 0, 0, time.UTC),
-							},
-						},
-					},
-					"2022-10-13": {
-						Date:         time.Date(2022, 10, 13, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 7.5,
-						WorkingDay:   "Virkedag",
-						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 13, 8, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 13, 15, 30, 0, 0, time.UTC),
-							},
-						},
-					},
-					"2022-10-14": {
-						Date:         time.Date(2022, 10, 14, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 7.5,
-						WorkingDay:   "Virkedag",
-						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 14, 8, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 14, 15, 30, 0, 0, time.UTC),
-							},
-						},
-					},
-					"2022-10-15": {
-						Date:         time.Date(2022, 10, 15, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Lørdag",
-						FormName:     "BV Lørdag IKT",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings:    []models.Clocking{},
-					},
-					"2022-10-16": {
-						Date:         time.Date(2022, 10, 16, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 0,
-						WorkingDay:   "Søndag",
-						FormName:     "BV Søndag IKT",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings:    []models.Clocking{},
-					},
-					"2022-10-17": {
-						Date:         time.Date(2022, 10, 17, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 7.5,
-						WorkingDay:   "Virkedag",
-						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 17, 8, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 17, 15, 30, 0, 0, time.UTC),
-							},
-						},
-					},
-					"2022-10-18": {
-						Date:         time.Date(2022, 10, 18, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 7.5,
-						WorkingDay:   "Virkedag",
-						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 18, 8, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 18, 15, 30, 0, 0, time.UTC),
-							},
-						},
-					},
-					"2022-10-19": {
-						Date:         time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
-						WorkingHours: 7.5,
-						WorkingDay:   "Virkedag",
-						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-						Salary:       decimal.NewFromInt(750_000),
-						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2022, 10, 19, 8, 0, 0, 0, time.UTC),
-								Out: time.Date(2022, 10, 19, 15, 30, 0, 0, time.UTC),
-							},
-						},
-					},
+					"2022-10-12": testhelpers.WorkDay("2022-10-12", 7.5, "Virkedag", "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)", testhelpers.Salary750k,
+						testhelpers.Clocking("2022-10-12T08:00", "2022-10-12T15:30")),
+					"2022-10-13": testhelpers.WorkDay("2022-10-13", 7.5, "Virkedag", "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)", testhelpers.Salary750k,
+						testhelpers.Clocking("2022-10-13T08:00", "2022-10-13T15:30")),
+					"2022-10-14": testhelpers.WorkDay("2022-10-14", 7.5, "Virkedag", "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)", testhelpers.Salary750k,
+						testhelpers.Clocking("2022-10-14T08:00", "2022-10-14T15:30")),
+					"2022-10-15": testhelpers.OffDay("2022-10-15", "Lørdag", "BV Lørdag IKT", testhelpers.Salary750k),
+					"2022-10-16": testhelpers.OffDay("2022-10-16", "Søndag", "BV Søndag IKT", testhelpers.Salary750k),
+					"2022-10-17": testhelpers.WorkDay("2022-10-17", 7.5, "Virkedag", "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)", testhelpers.Salary750k,
+						testhelpers.Clocking("2022-10-17T08:00", "2022-10-17T15:30")),
+					"2022-10-18": testhelpers.WorkDay("2022-10-18", 7.5, "Virkedag", "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)", testhelpers.Salary750k,
+						testhelpers.Clocking("2022-10-18T08:00", "2022-10-18T15:30")),
+					"2022-10-19": testhelpers.WorkDay("2022-10-19", 7.5, "Virkedag", "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)", testhelpers.Salary750k,
+						testhelpers.Clocking("2022-10-19T08:00", "2022-10-19T15:30")),
 				},
 				guardPeriod: map[string][]models.Period{
-					"2022-10-12": {
-						{
-							Begin: time.Date(2022, 10, 12, 12, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 13, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-10-13": {
-						{
-							Begin: time.Date(2022, 10, 13, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 14, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-10-14": {
-						{
-							Begin: time.Date(2022, 10, 14, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 15, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-10-15": {
-						{
-							Begin: time.Date(2022, 10, 15, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 16, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-10-16": {
-						{
-							Begin: time.Date(2022, 10, 16, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 17, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-10-17": {
-						{
-							Begin: time.Date(2022, 10, 17, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 18, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-10-18": {
-						{
-							Begin: time.Date(2022, 10, 18, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
-						},
-					},
-					"2022-10-19": {
-						{
-							Begin: time.Date(2022, 10, 19, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2022, 10, 19, 12, 0, 0, 0, time.UTC),
-						},
-					},
+					"2022-10-12": {testhelpers.Period("2022-10-12T12:00", "2022-10-13T00:00")},
+					"2022-10-13": {testhelpers.Period("2022-10-13T00:00", "2022-10-14T00:00")},
+					"2022-10-14": {testhelpers.Period("2022-10-14T00:00", "2022-10-15T00:00")},
+					"2022-10-15": {testhelpers.Period("2022-10-15T00:00", "2022-10-16T00:00")},
+					"2022-10-16": {testhelpers.Period("2022-10-16T00:00", "2022-10-17T00:00")},
+					"2022-10-17": {testhelpers.Period("2022-10-17T00:00", "2022-10-18T00:00")},
+					"2022-10-18": {testhelpers.Period("2022-10-18T00:00", "2022-10-19T00:00")},
+					"2022-10-19": {testhelpers.Period("2022-10-19T00:00", "2022-10-19T12:00")},
 				},
 			},
 			want: models.Artskoder{
-				Morgen: models.Artskode{
-					Sum:   decimal.NewFromFloat(5614.86),
-					Hours: 30,
-				},
-				Kveld: models.Artskode{
-					Sum:   decimal.NewFromFloat(3743.24),
-					Hours: 20,
-				},
-				Dag: models.Artskode{
-					Sum:   decimal.NewFromFloat(4508.51),
-					Hours: 33,
-				},
-				Helg: models.Artskode{
-					Sum:   decimal.NewFromFloat(9327.78),
-					Hours: 48,
-				},
-				Skift: models.Artskode{
-					Sum:   decimal.NewFromFloat(100),
-					Hours: 20,
-				},
+				Morgen: models.Artskode{Sum: testhelpers.Dec(5614.86), Hours: 30},
+				Kveld:  models.Artskode{Sum: testhelpers.Dec(3743.24), Hours: 20},
+				Dag:    models.Artskode{Sum: testhelpers.Dec(4508.51), Hours: 33},
+				Helg:   models.Artskode{Sum: testhelpers.Dec(9327.78), Hours: 48},
+				Skift:  models.Artskode{Sum: testhelpers.DecI(100), Hours: 20},
 			},
 		},
 		{
@@ -1007,93 +514,52 @@ func TestHoursGuarddutySalary(t *testing.T) {
 			args: args{
 				timesheet: map[string]models.TimeSheet{
 					"2026-01-10": {
-						Date:         time.Date(2026, 1, 10, 0, 0, 0, 0, time.UTC),
+						Date:         testhelpers.D("2026-01-10"),
 						WorkingHours: 7.5,
 						WorkingDay:   "Lørdag",
 						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-						Salary:       decimal.NewFromInt(500_000),
+						Salary:       testhelpers.Salary500k,
 						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2026, 1, 10, 20, 0, 0, 0, time.UTC),
-								Out: time.Date(2026, 1, 10, 22, 0, 0, 0, time.UTC),
-								OtG: true,
-							},
+							testhelpers.ClockingOtG("2026-01-10T20:00", "2026-01-10T22:00"),
 						},
 					},
 				},
 				guardPeriod: map[string][]models.Period{
-					"2026-01-10": {
-						{
-							Begin: time.Date(2026, 1, 10, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2026, 1, 11, 0, 0, 0, 0, time.UTC),
-						},
-					},
+					"2026-01-10": {testhelpers.Period("2026-01-10T00:00", "2026-01-11T00:00")},
 				},
 			},
 			want: models.Artskoder{
-				Helg: models.Artskode{
-					Sum:   decimal.NewFromFloat(3366.59),
-					Hours: 24,
-				},
-				Utrykning: models.Artskode{
-					Sum:   decimal.NewFromInt(130),
-					Hours: 2,
-				},
+				Helg:      models.Artskode{Sum: testhelpers.Dec(3366.59), Hours: 24},
+				Utrykning: models.Artskode{Sum: testhelpers.DecI(130), Hours: 2},
 			},
-			wantErr: false,
 		},
 		{
 			name: "Vakt en arbeidsdag med utrykning under utvidetarbeidstid",
 			args: args{
 				timesheet: map[string]models.TimeSheet{
 					"2026-01-27": {
-						Date:         time.Date(2026, 1, 27, 0, 0, 0, 0, time.UTC),
+						Date:         testhelpers.D("2026-01-27"),
 						WorkingHours: 7.5,
 						WorkingDay:   "Lørdag",
 						FormName:     "BV 0800-1545 m/Beredskapsvakt, start vakt kl 1600 (2018)",
-						Salary:       decimal.NewFromInt(500_000),
+						Salary:       testhelpers.Salary500k,
 						Clockings: []models.Clocking{
-							{
-								In:  time.Date(2026, 1, 27, 17, 0, 0, 0, time.UTC),
-								Out: time.Date(2026, 1, 27, 19, 0, 0, 0, time.UTC),
-								OtG: true,
-							},
+							testhelpers.ClockingOtG("2026-01-27T17:00", "2026-01-27T19:00"),
 						},
 					},
 				},
 				guardPeriod: map[string][]models.Period{
-					"2026-01-27": {
-						{
-							Begin: time.Date(2026, 1, 27, 0, 0, 0, 0, time.UTC),
-							End:   time.Date(2026, 1, 28, 0, 0, 0, 0, time.UTC),
-						},
-					},
+					"2026-01-27": {testhelpers.Period("2026-01-27T00:00", "2026-01-28T00:00")},
 				},
 			},
 			want: models.Artskoder{
-				Morgen: models.Artskode{
-					Sum:   decimal.NewFromFloat(798.65),
-					Hours: 6,
-				},
-				Kveld: models.Artskode{
-					Sum:   decimal.NewFromFloat(532.43),
-					Hours: 4,
-				},
-				Dag: models.Artskode{
-					Sum:   decimal.NewFromFloat(672.57),
-					Hours: 7,
-				},
-				Helg: models.Artskode{},
-				Skift: models.Artskode{
-					Sum:   decimal.NewFromInt(20),
-					Hours: 4,
-				},
-				Utrykning: models.Artskode{
-					Sum:   decimal.NewFromInt(50),
-					Hours: 2,
-				},
+				Morgen:    models.Artskode{Sum: testhelpers.Dec(798.65), Hours: 6},
+				Kveld:     models.Artskode{Sum: testhelpers.Dec(532.43), Hours: 4},
+				Dag:       models.Artskode{Sum: testhelpers.Dec(672.57), Hours: 7},
+				Helg:      models.Artskode{},
+				Skift:     models.Artskode{Sum: testhelpers.DecI(20), Hours: 4},
+				Utrykning: models.Artskode{Sum: testhelpers.DecI(50), Hours: 2},
 			},
-			wantErr: false,
 		},
 	}
 
@@ -1111,12 +577,7 @@ func TestHoursGuarddutySalary(t *testing.T) {
 				ApproverID:   "M654321",
 				ApproverName: "Kalpana, Bran",
 				Timesheet:    tt.args.timesheet,
-				Satser: models.Satser{
-					Helg:    decimal.NewFromInt(65),
-					Dag:     decimal.NewFromInt(15),
-					Natt:    decimal.NewFromInt(25),
-					Utvidet: decimal.NewFromInt(25),
-				},
+				Satser:       testhelpers.DefaultSatser,
 			}
 
 			got, err := GuarddutySalary(vaktplan, minWinTid)
@@ -1133,13 +594,8 @@ func TestHoursGuarddutySalary(t *testing.T) {
 }
 
 func TestCalculateIsEqualForHolidayOnSaturdayAndRegularSaturday(t *testing.T) {
-	salary := decimal.NewFromInt(500_000)
-	satser := models.Satser{
-		Helg:    decimal.NewFromInt(65),
-		Dag:     decimal.NewFromInt(15),
-		Natt:    decimal.NewFromInt(25),
-		Utvidet: decimal.NewFromInt(25),
-	}
+	salary := testhelpers.Salary500k
+	satser := testhelpers.DefaultSatser
 
 	holidayPayroll := &models.Payroll{}
 	holidayMinutes := map[string]models.GuardDuty{
@@ -1178,13 +634,8 @@ func TestCalculateIsEqualForHolidayOnSaturdayAndRegularSaturday(t *testing.T) {
 // TestCalculateIsNotEqualForHolidayOnMondayAndRegularMonday tester at man ikke får den samme lønnen for en vanlig arbeidsdag
 // uten arbeid og en arbeidsdag som er en helligdag.
 func TestCalculateIsNotEqualForHolidayOnMondayAndRegularMonday(t *testing.T) {
-	salary := decimal.NewFromInt(500_000)
-	satser := models.Satser{
-		Helg:    decimal.NewFromInt(65),
-		Dag:     decimal.NewFromInt(15),
-		Natt:    decimal.NewFromInt(25),
-		Utvidet: decimal.NewFromInt(25),
-	}
+	salary := testhelpers.Salary500k
+	satser := testhelpers.DefaultSatser
 
 	holidayPayroll := &models.Payroll{}
 	holidayMinutes := map[string]models.GuardDuty{

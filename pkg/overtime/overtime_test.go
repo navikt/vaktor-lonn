@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/navikt/vaktor-lonn/pkg/models"
+	"github.com/navikt/vaktor-lonn/pkg/testhelpers"
 	"github.com/shopspring/decimal"
 )
 
@@ -24,112 +25,39 @@ func TestCalculate(t *testing.T) {
 			name: "Beredskapsvakt en uke",
 			args: args{
 				payroll: &models.Payroll{},
-				salary:  decimal.NewFromInt(750_000),
+				salary:  testhelpers.Salary750k,
 				minutes: map[string]models.GuardDuty{
-					"2022-10-12": {
-						Hvilende2000: 240,
-						Hvilende0006: 0,
-						Hvilende0620: 255,
-						Skifttillegg: 180,
-					},
-					"2022-10-13": {
-						Hvilende2000: 240,
-						Hvilende0006: 360,
-						Hvilende0620: 375,
-						Skifttillegg: 240,
-					},
-					"2022-10-14": {
-						Hvilende2000: 240,
-						Hvilende0006: 360,
-						Hvilende0620: 375,
-						Skifttillegg: 240,
-					},
-					"2022-10-15": {
-						Hvilende2000: 240,
-						Hvilende0006: 360,
-						Hvilende0620: 840,
-						Helgetillegg: 1440,
-						IsWeekend:    true,
-					},
-					"2022-10-16": {
-						Hvilende2000: 240,
-						Hvilende0006: 360,
-						Hvilende0620: 840,
-						Helgetillegg: 1440,
-						IsWeekend:    true,
-					},
-					"2022-10-17": {
-						Hvilende2000: 240,
-						Hvilende0006: 360,
-						Hvilende0620: 375,
-						Skifttillegg: 240,
-					},
-					"2022-10-18": {
-						Hvilende2000: 240,
-						Hvilende0006: 360,
-						Hvilende0620: 375,
-						Skifttillegg: 240,
-					},
-					"2022-10-19": {
-						Hvilende2000: 0,
-						Hvilende0006: 360,
-						Hvilende0620: 120,
-						Skifttillegg: 60,
-					},
+					"2022-10-12": {Hvilende2000: 240, Hvilende0006: 0, Hvilende0620: 255, Skifttillegg: 180},
+					"2022-10-13": {Hvilende2000: 240, Hvilende0006: 360, Hvilende0620: 375, Skifttillegg: 240},
+					"2022-10-14": {Hvilende2000: 240, Hvilende0006: 360, Hvilende0620: 375, Skifttillegg: 240},
+					"2022-10-15": {Hvilende2000: 240, Hvilende0006: 360, Hvilende0620: 840, Helgetillegg: 1440, IsWeekend: true},
+					"2022-10-16": {Hvilende2000: 240, Hvilende0006: 360, Hvilende0620: 840, Helgetillegg: 1440, IsWeekend: true},
+					"2022-10-17": {Hvilende2000: 240, Hvilende0006: 360, Hvilende0620: 375, Skifttillegg: 240},
+					"2022-10-18": {Hvilende2000: 240, Hvilende0006: 360, Hvilende0620: 375, Skifttillegg: 240},
+					"2022-10-19": {Hvilende2000: 0, Hvilende0006: 360, Hvilende0620: 120, Skifttillegg: 60},
 				},
 			},
 			want: models.Artskoder{
-				Morgen: models.Artskode{
-					Sum:   decimal.NewFromFloat(4_864.86),
-					Hours: 30,
-				},
-				Dag: models.Artskode{
-					Sum:   decimal.NewFromFloat(3_770.27),
-					Hours: 31,
-				},
-				Kveld: models.Artskode{
-					Sum:   decimal.NewFromFloat(3_243.24),
-					Hours: 20,
-				},
-				Helg: models.Artskode{
-					Sum:   decimal.NewFromFloat(7_783.78),
-					Hours: 48,
-				},
+				Morgen: models.Artskode{Sum: testhelpers.Dec(4_864.86), Hours: 30},
+				Dag:    models.Artskode{Sum: testhelpers.Dec(3_770.27), Hours: 31},
+				Kveld:  models.Artskode{Sum: testhelpers.Dec(3_243.24), Hours: 20},
+				Helg:   models.Artskode{Sum: testhelpers.Dec(7_783.78), Hours: 48},
 			},
-			wantErr: false,
 		},
 
 		{
 			name: "Utrykning i helg (søndag)",
 			args: args{
 				payroll: &models.Payroll{},
-				salary:  decimal.NewFromInt(750_000),
+				salary:  testhelpers.Salary750k,
 				minutes: map[string]models.GuardDuty{
-					"2022-10-15": {
-						Hvilende2000: 240,
-						Hvilende0006: 360,
-						Hvilende0620: 840,
-						Helgetillegg: 1440,
-						Skifttillegg: 0,
-						IsWeekend:    true,
-					},
-					"2022-10-16": {
-						Hvilende2000: 120,
-						Hvilende0006: 360,
-						Hvilende0620: 840,
-						Helgetillegg: 1320,
-						Skifttillegg: 0,
-						IsWeekend:    true,
-					},
+					"2022-10-15": {Hvilende2000: 240, Hvilende0006: 360, Hvilende0620: 840, Helgetillegg: 1440, Skifttillegg: 0, IsWeekend: true},
+					"2022-10-16": {Hvilende2000: 120, Hvilende0006: 360, Hvilende0620: 840, Helgetillegg: 1320, Skifttillegg: 0, IsWeekend: true},
 				},
 			},
 			want: models.Artskoder{
-				Helg: models.Artskode{
-					Sum:   decimal.NewFromFloat(7_459.46),
-					Hours: 46,
-				},
+				Helg: models.Artskode{Sum: testhelpers.Dec(7_459.46), Hours: 46},
 			},
-			wantErr: false,
 		},
 	}
 	for _, tt := range tests {

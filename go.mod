@@ -1,6 +1,6 @@
 module github.com/navikt/vaktor-lonn
 
-go 1.26.0
+go 1.26.6
 
 tool (
 	github.com/securego/gosec/v2/cmd/gosec

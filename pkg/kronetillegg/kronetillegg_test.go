@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/navikt/vaktor-lonn/pkg/models"
-	"github.com/shopspring/decimal"
+	"github.com/navikt/vaktor-lonn/pkg/testhelpers"
 )
 
 func TestCalculate(t *testing.T) {
@@ -23,82 +23,24 @@ func TestCalculate(t *testing.T) {
 			name: "Beredskapsvakt en uke",
 			args: args{
 				payroll: &models.Payroll{},
-				satser: models.Satser{
-					Helg:    decimal.NewFromInt(65),
-					Dag:     decimal.NewFromInt(15),
-					Natt:    decimal.NewFromInt(25),
-					Utvidet: decimal.NewFromInt(25),
-				},
+				satser:  testhelpers.DefaultSatser,
 				minutes: map[string]models.GuardDuty{
-					"2022-10-12": {
-						Hvilende2000: 240,
-						Hvilende0006: 0,
-						Hvilende0620: 255,
-						Skifttillegg: 180,
-					},
-					"2022-10-13": {
-						Hvilende2000: 240,
-						Hvilende0006: 360,
-						Hvilende0620: 375,
-						Skifttillegg: 240,
-					},
-					"2022-10-14": {
-						Hvilende2000: 240,
-						Hvilende0006: 360,
-						Hvilende0620: 375,
-						Skifttillegg: 240,
-					},
-					"2022-10-15": {
-						Hvilende2000: 240,
-						Hvilende0006: 360,
-						Hvilende0620: 840,
-						Helgetillegg: 1440,
-						IsWeekend:    true,
-					},
-					"2022-10-16": {
-						Hvilende2000: 240,
-						Hvilende0006: 360,
-						Hvilende0620: 840,
-						Helgetillegg: 1440,
-						IsWeekend:    true,
-					},
-					"2022-10-17": {
-						Hvilende2000: 240,
-						Hvilende0006: 360,
-						Hvilende0620: 375,
-						Skifttillegg: 240,
-					},
-					"2022-10-18": {
-						Hvilende2000: 240,
-						Hvilende0006: 360,
-						Hvilende0620: 375,
-						Skifttillegg: 240,
-					},
-					"2022-10-19": {
-						Hvilende2000: 0,
-						Hvilende0006: 360,
-						Hvilende0620: 120,
-						Skifttillegg: 60,
-					},
+					"2022-10-12": {Hvilende2000: 240, Hvilende0006: 0, Hvilende0620: 255, Skifttillegg: 180},
+					"2022-10-13": {Hvilende2000: 240, Hvilende0006: 360, Hvilende0620: 375, Skifttillegg: 240},
+					"2022-10-14": {Hvilende2000: 240, Hvilende0006: 360, Hvilende0620: 375, Skifttillegg: 240},
+					"2022-10-15": {Hvilende2000: 240, Hvilende0006: 360, Hvilende0620: 840, Helgetillegg: 1440, IsWeekend: true},
+					"2022-10-16": {Hvilende2000: 240, Hvilende0006: 360, Hvilende0620: 840, Helgetillegg: 1440, IsWeekend: true},
+					"2022-10-17": {Hvilende2000: 240, Hvilende0006: 360, Hvilende0620: 375, Skifttillegg: 240},
+					"2022-10-18": {Hvilende2000: 240, Hvilende0006: 360, Hvilende0620: 375, Skifttillegg: 240},
+					"2022-10-19": {Hvilende2000: 0, Hvilende0006: 360, Hvilende0620: 120, Skifttillegg: 60},
 				},
 			},
 			want: models.Artskoder{
-				Morgen: models.Artskode{
-					Sum: decimal.NewFromInt(750),
-				},
-				Dag: models.Artskode{
-					Sum: decimal.NewFromInt(465),
-				},
-				Kveld: models.Artskode{
-					Sum: decimal.NewFromInt(500),
-				},
-				Helg: models.Artskode{
-					Sum: decimal.NewFromInt(1544),
-				},
-				Skift: models.Artskode{
-					Sum:   decimal.NewFromInt(100),
-					Hours: 20,
-				},
+				Morgen: models.Artskode{Sum: testhelpers.DecI(750)},
+				Dag:    models.Artskode{Sum: testhelpers.DecI(465)},
+				Kveld:  models.Artskode{Sum: testhelpers.DecI(500)},
+				Helg:   models.Artskode{Sum: testhelpers.DecI(1544)},
+				Skift:  models.Artskode{Sum: testhelpers.DecI(100), Hours: 20},
 			},
 		},
 
@@ -106,33 +48,14 @@ func TestCalculate(t *testing.T) {
 			name: "Utrykning i helg (søndag)",
 			args: args{
 				payroll: &models.Payroll{},
-				satser: models.Satser{
-					Helg:    decimal.NewFromInt(65),
-					Dag:     decimal.NewFromInt(15),
-					Natt:    decimal.NewFromInt(25),
-					Utvidet: decimal.NewFromInt(25),
-				},
+				satser:  testhelpers.DefaultSatser,
 				minutes: map[string]models.GuardDuty{
-					"2022-10-15": {
-						Hvilende2000: 240,
-						Hvilende0006: 360,
-						Hvilende0620: 840,
-						Helgetillegg: 1440,
-						IsWeekend:    true,
-					},
-					"2022-10-16": {
-						Hvilende2000: 120,
-						Hvilende0006: 360,
-						Hvilende0620: 840,
-						Helgetillegg: 1320,
-						IsWeekend:    true,
-					},
+					"2022-10-15": {Hvilende2000: 240, Hvilende0006: 360, Hvilende0620: 840, Helgetillegg: 1440, IsWeekend: true},
+					"2022-10-16": {Hvilende2000: 120, Hvilende0006: 360, Hvilende0620: 840, Helgetillegg: 1320, IsWeekend: true},
 				},
 			},
 			want: models.Artskoder{
-				Helg: models.Artskode{
-					Sum: decimal.NewFromInt(1468),
-				},
+				Helg: models.Artskode{Sum: testhelpers.DecI(1468)},
 			},
 		},
 
@@ -140,12 +63,7 @@ func TestCalculate(t *testing.T) {
 			name: "Beredskapsvakt en bevegelig hellig dag",
 			args: args{
 				payroll: &models.Payroll{},
-				satser: models.Satser{
-					Helg:    decimal.NewFromInt(65),
-					Dag:     decimal.NewFromInt(15),
-					Natt:    decimal.NewFromInt(25),
-					Utvidet: decimal.NewFromInt(25),
-				},
+				satser:  testhelpers.DefaultSatser,
 				minutes: map[string]models.GuardDuty{
 					"2022-10-12": {
 						Hvilende2000:  240,
@@ -158,19 +76,10 @@ func TestCalculate(t *testing.T) {
 				},
 			},
 			want: models.Artskoder{
-				Morgen: models.Artskode{
-					Sum: decimal.NewFromInt(150),
-				},
-				Kveld: models.Artskode{
-					Sum: decimal.NewFromInt(100),
-				},
-				Dag: models.Artskode{
-					Sum: decimal.NewFromInt(210),
-				},
-				Skift: models.Artskode{
-					Sum:   decimal.NewFromInt(20),
-					Hours: 4,
-				},
+				Morgen: models.Artskode{Sum: testhelpers.DecI(150)},
+				Kveld:  models.Artskode{Sum: testhelpers.DecI(100)},
+				Dag:    models.Artskode{Sum: testhelpers.DecI(210)},
+				Skift:  models.Artskode{Sum: testhelpers.DecI(20), Hours: 4},
 			},
 		},
 	}
