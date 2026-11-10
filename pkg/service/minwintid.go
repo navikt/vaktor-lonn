@@ -423,10 +423,10 @@ func calculateSalary(beredskapsvakt gensql.Beredskapsvakt, tiddataResult models.
 		ApproverID:   tiddataResult.LederNavID,
 		ApproverName: tiddataResult.LederNavn,
 		Satser: models.Satser{
-			Helg:    decimal.NewFromInt(65),
-			Dag:     decimal.NewFromInt(15),
-			Natt:    decimal.NewFromInt(25),
-			Utvidet: decimal.NewFromInt(25),
+			Helg:    decimal.NewFromInt(84),
+			Dag:     decimal.NewFromInt(19),
+			Natt:    decimal.NewFromInt(32),
+			Utvidet: decimal.NewFromInt(40),
 		},
 		Timesheet: timesheet,
 	}
